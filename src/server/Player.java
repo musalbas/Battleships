@@ -1,5 +1,6 @@
 package server;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,7 +23,9 @@ public class Player extends Thread {
     public void run() {
         super.run();
         try {
-            out = new ObjectOutputStream(socket.getOutputStream());
+            out = new ObjectOutputStream(new BufferedOutputStream(
+                    socket.getOutputStream()));
+            out.flush();
             ObjectInputStream in = new ObjectInputStream(
                     socket.getInputStream());
 
