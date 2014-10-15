@@ -27,7 +27,8 @@ public class ClientView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ShipView shipView = myBoard.getSelectedShip();
                 if (shipView != null) {
-                    shipView.setHorizontal(false);
+                    shipView.rotate();
+                    repaint();
                 }
             }
         });

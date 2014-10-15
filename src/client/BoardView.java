@@ -176,7 +176,9 @@ public class BoardView extends JPanel {
         }
     }
 
-    public void paint(Graphics g) {
+
+    @Override
+    protected void paintComponent(Graphics g) {
         for (CellView[] row : viewCells) {
             for (CellView cell : row) {
                 cell.paint(g);
