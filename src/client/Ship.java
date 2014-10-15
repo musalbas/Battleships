@@ -71,7 +71,11 @@ public class Ship {
     }
 
     public void paint(Graphics g) {
-        g.setColor(Color.GRAY);
+	    if ( selected ) {
+		    g.setColor (Color.GREEN);
+	    } else {
+		    g.setColor (Color.GRAY);
+	    }
 	    if ( horizontal ) {
 		    g.fillRect (x, y, length * cellSize, cellSize);
 	    } else {

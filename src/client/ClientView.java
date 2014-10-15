@@ -12,27 +12,30 @@ public class ClientView extends JFrame {
 
 	ClientView() {
 
-		JPanel rootPanel = new JPanel();
-		rootPanel.setLayout ( new BorderLayout ());
-		setContentPane (rootPanel);
+		JPanel rootPanel = new JPanel(new BorderLayout ());
+
 
 		JPanel boardsPanel = new JPanel (new GridLayout(1, 2, 10, 10)) ;
 		final Board myBoard = new Board();
-		boardsPanel.add(myBoard);
-
-		rootPanel.add ( boardsPanel, BorderLayout.CENTER);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		boardsPanel.add(myBoard.getView());
 
 		JPanel controlPanel = new JPanel( new GridLayout (1,1)) ;
 		JButton rotateButton = new JButton ( "Rotate" ) ;
+		controlPanel.add(rotateButton);
 		rotateButton.addActionListener ( new ActionListener () {
 			@Override
 			public void actionPerformed (ActionEvent e) {
-			   if ( myBoard.getSelectedShip() )
+				Ship ship = myBoard.getSelectedShip() ;
+				if ( ship != null ) {
+					ship.setHorizontal (false);
+				}
 			}
 		});
-		controlPanel.add(rotateButton);
+
+		setContentPane (rootPanel);
+		rootPanel.add ( boardsPanel, BorderLayout.CENTER);
 		rootPanel.add ( controlPanel, BorderLayout.EAST ) ;
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack ();
 		setVisible (true);
 
