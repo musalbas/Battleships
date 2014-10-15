@@ -16,7 +16,7 @@ public class ClientView extends JFrame {
 
 
 		JPanel boardsPanel = new JPanel (new GridLayout(1, 2, 10, 10)) ;
-		final Board myBoard = new Board();
+		final BoardView myBoard = new BoardView ();
 		boardsPanel.add(myBoard.getView());
 
 		JPanel controlPanel = new JPanel( new GridLayout (1,1)) ;
@@ -25,9 +25,9 @@ public class ClientView extends JFrame {
 		rotateButton.addActionListener ( new ActionListener () {
 			@Override
 			public void actionPerformed (ActionEvent e) {
-				Ship ship = myBoard.getSelectedShip() ;
-				if ( ship != null ) {
-					ship.setHorizontal (false);
+				ShipView shipView = myBoard.getSelectedShip() ;
+				if ( shipView != null ) {
+					shipView.setHorizontal (false);
 				}
 			}
 		});

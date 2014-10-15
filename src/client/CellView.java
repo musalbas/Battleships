@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * Created by user on 13.10.2014.
  */
-public class Cell {
+public class CellView {
 
     public static final int CLEAR = 0;
     public static final int HOVER = 1;
@@ -25,7 +25,7 @@ public class Cell {
            *----*
            width
      */
-    public Cell(int x, int y, int width, int height) {
+    public CellView (int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;

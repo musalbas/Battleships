@@ -7,7 +7,7 @@ import java.util.Random;
 /**
  * Created by user on 13.10.2014.
  */
-public class Ship {
+public class ShipView {
     private int length;
     private int cellSize;
 	private final int initialX;
@@ -19,7 +19,7 @@ public class Ship {
 	private boolean selected;
     private BufferedImage image; // TODO ship image. If we decide to replace a squares with proper image of a ship.
 
-    public Ship(int length, int cellSize, int x, int y) {
+    public ShipView (int length, int cellSize, int x, int y) {
         this.length = length;
         this.cellSize = cellSize;
         this.x = this.initialX = x;

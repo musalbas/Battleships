@@ -13,11 +13,17 @@ import java.util.Random;
  */
 public class GridView extends JPanel {
 
-	private final Board board;
+	private final BoardView board;
 
-	private Cell hoveredCell = null;
+	static final int BOAT_SIZE = 40;
+	private CellView hoveredCell = null;
+	private ShipView selectedShipView = null;
+	private CellView[][] viewCells = new CellView[ BoardView.BOARD_SIZE][ BoardView.BOARD_SIZE];
+	private ArrayList<ShipView> viewShips = new ArrayList<ShipView>();
+	private int xDistance;
+	private int yDistance;
 
-    public GridView( Board b ) {
+    public GridView( BoardView b ) {
 	    this.board = b ;
 
 
@@ -25,37 +31,37 @@ public class GridView extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-	            updateHoveredCell( e );
-	            setHoveredCell ( e );
-                getParent().repaint();
+	            updateHoveredCell (e);
+	            setHoveredCell (e);
+                getParent ().repaint();
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-	            board.updateSelectedShip(e);
+	            updateSelectedShip (e);
                 getParent().repaint();
             }
         });
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-	            setHoveredCellState(Cell.CLEAR);
+	            setHoveredCellState(CellView.CLEAR);
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-	            board.setSelectedShip(e);
+	            setSelectedShipView (e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
 	            updateHoveredCell (e);
 
-                if (board.getSelectedShip () != null) {
-	                board.moveSelectedShip( );
+                if ( getSelectedShipView () != null) {
+	                moveSelectedShip ();
                 } else {
-	                setHoveredCell ( e );
-                    setHoveredCellState (new Random().nextInt(2) + 2);
+	                setHoveredCell (e);
+                    setHoveredCellState (new Random ().nextInt (2) + 2);
                 }
                 getParent().repaint();
             }
@@ -63,15 +69,14 @@ public class GridView extends JPanel {
     }
 
 	private void addCellsAndShips() {
-		int BOARD_SIZE = Board.BOARD_SIZE ;
-		int BOAT_SIZE = Board.BOAT_SIZE ;
-		int NUMBER_OF_BOATS = Board.NUMBER_OF_BOATS ;
-		int BOATS_LENGTH[] = Board.BOATS_LENGTH ;
+		int BOARD_SIZE = BoardView.BOARD_SIZE ;
+		int NUMBER_OF_BOATS = BoardView.NUMBER_OF_BOATS ;
+		int BOATS_LENGTH[] = BoardView.BOATS_LENGTH ;
 		setPreferredSize(new Dimension((BOARD_SIZE+5) * BOAT_SIZE + 1, (BOARD_SIZE+5) * BOAT_SIZE + 50));
 		setVisible (true);
 		for (int i = 0; i < BOARD_SIZE; ++i) {
 			for (int j = 0; j < BOARD_SIZE; ++j) {
-				board.setCell ( i , j , new Cell(i * BOAT_SIZE, j * BOAT_SIZE, BOAT_SIZE, BOAT_SIZE) );
+				setCell (i, j, new CellView (i * BOAT_SIZE, j * BOAT_SIZE, BOAT_SIZE, BOAT_SIZE));
 			}
 		}
 
@@ -79,8 +84,7 @@ public class GridView extends JPanel {
 		int y = BOAT_SIZE * BOARD_SIZE + 5;
 		for (int i = 0; i < NUMBER_OF_BOATS; i++) {
 			int length = BOATS_LENGTH[i];
-
-			board.addShip(new Ship(length, BOAT_SIZE, x, y));
+			viewShips.add(new ShipView (length, BOAT_SIZE, x, y));
 			final int newPosition = x + length * BOAT_SIZE + 5;
 			if (newPosition + length * BOAT_SIZE + 5 > BOAT_SIZE * 10) {
 				x = 0;
@@ -91,18 +95,76 @@ public class GridView extends JPanel {
 		}
 	}
 
+	void setSelectedShipView (MouseEvent e) {
+		System.out.println("got a selected ship");
+		int x = e.getX();
+		int y = e.getY();
+		if ( selectedShipView != null) {
+			selectedShipView.setSelected (false);
+		}
+		selectedShipView = getShip(x, y);
+		if ( selectedShipView != null) {
+			selectedShipView.setSelected(true);
+			xDistance = e.getX() - selectedShipView.getX();
+			yDistance = e.getY() - selectedShipView.getY();
+		}
+	}
+
+	void moveSelectedShip() {
+		final int x = selectedShipView.getX() + BOAT_SIZE / 2;
+		final int y = selectedShipView.getY() + BOAT_SIZE / 2;
+		CellView hovered = getCell(x, y);
+		if ( hovered != null ) {
+			selectedShipView.setX(hovered.getX());
+			selectedShipView.setY(hovered.getY());
+		} else {
+			selectedShipView.resetPosition();
+		}
+	}
+
+	private ShipView getShip(int x, int y) {
+		for ( ShipView shipView : viewShips  ) {
+			if ( shipView.has(x, y)) {
+				return shipView;
+			}
+		}
+		return null;
+	}
+
+	ShipView getSelectedShipView () {
+		return selectedShipView;
+	}
+
+	CellView getCell(int x, int y) {
+		int i = x / BOAT_SIZE;
+		int j = y / BOAT_SIZE;
+		return i >= 0  && j >= 0 && i < 10 && j < 10 ? viewCells[i][j] : null;
+	}
+
+	void setCell ( int i , int j , CellView cell){
+		viewCells[i][j] = cell ;
+	}
+
+	void updateSelectedShip(MouseEvent e) {
+		ShipView selectedShipView = getSelectedShipView () ;
+		if ( selectedShipView != null) {
+			selectedShipView.setX(e.getX() - xDistance);
+			selectedShipView.setY(e.getY() - yDistance);
+		}
+	}
+
 	void setHoveredCell(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		hoveredCell = board.getCell(x, y);
-		if (hoveredCell != null && hoveredCell.getState() == Cell.CLEAR) {
-			hoveredCell.setState(Cell.HOVER);
+		hoveredCell = getCell (x, y);
+		if (hoveredCell != null && hoveredCell.getState() == CellView.CLEAR) {
+			hoveredCell.setState(CellView.HOVER);
 		}
 	}
 
 	void updateHoveredCell(MouseEvent e) {
-		if (hoveredCell != null && hoveredCell.getState() == Cell.HOVER) {
-			hoveredCell.setState(Cell.CLEAR);
+		if (hoveredCell != null && hoveredCell.getState() == CellView.HOVER) {
+			hoveredCell.setState(CellView.CLEAR);
 		}
 	}
 
@@ -113,12 +175,12 @@ public class GridView extends JPanel {
 	}
 
     public void paint(Graphics g) {
-        for (Cell[] row : board.getCells() ) {
-            for (Cell cell : row) {
+        for ( CellView[] row : viewCells ) {
+            for ( CellView cell : row) {
                 cell.paint(g);
             }
         }
-        for (Ship s : board.getShips() ) {
+        for ( ShipView s : viewShips ) {
             s.paint(g);
         }
     }
