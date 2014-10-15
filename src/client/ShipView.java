@@ -52,7 +52,7 @@ public class ShipView {
         if (horizontal) {
             return this.x <= x && x <= this.x + length * cellSize && this.y <= y && y <= this.y + cellSize;
         } else {
-            return this.x <= x && x <= this.x + cellSize && this.y <= y && this.y <= this.y + length * cellSize;
+            return this.x <= x && x <= this.x + cellSize && this.y <= y && y <= this.y + length * cellSize;
         }
     }
 
