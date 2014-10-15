@@ -16,6 +16,7 @@ public class Ship {
     private int y;
     private boolean horizontal;
     private boolean onBoard;
+	private boolean selected;
     private BufferedImage image; // TODO ship image. If we decide to replace a squares with proper image of a ship.
 
     public Ship(int length, int cellSize, int x, int y) {
@@ -23,9 +24,14 @@ public class Ship {
         this.cellSize = cellSize;
         this.x = this.initialX = x;
         this.y = this.initialY = y;
-        horizontal = new Random().nextBoolean ();
+        horizontal = true ;
+	    selected = false ;
         onBoard = false;
     }
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
 
     public int getX() {
         return x;

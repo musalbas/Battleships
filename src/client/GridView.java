@@ -13,32 +13,32 @@ import java.util.Random;
  */
 public class GridView extends JPanel {
 
-    private static final int SIZE = 40;
-    private Cell hoveredCell;
-    private Cell[][] cells = new Cell[10][10];
-    private ArrayList<Ship> ships = new ArrayList<Ship>();
-    private Ship selectedShip;
-    private int xDistance;
-    private int yDistance;
+	private final Board board;
 
-    public GridView() {
-        setPreferredSize(new Dimension(15 * SIZE + 1, 15 * SIZE + 50));
-        for (int i = 0; i < 10; ++i) {
-            for (int j = 0; j < 10; ++j) {
-                cells[i][j] = new Cell(i * SIZE, j * SIZE, SIZE, SIZE);
+    public GridView( Board b ) {
+	    this.board = b ;
+	    int BOARD_SIZE = Board.BOARD_SIZE ;
+	    int BOAT_SIZE = Board.BOAT_SIZE ;
+	    int NUMBER_OF_BOATS = Board.NUMBER_OF_BOATS ;
+	    int BOATS_LENGTH[] = Board.BOATS_LENGTH ;
+
+        setPreferredSize(new Dimension((BOARD_SIZE+5) * BOAT_SIZE + 1, (BOARD_SIZE+5) * BOAT_SIZE + 50));
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            for (int j = 0; j < BOARD_SIZE; ++j) {
+                board.setCell ( i , j , new Cell(i * BOAT_SIZE, j * BOAT_SIZE, BOAT_SIZE, BOAT_SIZE) );
             }
         }
 
         int x = 0;
-        int y = SIZE * 10 + 5;
-        final int[] lengthArray = { 2 , 3 , 3 , 4 , 5} ;
-        for (int i = 0; i < 5; i++) {
-	        int length = lengthArray[i];
-	        ships.add(new Ship(length, SIZE, x, y));
-            final int newPosition = x + length * SIZE + 5;
-            if (newPosition + length * SIZE + 5 > SIZE * 10) {
+        int y = BOAT_SIZE * BOARD_SIZE + 5;
+        for (int i = 0; i < NUMBER_OF_BOATS; i++) {
+	        int length = BOATS_LENGTH[i];
+
+	        board.addShip(new Ship(length, BOAT_SIZE, x, y));
+            final int newPosition = x + length * BOAT_SIZE + 5;
+            if (newPosition + length * BOAT_SIZE + 5 > BOAT_SIZE * 10) {
                 x = 0;
-                y += SIZE + 5;
+                y += BOAT_SIZE + 5;
             } else {
                 x = newPosition;
             }
@@ -46,90 +46,40 @@ public class GridView extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (hoveredCell != null && hoveredCell.getState() == Cell.HOVER) {
-                    hoveredCell.setState(Cell.CLEAR);
-                }
-                int x = e.getX();
-                int y = e.getY();
-
-                hoveredCell = getCell(x, y);
-                if (hoveredCell != null && hoveredCell.getState() == Cell.CLEAR) {
-                    hoveredCell.setState(Cell.HOVER);
-                }
+	            board.updateHoveredCell( e );
+	            board.setHoveredCell ( e );
                 getParent().repaint();
             }
-
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (selectedShip != null) {
-                    selectedShip.setX(e.getX() - xDistance);
-                    selectedShip.setY(e.getY() - yDistance);
-                }
+	            board.updateSelectedShip(e);
                 getParent().repaint();
             }
         });
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-                if (hoveredCell != null) {
-                    hoveredCell.setState(Cell.CLEAR);
-                }
+	            board.setHoveredCellState(Cell.CLEAR);
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                selectedShip = getShip(x, y);
-                if (selectedShip != null) {
-                    xDistance = e.getX() - selectedShip.getX();
-                    yDistance = e.getY() - selectedShip.getY();
-                }
+	            board.setSelectedShip(e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (hoveredCell != null && hoveredCell.getState() == Cell.HOVER) {
-                    hoveredCell.setState(Cell.CLEAR);
-                }
-                if (selectedShip != null) {
-                    final int x = selectedShip.getX() + SIZE / 2;
-                    final int y = selectedShip.getY() + SIZE / 2;
-                    Cell hovered = getCell(x, y);
-	                if ( hovered != null ) {
-		                selectedShip.setX(hovered.getX());
-		                selectedShip.setY(hovered.getY());
-	                } else {
-		                selectedShip.resetPosition();
-		                getParent().repaint();
-	                }
+	            board.updateHoveredCell (e);
 
+                if (board.getSelectedShip () != null) {
+	                board.moveSelectedShip( );
                 } else {
-                    int x = e.getX();
-                    int y = e.getY();
-                    hoveredCell = getCell(x, y);
-                    if (hoveredCell != null) {
-                        hoveredCell.setState(new Random().nextInt(2) + 2);
-                    }
+	                board.setHoveredCell ( e );
+                    board.setHoveredCellState (new Random().nextInt(2) + 2);
                 }
                 getParent().repaint();
             }
         });
-    }
-
-    private Ship getShip(int x, int y) {
-        for (Ship ship : ships) {
-            if (ship.has(x, y)) {
-                return ship;
-            }
-        }
-        return null;
-    }
-
-    private Cell getCell(int x, int y) {
-        int i = x / SIZE;
-        int j = y / SIZE;
-        return i >= 0  && j >= 0 && i < 10 && j < 10 ? cells[i][j] : null;
     }
 
     public void paint(Graphics g) {
