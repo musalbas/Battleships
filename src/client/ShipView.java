@@ -61,6 +61,10 @@ public class ShipView {
         setY(initialY);
     }
 
+    public void setHorizontal(boolean horizontal) {
+        this.horizontal = horizontal;
+    }
+
     public void setOnBoard(boolean onBoard) {
         this.onBoard = onBoard;
     }
