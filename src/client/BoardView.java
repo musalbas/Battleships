@@ -23,25 +23,21 @@ public class BoardView extends JPanel {
     private ArrayList<ShipView> viewShips = new ArrayList<ShipView>();
     private int xDistance;
     private int yDistance;
-    private JFrame root;
 
     public BoardView() {
-        root = (JFrame) SwingUtilities.windowForComponent(this);
-        System.out.println(root);
-
         addCellsAndShips();
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 updateHoveredCell(e);
                 setHoveredCell(e);
-                root.repaint();
+                repaintRoot();
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
                 updateSelectedShip(e);
-                root.repaint();
+                repaintRoot();
             }
         });
         addMouseListener(new MouseAdapter() {
@@ -65,9 +61,16 @@ public class BoardView extends JPanel {
                     setHoveredCell(e);
                     setHoveredCellState(new Random().nextInt(2) + 2);
                 }
-                root.repaint();
+                repaintRoot();
             }
         });
+    }
+
+    private void repaintRoot() {
+        Component c = SwingUtilities.getWindowAncestor(this);
+        if (c != null) {
+            c.repaint();
+        }
     }
 
     private void addCellsAndShips() {

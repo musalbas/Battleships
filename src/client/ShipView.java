@@ -65,8 +65,8 @@ public class ShipView {
         this.onBoard = onBoard;
     }
 
-    public void setHorizontal(boolean horizontal) {
-        this.horizontal = horizontal;
+    public void rotate() {
+        horizontal = ! horizontal;
     }
 
     public void paint(Graphics g) {
