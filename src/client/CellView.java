@@ -25,7 +25,7 @@ public class CellView {
            *----*
            width
      */
-    public CellView (int x, int y, int width, int height) {
+    public CellView(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;

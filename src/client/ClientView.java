@@ -10,39 +10,39 @@ import java.awt.event.ActionListener;
  */
 public class ClientView extends JFrame {
 
-	ClientView() {
+    ClientView() {
 
-		JPanel rootPanel = new JPanel(new BorderLayout ());
+        JPanel rootPanel = new JPanel(new BorderLayout());
 
 
-		JPanel boardsPanel = new JPanel (new GridLayout(1, 2, 10, 10)) ;
-		final BoardView myBoard = new BoardView ();
-		boardsPanel.add(myBoard.getView());
+        JPanel boardsPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        final BoardView myBoard = new BoardView();
+        boardsPanel.add(myBoard);
 
-		JPanel controlPanel = new JPanel( new GridLayout (1,1)) ;
-		JButton rotateButton = new JButton ( "Rotate" ) ;
-		controlPanel.add(rotateButton);
-		rotateButton.addActionListener ( new ActionListener () {
-			@Override
-			public void actionPerformed (ActionEvent e) {
-				ShipView shipView = myBoard.getSelectedShip() ;
-				if ( shipView != null ) {
-					shipView.setHorizontal (false);
-				}
-			}
-		});
+        JPanel controlPanel = new JPanel(new GridLayout(1, 1));
+        JButton rotateButton = new JButton("Rotate");
+        controlPanel.add(rotateButton);
+        rotateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ShipView shipView = myBoard.getSelectedShip();
+                if (shipView != null) {
+                    shipView.setHorizontal(false);
+                }
+            }
+        });
 
-		setContentPane (rootPanel);
-		rootPanel.add ( boardsPanel, BorderLayout.CENTER);
-		rootPanel.add ( controlPanel, BorderLayout.EAST ) ;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		pack ();
-		setVisible (true);
+        setContentPane(rootPanel);
+        rootPanel.add(boardsPanel, BorderLayout.CENTER);
+        rootPanel.add(controlPanel, BorderLayout.EAST);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
+        setVisible(true);
 
-	}
+    }
 
-	public static void main ( String[] args ) {
-		new ClientView ();
-	}
+    public static void main(String[] args) {
+        new ClientView();
+    }
 
 }
