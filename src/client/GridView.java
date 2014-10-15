@@ -22,7 +22,7 @@ public class GridView extends JPanel {
     private int yDistance;
 
     public GridView() {
-        setPreferredSize(new Dimension(10 * SIZE + 1, 10 * SIZE + 50));
+        setPreferredSize(new Dimension(15 * SIZE + 1, 15 * SIZE + 50));
         for (int i = 0; i < 10; ++i) {
             for (int j = 0; j < 10; ++j) {
                 cells[i][j] = new Cell(i * SIZE, j * SIZE, SIZE, SIZE);
@@ -31,9 +31,10 @@ public class GridView extends JPanel {
 
         int x = 0;
         int y = SIZE * 10 + 5;
-        final int length = 2;
-        for (int i = 0; i < 4; i++) {
-            ships.add(new Ship(length, SIZE, x, y));
+        final int[] lengthArray = { 2 , 3 , 3 , 4 , 5} ;
+        for (int i = 0; i < 5; i++) {
+	        int length = lengthArray[i];
+	        ships.add(new Ship(length, SIZE, x, y));
             final int newPosition = x + length * SIZE + 5;
             if (newPosition + length * SIZE + 5 > SIZE * 10) {
                 x = 0;
@@ -95,8 +96,14 @@ public class GridView extends JPanel {
                     final int x = selectedShip.getX() + SIZE / 2;
                     final int y = selectedShip.getY() + SIZE / 2;
                     Cell hovered = getCell(x, y);
-                    selectedShip.setX(hovered.getX());
-                    selectedShip.setY(hovered.getY());
+	                if ( hovered != null ) {
+		                selectedShip.setX(hovered.getX());
+		                selectedShip.setY(hovered.getY());
+	                } else {
+		                selectedShip.resetPosition();
+		                getParent().repaint();
+	                }
+
                 } else {
                     int x = e.getX();
                     int y = e.getY();
@@ -122,7 +129,7 @@ public class GridView extends JPanel {
     private Cell getCell(int x, int y) {
         int i = x / SIZE;
         int j = y / SIZE;
-        return i < 10 && j < 10 ? cells[i][j] : null;
+        return i >= 0  && j >= 0 && i < 10 && j < 10 ? cells[i][j] : null;
     }
 
     public void paint(Graphics g) {

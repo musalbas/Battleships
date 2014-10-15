@@ -2,6 +2,7 @@ package client;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 /**
  * Created by user on 13.10.2014.
@@ -9,6 +10,8 @@ import java.awt.image.BufferedImage;
 public class Ship {
     private int length;
     private int cellSize;
+	private final int initialX;
+	private final int initialY;
     private int x;
     private int y;
     private boolean horizontal;
@@ -18,9 +21,9 @@ public class Ship {
     public Ship(int length, int cellSize, int x, int y) {
         this.length = length;
         this.cellSize = cellSize;
-        this.x = x;
-        this.y = y;
-        horizontal = false;
+        this.x = this.initialX = x;
+        this.y = this.initialY = y;
+        horizontal = new Random().nextBoolean ();
         onBoard = false;
     }
 
@@ -41,8 +44,17 @@ public class Ship {
     }
 
     public boolean has(int x, int y) {
-        return this.x <= x && x <= this.x + length * cellSize && this.y <= y && y <= this.y + cellSize;
+	    if ( horizontal ) {
+		    return this.x <= x && x <= this.x + length * cellSize && this.y <= y && y <= this.y + cellSize;
+	    } else {
+		    return this.x <= x && x <= this.x + cellSize && this.y <= y && this.y <= this.y + length * cellSize;
+	    }
     }
+
+	public void resetPosition () {
+		setX ( initialX ) ;
+		setY ( initialY ) ;
+	}
 
     public void setOnBoard(boolean onBoard) {
         this.onBoard = onBoard;
@@ -54,6 +66,10 @@ public class Ship {
 
     public void paint(Graphics g) {
         g.setColor(Color.GRAY);
-        g.fillRect(x, y, length * cellSize, cellSize);
+	    if ( horizontal ) {
+		    g.fillRect (x, y, length * cellSize, cellSize);
+	    } else {
+		    g.fillRect (x, y, cellSize, length * cellSize);
+	    }
     }
 }
