@@ -20,7 +20,6 @@ public class CellView {
 
     /* (x,y)
            *----*
-           |    |
            |    | height
            *----*
            width
@@ -73,15 +72,19 @@ public class CellView {
                     g.setColor(Color.BLACK);
                     g.fillRect(x, y, width, height);
                     g.setColor(Color.RED);
-                    g.drawLine(x, y, x + width, y + height);
-                    g.drawLine(x + width, y, x, y + height);
+                    drawCross(g);
                     break;
                 case MISS:
                     g.setColor(Color.RED);
-                    g.drawLine(x, y, x + width, y + height);
-                    g.drawLine(x + width, y, x, y + height);
+                    drawCross(g);
                     break;
             }
         }
+    }
+
+    private void drawCross(Graphics g) {
+        final int padding = 5;
+        g.drawLine(x + padding, y + padding, x + width - padding, y + height - padding);
+        g.drawLine(x + width - padding, y + padding, x + padding, y + height - padding);
     }
 }
