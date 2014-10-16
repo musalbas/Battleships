@@ -1,3 +1,5 @@
+package logic;
+
 public class Square {
 	private Ship ship;
 	private boolean hit;
