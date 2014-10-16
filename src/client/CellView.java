@@ -79,7 +79,7 @@ public class CellView {
                     }
                     break;
                 case HIT:
-                    g.setColor(Color.BLACK);
+                    g.setColor(Color.GRAY);
                     g.fillRect(x, y, width, height);
                     g.setColor(Color.RED);
                     if (!animationDisplayed()) {

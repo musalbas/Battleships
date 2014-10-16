@@ -41,15 +41,10 @@ public class ExplosionAnimation {
             @Override
             public void actionPerformed(ActionEvent event) {
                 currentIndex++;
-                if (currentIndex == images.size()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                if (currentIndex == images.size() + 25) {
                     cell.setExplosionImage(null);
                     t.stop();
-                } else {
+                } else if (currentIndex < images.size()) {
                     cell.setExplosionImage(images.get(currentIndex));
                 }
                 board.repaintRoot();

@@ -67,6 +67,10 @@ public class BoardView extends JPanel {
         });
     }
 
+    /**
+     * Calling repaint() works only on Mac and Linux, on Windows repaint() causes issues with components layout.
+     * The whole JFrame has to repainted.
+     */
     public void repaintRoot() {
         Component c = SwingUtilities.getWindowAncestor(this);
         if (c != null) {
