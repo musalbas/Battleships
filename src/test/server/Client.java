@@ -1,10 +1,14 @@
 package test.server;
 
+import logic.Board;
+import logic.Ship;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Client {
 
@@ -42,6 +46,21 @@ public class Client {
                 out.writeObject(new String[]{"join", args[1], args[2]});
                 out.flush();
             }
+
+            Board board = new Board(true);
+            ArrayList<Ship> ships = board.getShips();
+            ships.get(0).setVertical(true);
+            if (!board.placeShip(ships.get(0), 3, 5)) {
+                System.out.println("Invalid placement");
+            }
+            board.printBoard();
+            if (!board.placeShip(ships.get(0), 3, 6)) {
+                System.out.println("Invalid placement");
+            }
+            board.printBoard();
+
+            out.writeObject(board);
+            out.flush();
 
         } catch (IOException e) {
             e.printStackTrace();

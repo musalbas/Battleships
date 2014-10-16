@@ -1,6 +1,8 @@
 package logic;
 
-public class Square {
+import java.io.Serializable;
+
+public class Square implements Serializable {
 	private Ship ship;
 	private boolean hit;
 	private int x, y;
