@@ -66,4 +66,8 @@ public class Ship implements Serializable {
 		return (health == 0);
 	}
 
+    public void sink() {
+        health = 0;
+    }
+
 }
