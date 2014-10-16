@@ -1,5 +1,7 @@
 package logic;
 
+import server.messages.MoveResponseMessage;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -67,7 +69,7 @@ public class Board implements Serializable {
 	}
 
 	public void setHit(Square s) {
-		s.setHit(true);
+		s.setGuessed(true);
 	}
 
 	public boolean gameOver() {
@@ -111,4 +113,10 @@ public class Board implements Serializable {
 	public ArrayList<Ship> getShips() {
 		return ships;
 	}
+
+    public void applyMove(MoveResponseMessage move) {
+        Square s = getSquare(move.getX(), move.getY());
+        s.update(move.isHit(), move.shipSank());
+        move.shipSank().sink();
+    }
 }
