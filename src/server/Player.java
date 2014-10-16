@@ -1,5 +1,7 @@
 package server;
 
+import logic.Board;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -52,6 +54,8 @@ public class Player extends Thread {
                                 break;
                         }
                     }
+                } else if (input instanceof Board) {
+                    ((Board) input).printBoard();
                 }
             }
         } catch (IOException e) {
