@@ -59,14 +59,15 @@ public class BoardView extends JPanel {
                     moveSelectedShip();
                 } else {
                     setHoveredCell(e);
-                    setHoveredCellState(new Random().nextInt(2) + 2);
+                    final int state = new Random().nextInt(2) + 2;
+                    setHoveredCellState(state);
                 }
                 repaintRoot();
             }
         });
     }
 
-    private void repaintRoot() {
+    public void repaintRoot() {
         Component c = SwingUtilities.getWindowAncestor(this);
         if (c != null) {
             c.repaint();
@@ -172,6 +173,9 @@ public class BoardView extends JPanel {
 
     void setHoveredCellState(int state) {
         if (hoveredCell != null) {
+            if (state == CellView.HIT) {
+                new ExplosionAnimation(hoveredCell, this).start();
+            }
             hoveredCell.setState(state);
         }
     }
