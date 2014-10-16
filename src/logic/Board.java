@@ -1,8 +1,9 @@
 package logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Board {
+public class Board implements Serializable {
 	private final int BOARD_DIMENSION = 10;
 	private Square[][] squares;
 	private ArrayList<Ship> ships;
@@ -37,7 +38,7 @@ public class Board {
 
 	public boolean placeShip(Ship ship, int x, int y) {
 
-		int end = (ship.isVertical()) ? x + ship.getLength() - 1 : y
+		int end = (ship.isVertical()) ? y + ship.getLength() - 1 : x
 				+ ship.getLength() - 1;
 		if (x < 0 || y < 0 || end >= BOARD_DIMENSION) {
 			return false; // doesn't fit on board
@@ -46,11 +47,11 @@ public class Board {
 		// puts ship on squares
 		for (int i = 0; i < ship.getLength(); i++) {
 			if (ship.isVertical()) {
-				squares[x + i][y].setShip(ship);
-				ship.setSquare(squares[x + i][y]);
-			} else if (!ship.isVertical()) {
 				squares[x][y + i].setShip(ship);
 				ship.setSquare(squares[x][y + i]);
+			} else if (!ship.isVertical()) {
+				squares[x + i][y].setShip(ship);
+				ship.setSquare(squares[x + 1][y]);
 			}
 		}
 
@@ -80,7 +81,7 @@ public class Board {
 	public void printBoard() {
 		for (int i = 0; i < BOARD_DIMENSION; ++i) {
 			for (int j = 0; j < BOARD_DIMENSION; ++j) {
-				Square s = squares[i][j];
+				Square s = squares[j][i];
 				Ship ship = s.getShip();
 				char c = '-';
 				if (ship != null) {
@@ -105,5 +106,9 @@ public class Board {
 			}
 			System.out.println();
 		}
+	}
+
+	public ArrayList<Ship> getShips() {
+		return ships;
 	}
 }
