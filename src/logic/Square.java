@@ -1,46 +1,45 @@
-public class Square
-{
-    private boolean hitStatus; //shows if this square has been fired on
-    private boolean shipStatus; //shows if this square contains part of a ship
-    private Ship ship; //the ship which occupies this square, can be null if square is sea
-    
-    //constructs a water square which hasn't been hit
-    public Square()
-    {
-        hitStatus = false;
-        shipStatus = false;
-    }
-    
-    public boolean isHit()
-    {
-        return hitStatus;
-    }
-    
-    public boolean isShip()
-    {
-        return shipStatus;
-    }
-    
-    public void setHit(boolean b)
-    {
-        hitStatus = b;
-    }
-    
-    public void setShip(Ship s)
-    {
-        shipStatus = true;
-        ship = s;
-    }
-    
-    //returns the ship on this tile, returns null if there's no ship
-    public Ship getShip()
-    {
-        return ship;
-    }
-    
-    @Override
-    public String toString()
-    {
-        return "[hit=" + hitStatus + ", ship=" + shipStatus + "]";
-    }
+package logic;
+
+public class Square {
+	private Ship ship;
+	private boolean hit;
+	private int x, y;
+
+	public Square(int x, int y, boolean ownBoard) {
+		this.ship = null;
+		this.hit = false;
+		this.x = x;
+		this.y = y;
+	}
+
+	public boolean isShip() {
+		return (ship != null);
+	}
+
+	public Ship getShip() {
+		return ship;
+	}
+
+	public void setShip(Ship ship) {
+		this.ship = ship;
+	}
+
+	public boolean isHit() {
+		return hit;
+	}
+
+	public void setHit(boolean b) {
+		if (ship != null)
+			ship.gotHit();
+		hit = b;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
 }
