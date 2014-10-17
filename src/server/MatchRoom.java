@@ -1,5 +1,7 @@
 package server;
 
+import server.messages.NotificationMessage;
+
 import java.util.HashMap;
 import java.util.Random;
 
@@ -62,7 +64,8 @@ public class MatchRoom {
         }
         String key = keyBuilder.toString();
         waitingPlayerList.put(key, player);
-        player.writeMessage("Game token: " + key);
+        player.writeObject(new NotificationMessage(
+                NotificationMessage.GAME_TOKEN, key));
     }
 
     /**

@@ -39,13 +39,24 @@ public class Square implements Serializable {
 		guessed = b;
 	}
 
+    public boolean guess() {
+        guessed = true;
+        if (ship != null) {
+            ship.gotHit();
+            return true;
+        }
+        return false;
+    }
+
     public void update(boolean hit, Ship shipSunk) {
         this.guessed = true;
         if (this.state == State.UNKNOWN) {
             this.state = (hit) ? State.CONTAINS_SHIP : State.NO_SHIP;
-            this.ship = shipSunk;
         } else if (this.ship != null) {
             ship.gotHit();
+        }
+        if (this.ship == null) {
+            this.ship = shipSunk;
         }
     }
 
@@ -61,6 +72,10 @@ public class Square implements Serializable {
         CONTAINS_SHIP,
         NO_SHIP,
         UNKNOWN
+    }
+
+    public State getState() {
+        return state;
     }
 
 }

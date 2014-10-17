@@ -53,7 +53,7 @@ public class Board implements Serializable {
 				ship.setSquare(squares[x][y + i]);
 			} else if (!ship.isVertical()) {
 				squares[x + i][y].setShip(ship);
-				ship.setSquare(squares[x + 1][y]);
+				ship.setSquare(squares[x + i][y]);
 			}
 		}
 
@@ -80,13 +80,18 @@ public class Board implements Serializable {
 		return true;
 	}
 
-	public void printBoard() {
+	public void printBoard(boolean clean) {
 		for (int i = 0; i < BOARD_DIMENSION; ++i) {
 			for (int j = 0; j < BOARD_DIMENSION; ++j) {
 				Square s = squares[j][i];
 				Ship ship = s.getShip();
 				char c = '-';
-				if (ship != null) {
+                if (s.isGuessed() && !clean &&
+                        s.getState() == Square.State.CONTAINS_SHIP) {
+                    c = 'X';
+                } else if(s.isGuessed() && !clean) {
+                    c = 'O';
+                } else if (ship != null) {
 					switch (ship.getType()) {
 					case AIRCRAFT_CARRIER:
 						c = 'A';
@@ -101,7 +106,7 @@ public class Board implements Serializable {
 						c = 'D';
 						break;
 					case PATROL_BOAT:
-						c = 'p';
+						c = 'P';
 					}
 				}
 				System.out.print(c + " ");
@@ -115,8 +120,19 @@ public class Board implements Serializable {
 	}
 
     public void applyMove(MoveResponseMessage move) {
-        Square s = getSquare(move.getX(), move.getY());
-        s.update(move.isHit(), move.shipSank());
-        move.shipSank().sink();
+        Ship ship = move.shipSank();
+        if (ship != null) {
+            ship.sink();
+            for (Square s : ship.getSquares()) {
+                getSquare(s.getX(), s.getY()).update(true, ship);
+            }
+        } else {
+            Square square = getSquare(move.getX(), move.getY());
+            square.update(move.isHit(), null);
+        }
+    }
+
+    public static boolean isValid(Board board) {
+        return true;
     }
 }
