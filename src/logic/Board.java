@@ -106,7 +106,7 @@ public class Board implements Serializable {
 						c = 'D';
 						break;
 					case PATROL_BOAT:
-						c = 'p';
+						c = 'P';
 					}
 				}
 				System.out.print(c + " ");
