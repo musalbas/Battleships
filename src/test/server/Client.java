@@ -36,8 +36,12 @@ public class Client {
             board.placeShip(ships.get(2), 1, 1);
             board.placeShip(ships.get(3), 3, 1);
             board.placeShip(ships.get(4), 4, 2);
+            board.printBoard(true);
+            board.placeShip(ships.get(4), 4, 4);
 
             board.printBoard(true);
+
+            System.out.println(Board.isValid(board));
 
             final ArrayList<Integer[]> coordinates =
                     new ArrayList<>();

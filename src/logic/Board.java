@@ -146,14 +146,40 @@ public class Board implements Serializable {
 	}
 
 	public static boolean isValid(Board board) {
-		final int SHIP_PARTS = 17;
-		int total = 0;
-		for (int i = 0; i < board.BOARD_DIMENSION; i++) {
-			for (int j = 0; j < board.BOARD_DIMENSION; j++) {
-				if (board.getSquare(i, j).isShip())
-					total++;
-			}
-		}
-		return (total == SHIP_PARTS);
+		Board tempBoard = new Board(true);
+        for (Ship s : board.getShips()) {
+            int[] tl = s.getTopLeft();
+            Ship tempBoardShip = tempBoard.findShipByType(s.getType());
+            tempBoardShip.setVertical(s.isVertical());
+            tempBoard.placeShip(tempBoardShip, tl[0], tl[1]);
+        }
+        tempBoard.printBoard(true);
+        return tempBoard.shipPlacementEquals(board);
 	}
+
+    public boolean shipPlacementEquals(Board board) {
+        for (int y = 0; y < BOARD_DIMENSION; ++y) {
+            for (int x = 0; x < BOARD_DIMENSION; ++x) {
+                Square s1 = this.getSquare(x, y);
+                Square s2 = board.getSquare(x, y);
+                if ((s1.isShip() != s2.isShip())) {
+                    return false;
+                }
+                if (s1.getShip() != null && s2.getShip() != null &&
+                        s1.getShip().getType() != s2.getShip().getType()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private Ship findShipByType(Ship.Type type) {
+        for (Ship s : ships) {
+            if (s.getType() == type) {
+                return s;
+            }
+        }
+        return null;
+    }
 }
