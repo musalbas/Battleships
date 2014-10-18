@@ -70,4 +70,19 @@ public class Ship implements Serializable {
         health = 0;
     }
 
+    public int[] getTopLeft() {
+        Square firstSquare = squares.get(0);
+        int[] tl = {firstSquare.getX(), firstSquare.getY()};
+        for (int i = 1; i < squares.size(); ++i) {
+            Square s = squares.get(i);
+            if (s.getX() < tl[0]) {
+                tl[0] = s.getX();
+            }
+            if (s.getY() < tl[1]) {
+                tl[1] = s.getY();
+            }
+        }
+        return tl;
+    }
+
 }
