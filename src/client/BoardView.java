@@ -169,7 +169,7 @@ public class BoardView extends JPanel {
         }
     }
 
-    void updateHoveredCell(MouseEvent e) {
+    void updateHoveredCell(MouseEvent e) { // TODO MouseEvent is never used.
         if (hoveredCell != null && hoveredCell.getState() == CellView.HOVER) {
             hoveredCell.setState(CellView.CLEAR);
         }
@@ -183,7 +183,6 @@ public class BoardView extends JPanel {
             hoveredCell.setState(state);
         }
     }
-
 
     @Override
     protected void paintComponent(Graphics g) {
