@@ -23,7 +23,6 @@ public class ExplosionAnimation {
         for (File f : icons) {
             try {
                 images.add(ImageIO.read(f));
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
