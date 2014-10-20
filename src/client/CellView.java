@@ -17,6 +17,7 @@ public class CellView {
     private int width;
     private int height;
     private int state;
+    private Image explosionImage;
 
     /* (x,y)
            *----*
@@ -40,6 +41,10 @@ public class CellView {
         return state;
     }
 
+    public void setExplosionImage(Image explosionImage) {
+        this.explosionImage = explosionImage;
+    }
+
     public int getX() {
         return x;
     }
@@ -55,6 +60,9 @@ public class CellView {
         }
         this.state = state;
     }
+    private boolean animationDisplayed() {
+        return explosionImage != null;
+    }
 
     public void paint(Graphics g) {
         if (hasShip) {
@@ -65,20 +73,27 @@ public class CellView {
             g.drawRect(x, y, width, height);
             switch (state) {
                 case HOVER:
-                    g.setColor(Color.RED);
-                    g.fillRect(x, y, width, height);
+                    if (!animationDisplayed()) {
+                        g.setColor(Color.RED);
+                        g.fillRect(x, y, width, height);
+                    }
                     break;
                 case HIT:
-                    g.setColor(Color.BLACK);
+                    g.setColor(Color.GRAY);
                     g.fillRect(x, y, width, height);
                     g.setColor(Color.RED);
-                    drawCross(g);
+                    if (!animationDisplayed()) {
+                        drawCross(g);
+                    }
                     break;
                 case MISS:
                     g.setColor(Color.RED);
                     drawCross(g);
                     break;
             }
+        }
+        if (explosionImage != null) {
+            g.drawImage(explosionImage, x, y, width, height, null);
         }
     }
 

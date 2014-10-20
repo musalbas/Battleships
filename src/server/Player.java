@@ -1,5 +1,9 @@
 package server;
 
+import logic.Board;
+import server.messages.Message;
+import server.messages.MoveMessage;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,6 +17,7 @@ public class Player extends Thread {
     private String name;
     private ObjectOutputStream out;
     private Game game;
+    private Board board;
 
     public Player(Socket socket, MatchRoom matchRoom) {
         this.socket = socket;
@@ -52,11 +57,26 @@ public class Player extends Thread {
                                 break;
                         }
                     }
+                } else if (input instanceof Board) {
+                    Board board = (Board) input;
+                    if (Board.isValid(board) && game != null) {
+                        this.board = board;
+                        game.checkBoards();
+                    } else if (game == null) {
+                        // not in game
+                    } else {
+                        // invalid board
+                    }
+                } else if (input instanceof MoveMessage) {
+                    if (game != null) {
+                        game.applyMove((MoveMessage) input, this);
+                    }
                 }
             }
         } catch (IOException e) {
             if (game != null) {
-                game.killGame(this);
+                game.killGame();
+                // TODO: Alert other player they win
             } else {
                 matchRoom.removeWaitingPlayer(this);
             }
@@ -85,6 +105,19 @@ public class Player extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void writeObject(Object object) {
+        try {
+            out.writeObject(object);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Board getBoard() {
+        return this.board;
     }
 
 }
