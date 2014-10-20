@@ -84,14 +84,19 @@ public class Game {
     public synchronized void applyMove(MoveMessage move, Player player) {
         int x = move.getX();
         int y = move.getY();
+        int max = player.getBoard().BOARD_DIMENSION;
         if (player != turn) {
-            // Throw error
-            return;
+            turn.writeObject(new NotificationMessage(
+                    NotificationMessage.NOT_YOUR_TURN));
+        } else if (x < 0 || x >= max || y < 0 || y >= max) {
+            player.writeObject(new NotificationMessage(
+                    NotificationMessage.INVALID_MOVE));
         } else {
             Player opponent = getOpponent(player);
             Square square = opponent.getBoard().getSquare(x, y);
             if (square.isGuessed()) {
-                // Throw move already done error
+                player.writeObject(new NotificationMessage(
+                        NotificationMessage.REPEATED_MOVE));
                 return;
             }
             boolean hit = square.guess();
@@ -113,7 +118,6 @@ public class Game {
                 opponent.writeObject(new NotificationMessage(
                         NotificationMessage.GAME_LOSE));
                 turn = null;
-                // player wins
             } else if (hit) {
                 setTurn(player); // player gets another go if hit
             } else {
@@ -127,11 +131,25 @@ public class Game {
         @Override
         public void run() {
             if (player1.getBoard() == null & player2.getBoard() == null) {
-                // Both clients failed to place ships in time
+                NotificationMessage draw =new NotificationMessage(
+                        NotificationMessage.TIMEOUT_DRAW);
+                player1.writeObject(draw);
+                player2.writeObject(draw);
+                killGame();
             } else if (player1.getBoard() == null) {
                 // Player1 failed to place ships in time
+                player1.writeObject(new NotificationMessage(
+                        NotificationMessage.TIMEOUT_LOSE));
+                player2.writeObject(new NotificationMessage(
+                        NotificationMessage.TIMEOUT_WIN));
+                killGame();
             } else if (player2.getBoard() == null) {
                 // Player2 failed to place ships in time
+                player1.writeObject(new NotificationMessage(
+                        NotificationMessage.TIMEOUT_WIN));
+                player2.writeObject(new NotificationMessage(
+                        NotificationMessage.TIMEOUT_LOSE));
+                killGame();
             }
         }
     }
@@ -141,7 +159,11 @@ public class Game {
         @Override
         public void run() {
             if (turn != null) {
-
+                turn.writeObject(new NotificationMessage(
+                        NotificationMessage.TIMEOUT_LOSE));
+                getOpponent(turn).writeObject(new NotificationMessage(
+                        NotificationMessage.TIMEOUT_WIN));
+                killGame();
             }
         }
     }
