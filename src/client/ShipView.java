@@ -1,5 +1,7 @@
 package client;
 
+import logic.Ship;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -14,18 +16,18 @@ public class ShipView {
     private int x;
     private int y;
     private boolean horizontal;
-    private boolean onBoard;
     private boolean selected;
     private BufferedImage image; // TODO ship image. If we decide to replace a squares with proper image of a ship.
+	private Ship model ;
 
-    public ShipView(int length, int cellSize, int x, int y) {
+    public ShipView(int length, int cellSize, int x, int y, Ship model) {
         this.length = length;
         this.cellSize = cellSize;
         this.x = this.initialX = x;
         this.y = this.initialY = y;
+	    this.model = model ;
         horizontal = true;
         selected = false;
-        onBoard = false;
     }
 
     public void setSelected(boolean selected) {
@@ -61,12 +63,13 @@ public class ShipView {
         setY(initialY);
     }
 
-    public void setOnBoard(boolean onBoard) {
-        this.onBoard = onBoard;
-    }
+	public Ship getModel () {
+		return model;
+	}
 
-    public void rotate() {
+	public void rotate() {
         horizontal = !horizontal;
+	    model.setVertical( !horizontal ) ;
     }
 
     public void paint(Graphics g) {

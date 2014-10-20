@@ -1,5 +1,7 @@
 package logic;
 
+import client.ShipView;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,12 +11,13 @@ public class Ship implements Serializable {
 	private ArrayList<Square> squares;
 	private boolean vertical;
 	private int health;
+	private ShipView view ;
 
 	// ////////////////////////// private int headX, headY;
 
 	public Ship(Type type) {
 		this.type = type;
-		this.vertical = true;
+		this.vertical = false;
 		this.health = type.length;
 		squares = new ArrayList<Square>();
 	}
@@ -84,5 +87,9 @@ public class Ship implements Serializable {
         }
         return tl;
     }
+
+	public void setView (ShipView view) {
+		this.view = view;
+	}
 
 }
