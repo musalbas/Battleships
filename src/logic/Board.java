@@ -1,5 +1,6 @@
 package logic;
 
+import client.BoardView;
 import server.messages.MoveResponseMessage;
 
 import java.io.Serializable;
@@ -10,6 +11,8 @@ public class Board implements Serializable {
 	private Square[][] squares;
 	private ArrayList<Ship> ships;
 	private boolean ownBoard;
+	private BoardView view ;
+
 
 	public Board(boolean ownBoard) {
 		this.ownBoard = ownBoard;
@@ -182,4 +185,22 @@ public class Board implements Serializable {
         }
         return null;
     }
+
+	// TODO: Fix me!
+	public int getNumberOfBoats() {
+		return 5 ;
+	}
+
+	public Ship.Type[] getShipTypes() {
+		return new Ship.Type[] { Ship.Type.AIRCRAFT_CARRIER,
+									Ship.Type.BATTLESHIP,
+									Ship.Type.DESTROYER,
+									Ship.Type.PATROL_BOAT,
+									Ship.Type.SUBMARINE
+								} ;
+	}
+
+	public void setView (BoardView view) {
+		this.view = view;
+	}
 }

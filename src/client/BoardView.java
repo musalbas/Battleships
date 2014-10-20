@@ -1,5 +1,8 @@
 package client;
 
+import logic.Board;
+import logic.Ship;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -13,16 +16,17 @@ import java.util.Random;
  */
 public class BoardView extends JPanel {
 
-    private static final int BOARD_SIZE = 10;
-    private static final int NUMBER_OF_BOATS = 5;
-    private static final int[] BOATS_LENGTH = {2, 3, 3, 4, 5};
-    private static final int CELL_SIZE = 40;
+    private int BOARD_SIZE;
+    private int NUMBER_OF_BOATS ; // = 5;
+	private Ship.Type[] BOATS_TYPE ;
+    private static int CELL_SIZE = 40;
     private CellView hoveredCell = null;
     private ShipView selectedShipView = null;
-    private CellView[][] viewCells = new CellView[BOARD_SIZE][BOARD_SIZE];
+    private CellView[][] viewCells;
     private ArrayList<ShipView> viewShips = new ArrayList<ShipView>();
     private int xDistance;
     private int yDistance;
+	private Board model;
 
     public BoardView() {
         addCellsAndShips();
@@ -79,6 +83,14 @@ public class BoardView extends JPanel {
     }
 
     private void addCellsAndShips() {
+	    this.model = new Board( true ) ;
+	    model.setView( this );
+	    BOARD_SIZE = model.BOARD_DIMENSION ;
+	    NUMBER_OF_BOATS = model.getNumberOfBoats() ;
+	    BOATS_TYPE = model.getShipTypes () ;
+
+	    viewCells =  new CellView[BOARD_SIZE][BOARD_SIZE];
+
         setPreferredSize(new Dimension((BOARD_SIZE + 5) * CELL_SIZE + 1, (BOARD_SIZE + 5) * CELL_SIZE + 50));
         setVisible(true);
         for (int i = 0; i < BOARD_SIZE; ++i) {
@@ -90,8 +102,11 @@ public class BoardView extends JPanel {
         int x = 0;
         int y = CELL_SIZE * BOARD_SIZE + 5;
         for (int i = 0; i < NUMBER_OF_BOATS; i++) {
-            int length = BOATS_LENGTH[i];
-            viewShips.add(new ShipView(length, CELL_SIZE, x, y));
+	        Ship shipModel = new Ship( BOATS_TYPE[i] );
+	        int length = shipModel.getLength () ;
+	        ShipView shipView = new ShipView(length, CELL_SIZE, x, y, shipModel) ;
+	        shipModel.setView(shipView);
+            viewShips.add( shipView );
             final int newPosition = x + length * CELL_SIZE + 5;
             if (newPosition + length * CELL_SIZE + 5 > CELL_SIZE * 10) {
                 x = 0;
@@ -103,7 +118,6 @@ public class BoardView extends JPanel {
     }
 
     void setSelectedShipView(MouseEvent e) {
-        System.out.println("got a selected ship");
         int x = e.getX();
         int y = e.getY();
         if (selectedShipView != null) {
@@ -121,12 +135,21 @@ public class BoardView extends JPanel {
         final int x = selectedShipView.getX() + CELL_SIZE / 2;
         final int y = selectedShipView.getY() + CELL_SIZE / 2;
         CellView hovered = getCell(x, y);
-        if (hovered != null) {
-            selectedShipView.setX(hovered.getX());
-            selectedShipView.setY(hovered.getY());
-        } else {
-            selectedShipView.resetPosition();
+	    int[] newPosition = translateCoordinates(x,y) ;
+	    boolean shouldReset = true ;
+        if (hovered != null ) {
+	        boolean result = this.model.placeShip ( selectedShipView.getModel() , newPosition[0] , newPosition[1] ) ;
+	        if ( result ) {
+		        selectedShipView.setX (hovered.getX ());
+		        selectedShipView.setY (hovered.getY ());
+		        shouldReset = false ;
+	        }
         }
+	    if ( shouldReset ) {
+            selectedShipView.resetPosition();
+		    this.model.pickUpShip(selectedShipView.getModel ());
+        }
+	    this.model.printBoard (true);
     }
 
     private ShipView getShip(int x, int y) {
@@ -141,6 +164,10 @@ public class BoardView extends JPanel {
     ShipView getSelectedShip() {
         return selectedShipView;
     }
+
+	private int[] translateCoordinates(int x, int y) {
+		return new int [] { x / CELL_SIZE, y/ CELL_SIZE } ;
+	}
 
     CellView getCell(int x, int y) {
         int i = x / CELL_SIZE;
