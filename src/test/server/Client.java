@@ -32,6 +32,7 @@ public class Client {
             final Board board = TestBoards.getTestBoard(Integer.parseInt(args[1]));
             final Board opponentsBoard = new Board(false);
             board.printBoard(true);
+            System.out.println("Board valid: " + Board.isValid(board));
 
             final ArrayList<Integer[]> coordinates =
                     new ArrayList<>();

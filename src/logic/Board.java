@@ -40,7 +40,7 @@ public class Board implements Serializable {
 
 	public boolean placeShip(Ship ship, int x, int y) {
 
-		
+
 		// checks if it is within the board
 		int end = (ship.isVertical()) ? y + ship.getLength() - 1 : x
 				+ ship.getLength() - 1;
@@ -145,16 +145,20 @@ public class Board implements Serializable {
 		}
 	}
 
-	public static boolean isValid(Board board) {
+    public static boolean isValid(Board board) {
 		Board tempBoard = new Board(true);
-        for (Ship s : board.getShips()) {
-            int[] tl = s.getTopLeft();
-            Ship tempBoardShip = tempBoard.findShipByType(s.getType());
-            tempBoardShip.setVertical(s.isVertical());
-            tempBoard.placeShip(tempBoardShip, tl[0], tl[1]);
-        }
-        tempBoard.printBoard(true);
-        return tempBoard.shipPlacementEquals(board);
+		for (Ship s : board.getShips()) {
+			if (s.getSquares().size() == 0) {
+				return false;
+			}
+			int[] tl = s.getTopLeft();
+			Ship tempBoardShip = tempBoard.findShipByType(s.getType());
+			tempBoardShip.setVertical(s.isVertical());
+			if (!tempBoard.placeShip(tempBoardShip, tl[0], tl[1])) {
+				return false;
+			}
+		}
+		return tempBoard.shipPlacementEquals(board);
 	}
 
     public boolean shipPlacementEquals(Board board) {
