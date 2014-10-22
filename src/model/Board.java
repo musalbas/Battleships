@@ -1,7 +1,7 @@
 package model;
 
-import client.BoardView;
 import server.messages.MoveResponseMessage;
+import view.BoardView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,26 +11,26 @@ public class Board implements Serializable {
 	private Square[][] squares;
 	private ArrayList<Ship> ships;
 	private boolean ownBoard;
-	private BoardView view ;
+	private BoardView view;
 
 
-	public Board(boolean ownBoard) {
+	public Board (boolean ownBoard) {
 		this.ownBoard = ownBoard;
-		squares = new Square[BOARD_DIMENSION][BOARD_DIMENSION];
+		squares = new Square[ BOARD_DIMENSION ][ BOARD_DIMENSION ];
 
 		// populates the squares array
-		for (int i = 0; i < BOARD_DIMENSION; i++) {
-			for (int j = 0; j < BOARD_DIMENSION; j++) {
-				squares[i][j] = new Square(i, j, ownBoard);
+		for ( int i = 0 ; i < BOARD_DIMENSION ; i++ ) {
+			for ( int j = 0 ; j < BOARD_DIMENSION ; j++ ) {
+				squares[ i ][ j ] = new Square (i, j, ownBoard);
 			}
 		}
 
-		ships = new ArrayList<Ship>();
-		ships.add(new Ship(Ship.Type.AIRCRAFT_CARRIER));
-		ships.add(new Ship(Ship.Type.BATTLESHIP));
-		ships.add(new Ship(Ship.Type.DESTROYER));
-		ships.add(new Ship(Ship.Type.PATROL_BOAT));
-		ships.add(new Ship(Ship.Type.SUBMARINE));
+		ships = new ArrayList<Ship> ();
+		ships.add (new Ship (Ship.Type.AIRCRAFT_CARRIER));
+		ships.add (new Ship (Ship.Type.BATTLESHIP));
+		ships.add (new Ship (Ship.Type.DESTROYER));
+		ships.add (new Ship (Ship.Type.PATROL_BOAT));
+		ships.add (new Ship (Ship.Type.SUBMARINE));
 	}
 
 	public static boolean isValid (Board board) {
@@ -53,7 +53,7 @@ public class Board implements Serializable {
 		return (ownBoard);
 	}
 
-	public Square getSquare(int x, int y) {
+	public Square getSquare (int x, int y) {
 		return squares[ x ][ y ];
 	}
 
@@ -164,44 +164,44 @@ public class Board implements Serializable {
 		}
 	}
 
-    public boolean shipPlacementEquals(Board board) {
-        for (int y = 0; y < BOARD_DIMENSION; ++y) {
-            for (int x = 0; x < BOARD_DIMENSION; ++x) {
-                Square s1 = this.getSquare(x, y);
-                Square s2 = board.getSquare(x, y);
-                if ((s1.isShip() != s2.isShip())) {
-                    return false;
-                }
-                if (s1.getShip() != null && s2.getShip() != null &&
-                        s1.getShip().getType() != s2.getShip().getType()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private Ship findShipByType(Ship.Type type) {
-        for (Ship s : ships) {
-            if (s.getType() == type) {
-                return s;
-            }
-        }
-        return null;
-    }
-
-	// TODO: Fix me!
-	public int getNumberOfBoats() {
-		return 5 ;
+	public boolean shipPlacementEquals (Board board) {
+		for ( int y = 0 ; y < BOARD_DIMENSION ; ++y ) {
+			for ( int x = 0 ; x < BOARD_DIMENSION ; ++x ) {
+				Square s1 = this.getSquare (x, y);
+				Square s2 = board.getSquare (x, y);
+				if ( (s1.isShip () != s2.isShip ()) ) {
+					return false;
+				}
+				if ( s1.getShip () != null && s2.getShip () != null &&
+						s1.getShip ().getType () != s2.getShip ().getType () ) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
-	public Ship.Type[] getShipTypes() {
-		return new Ship.Type[] { Ship.Type.AIRCRAFT_CARRIER,
-									Ship.Type.BATTLESHIP,
-									Ship.Type.DESTROYER,
-									Ship.Type.PATROL_BOAT,
-									Ship.Type.SUBMARINE
-								} ;
+	private Ship findShipByType (Ship.Type type) {
+		for ( Ship s : ships ) {
+			if ( s.getType () == type ) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	// TODO: Fix me!
+	public int getNumberOfBoats () {
+		return 5;
+	}
+
+	public Ship.Type[] getShipTypes () {
+		return new Ship.Type[]{ Ship.Type.AIRCRAFT_CARRIER,
+				Ship.Type.BATTLESHIP,
+				Ship.Type.DESTROYER,
+				Ship.Type.PATROL_BOAT,
+				Ship.Type.SUBMARINE
+		};
 	}
 
 	public void setView (BoardView view) {

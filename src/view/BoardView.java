@@ -1,4 +1,4 @@
-package client;
+package view;
 
 import model.Board;
 import model.Ship;

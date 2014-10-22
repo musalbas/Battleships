@@ -1,6 +1,6 @@
 package model;
 
-import client.ShipView;
+import view.ShipView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,18 +11,18 @@ public class Ship implements Serializable {
 	private ArrayList<Square> squares;
 	private boolean vertical;
 	private int health;
-	private ShipView view ;
+	private ShipView view;
 
 	// ////////////////////////// private int headX, headY;
 
-	public Ship(Type type) {
+	public Ship (Type type) {
 		this.type = type;
 		this.vertical = false;
 		this.health = type.length;
-		squares = new ArrayList<Square>();
+		squares = new ArrayList<Square> ();
 	}
 
-	public int getLength() {
+	public int getLength () {
 		return type.length;
 	}
 

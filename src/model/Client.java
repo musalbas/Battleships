@@ -1,9 +1,9 @@
 package model;
 
-import client.ClientView;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
 import server.messages.NotificationMessage;
+import view.ClientView;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

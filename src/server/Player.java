@@ -11,112 +11,113 @@ import java.net.Socket;
 
 public class Player extends Thread {
 
-    private Socket socket;
-    private MatchRoom matchRoom;
-    private String name;
-    private ObjectOutputStream out;
-    private Game game;
-    private Board board;
+	private Socket socket;
+	private MatchRoom matchRoom;
+	private String name;
+	private ObjectOutputStream out;
+	private Game game;
+	private Board board;
 
-    public Player(Socket socket, MatchRoom matchRoom) {
-        this.socket = socket;
-        this.matchRoom = matchRoom;
-    }
+	public Player (Socket socket, MatchRoom matchRoom) {
+		this.socket = socket;
+		this.matchRoom = matchRoom;
+	}
 
-    @Override
-    public void run() {
-        super.run();
-        try {
-            out = new ObjectOutputStream(new BufferedOutputStream(
-                    socket.getOutputStream()));
-            out.flush();
-            ObjectInputStream in = new ObjectInputStream(
-                    socket.getInputStream());
+	@Override
+	public void run () {
+		super.run ();
+		try {
+			out = new ObjectOutputStream (new BufferedOutputStream (
+					socket.getOutputStream ()));
+			out.flush ();
+			ObjectInputStream in = new ObjectInputStream (
+					socket.getInputStream ());
 
-            Object input;
+			Object input;
 
-            while ((input = in.readObject()) != null) {
-                if (input instanceof String[]) {
-                    String[] array = (String[]) input;
-                    int length = array.length;
+			while ((input = in.readObject ()) != null) {
+				if ( input instanceof String[] ) {
+					String[] array = (String[]) input;
+					int length = array.length;
 
-                    if (length > 0 ) {
-                        String message = array[0];
+					if ( length > 0 ) {
+						String message = array[ 0 ];
 
-                        switch (message) {
-                            case "join":
-                                if (game == null) {
-                                    matchRoom.join(this, array);
-                                }
-                                break;
-                            case "name":
-                                if (length == 2) {
-                                    name = array[1];
-                                }
-                                break;
-                        }
-                    }
-                } else if (input instanceof Board) {
-                    Board board = (Board) input;
-                    if (Board.isValid(board) && game != null) {
-                        this.board = board;
-                        game.checkBoards();
-                    } else if (game == null) {
-                        // not in game
-                    } else {
-                        // invalid board
-                    }
-                } else if (input instanceof MoveMessage) {
-                    if (game != null) {
-                        game.applyMove((MoveMessage) input, this);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            if (game != null) {
-                game.killGame();
-                // TODO: Alert other player they win
-            } else {
-                matchRoom.removeWaitingPlayer(this);
-            }
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+						switch (message) {
+							case "join":
+								if ( game == null ) {
+									matchRoom.join (this, array);
+								}
+								break;
+							case "name":
+								if ( length == 2 ) {
+									name = array[ 1 ];
+								}
+								break;
+						}
+					}
+				} else if ( input instanceof Board ) {
+					Board board = (Board) input;
+					if ( Board.isValid (board) && game != null ) {
+						this.board = board;
+						game.checkBoards ();
+					} else if ( game == null ) {
+						// not in game
+					} else {
+						// invalid board
+					}
+				} else if ( input instanceof MoveMessage ) {
+					if ( game != null ) {
+						game.applyMove ((MoveMessage) input, this);
+					}
+				}
+			}
+		} catch (IOException e) {
+			if ( game != null ) {
+				game.killGame ();
+				// TODO: Alert other player they win
+			} else {
+				matchRoom.removeWaitingPlayer (this);
+			}
+			e.printStackTrace ();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace ();
+		}
+	}
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
+	public void setGame (Game game) {
+		this.game = game;
+	}
 
-    public String getPlayerName() {
-        return name;
-    }
+	public String getPlayerName () {
+		return name;
+	}
 
-    /**
-     * Writes a String to the client.
-     * @param message
-     */
-    public void writeMessage(String message) {
-        try {
-            out.writeObject(message);
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	/**
+	 * Writes a String to the view.
+	 *
+	 * @param message
+	 */
+	public void writeMessage (String message) {
+		try {
+			out.writeObject (message);
+			out.flush ();
+		} catch (IOException e) {
+			e.printStackTrace ();
+		}
+	}
 
-    public void writeObject(Object object) {
-        try {
-            out.writeObject(object);
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	public void writeObject (Object object) {
+		try {
+			out.writeObject (object);
+			out.flush ();
+		} catch (IOException e) {
+			e.printStackTrace ();
+		}
+	}
 
-    public Board getBoard() {
-        return this.board;
-    }
+	public Board getBoard () {
+		return this.board;
+	}
 
 }
