@@ -2,6 +2,7 @@ package server;
 
 import model.Board;
 import server.messages.MoveMessage;
+import server.messages.NotificationMessage;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -62,9 +63,11 @@ public class Player extends Thread {
 						this.board = board;
 						game.checkBoards ();
 					} else if ( game == null ) {
-						// not in game
+						writeObject(new NotificationMessage(
+                                NotificationMessage.NOT_IN_GAME));
 					} else {
-						// invalid board
+						writeObject(new NotificationMessage(
+                                NotificationMessage.INVALID_BOARD));
 					}
 				} else if ( input instanceof MoveMessage ) {
 					if ( game != null ) {
