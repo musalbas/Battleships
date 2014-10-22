@@ -15,6 +15,7 @@ public class Client extends Thread {
 
     private Board ownBoard;
     private Board opponentBoard;
+	private ClientView view;
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -22,12 +23,14 @@ public class Client extends Thread {
     public Client(ClientView clientView, Board ownBoard, Board opponentBoard) {
         this.ownBoard = ownBoard;
         this.opponentBoard = opponentBoard;
+	    this.view = clientView;
 
         try {
             Socket socket = new Socket("localhost", 8900);
             out = new ObjectOutputStream(
                     new BufferedOutputStream(socket.getOutputStream()));
             in = new ObjectInputStream(socket.getInputStream());
+	        out.flush ();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,36 +60,47 @@ public class Client extends Thread {
             switch (n.getCode()) {
                 case NotificationMessage.OPPONENTS_NAME:
                     // TODO: handle receiving opponents name
-                    break;
+	                view.addChatMessage ("received opponents_name");
+	                break;
                 case NotificationMessage.GAME_TOKEN:
                     // TODO: handle receiving game token to share with friend
-                    break;
+	                view.addChatMessage ("received game_Token");
+	                break;
                 case NotificationMessage.GAME_NOT_FOUND:
                     // TODO: handle joining a game that doesn't exist
-                    break;
+	                view.addChatMessage ("game not found");
+	                break;
                 case NotificationMessage.PLACE_SHIPS:
                     // TODO: allow player to start positioning ships
-                    break;
+	                view.addChatMessage ("can place ships now");
+	                break;
                 case NotificationMessage.YOUR_TURN:
                     // TODO: inform player it's their turn and to make a move
-                    break;
+	                view.addChatMessage ("YOUR TURN");
+	                break;
                 case NotificationMessage.OPPONENTS_TURN:
                     // TODO: informs player it is their opponent's turn
-                    break;
+	                view.addChatMessage ("OPPONENTS_TURN");
+	                break;
                 case NotificationMessage.GAME_WIN:
                     // TODO: inform player they have won the game
-                    break;
+	                view.addChatMessage ("GAME_WIN");
+	                break;
                 case NotificationMessage.GAME_LOSE:
                     // TODO: inform player they have lost the game
-                    break;
+	                view.addChatMessage ("GAME_LOSE");
+	                break;
                 case NotificationMessage.TIMEOUT_WIN:
                     // TODO: inform of win due to opponent taking too long
-                    break;
+	                view.addChatMessage ("TIMEOUT_WIN");
+	                break;
                 case NotificationMessage.TIMEOUT_LOSE:
-                    // TODO: inform of loss due to taking too long
+	                view.addChatMessage ("TIMEOUT_LOSE");
+	                // TODO: inform of loss due to taking too long
                     break;
                 case NotificationMessage.TIMEOUT_DRAW:
-                    // TODO: inform that both took too long to place ships
+	                view.addChatMessage ("TIMEOUT_DRAW");
+	                // TODO: inform that both took too long to place ships
             }
         } else if (input instanceof MoveResponseMessage) {
             MoveResponseMessage move = (MoveResponseMessage) input;
