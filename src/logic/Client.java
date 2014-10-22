@@ -63,5 +63,6 @@ public class Client extends Thread {
 
     public void sendMove(int x, int y) throws IOException {
         out.writeObject(new MoveMessage(x, y));
+        out.flush();
     }
 }
