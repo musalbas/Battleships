@@ -1,7 +1,7 @@
 package client;
 
-import logic.Board;
-import logic.Ship;
+import model.Board;
+import model.Ship;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +16,10 @@ import java.util.Random;
  */
 public class BoardView extends JPanel {
 
-    private int BOARD_SIZE;
+	private static int CELL_SIZE = 40;
+	private int BOARD_SIZE;
     private int NUMBER_OF_BOATS ; // = 5;
 	private Ship.Type[] BOATS_TYPE ;
-    private static int CELL_SIZE = 40;
     private CellView hoveredCell = null;
     private ShipView selectedShipView = null;
     private CellView[][] viewCells;

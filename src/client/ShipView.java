@@ -1,6 +1,6 @@
 package client;
 
-import logic.Ship;
+import model.Ship;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,11 +9,11 @@ import java.awt.image.BufferedImage;
  * Created by user on 13.10.2014.
  */
 public class ShipView {
-    private int length;
-    private int cellSize;
     private final int initialX;
     private final int initialY;
-    private int x;
+	private int length;
+	private int cellSize;
+	private int x;
     private int y;
     private boolean horizontal;
     private boolean selected;

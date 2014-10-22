@@ -1,7 +1,6 @@
 package server;
 
-import logic.Board;
-import server.messages.Message;
+import model.Board;
 import server.messages.MoveMessage;
 
 import java.io.BufferedOutputStream;

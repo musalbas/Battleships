@@ -1,11 +1,14 @@
-package logic;
+package model;
 
 import client.ClientView;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
 import server.messages.NotificationMessage;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Client extends Thread {

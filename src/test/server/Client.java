@@ -1,14 +1,10 @@
 package test.server;
 
-import logic.Board;
-import logic.Ship;
-import logic.Square;
-import server.Game;
+import model.Board;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
 import server.messages.NotificationMessage;
 
-import javax.sound.midi.Soundbank;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
