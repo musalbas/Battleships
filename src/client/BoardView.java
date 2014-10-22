@@ -28,7 +28,10 @@ public class BoardView extends JPanel {
     private int yDistance;
 	private Board model;
 
-    public BoardView() {
+    public BoardView( boolean ownBoard) {
+	    this.model = new Board( ownBoard ) ;
+	    model.setView( this );
+
         addCellsAndShips();
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -83,8 +86,7 @@ public class BoardView extends JPanel {
     }
 
     private void addCellsAndShips() {
-	    this.model = new Board( true ) ;
-	    model.setView( this );
+
 	    BOARD_SIZE = model.BOARD_DIMENSION ;
 	    NUMBER_OF_BOATS = model.getNumberOfBoats() ;
 	    BOATS_TYPE = model.getShipTypes () ;
@@ -98,23 +100,24 @@ public class BoardView extends JPanel {
                 setCell(i, j, new CellView(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
             }
         }
-
-        int x = 0;
-        int y = CELL_SIZE * BOARD_SIZE + 5;
-        for (int i = 0; i < NUMBER_OF_BOATS; i++) {
-	        Ship shipModel = new Ship( BOATS_TYPE[i] );
-	        int length = shipModel.getLength () ;
-	        ShipView shipView = new ShipView(length, CELL_SIZE, x, y, shipModel) ;
-	        shipModel.setView(shipView);
-            viewShips.add( shipView );
-            final int newPosition = x + length * CELL_SIZE + 5;
-            if (newPosition + length * CELL_SIZE + 5 > CELL_SIZE * 10) {
-                x = 0;
-                y += CELL_SIZE + 5;
-            } else {
-                x = newPosition;
-            }
-        }
+	    if ( model.isOwnBoard () ) {
+		    int x = 0;
+		    int y = CELL_SIZE * BOARD_SIZE + 5;
+		    for ( int i = 0 ; i < NUMBER_OF_BOATS ; i++ ) {
+			    Ship shipModel = new Ship (BOATS_TYPE[ i ]);
+			    int length = shipModel.getLength ();
+			    ShipView shipView = new ShipView (length, CELL_SIZE, x, y, shipModel);
+			    shipModel.setView (shipView);
+			    viewShips.add (shipView);
+			    final int newPosition = x + length * CELL_SIZE + 5;
+			    if ( newPosition + length * CELL_SIZE + 5 > CELL_SIZE * 10 ) {
+				    x = 0;
+				    y += CELL_SIZE + 5;
+			    } else {
+				    x = newPosition;
+			    }
+		    }
+	    }
     }
 
     void setSelectedShipView(MouseEvent e) {

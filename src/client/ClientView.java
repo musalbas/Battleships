@@ -10,13 +10,16 @@ import java.awt.event.ActionListener;
  */
 public class ClientView extends JFrame {
 
+	public void addChatMessage ( String text ) {
+
+	}
+
     ClientView() {
 
         JPanel rootPanel = new JPanel(new BorderLayout());
 
-
         JPanel boardsPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        final BoardView myBoard = new BoardView();
+        final BoardView myBoard = new BoardView(true);
         boardsPanel.add(myBoard);
 
         JPanel controlPanel = new JPanel(new GridLayout(1, 1));
@@ -32,6 +35,8 @@ public class ClientView extends JFrame {
                 }
             }
         });
+
+
 
         setContentPane(rootPanel);
         rootPanel.add(boardsPanel, BorderLayout.CENTER);
