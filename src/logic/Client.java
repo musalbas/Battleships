@@ -50,7 +50,41 @@ public class Client extends Thread {
 
     private void parseInput(Object input) {
         if (input instanceof NotificationMessage) {
-
+            NotificationMessage n = (NotificationMessage) input;
+            switch (n.getCode()) {
+                case NotificationMessage.OPPONENTS_NAME:
+                    // TODO: handle receiving opponents name
+                    break;
+                case NotificationMessage.GAME_TOKEN:
+                    // TODO: handle receiving game token to share with friend
+                    break;
+                case NotificationMessage.GAME_NOT_FOUND:
+                    // TODO: handle joining a game that doesn't exist
+                    break;
+                case NotificationMessage.PLACE_SHIPS:
+                    // TODO: allow player to start positioning ships
+                    break;
+                case NotificationMessage.YOUR_TURN:
+                    // TODO: inform player it's their turn and to make a move
+                    break;
+                case NotificationMessage.OPPONENTS_TURN:
+                    // TODO: informs player it is their opponent's turn
+                    break;
+                case NotificationMessage.GAME_WIN:
+                    // TODO: inform player they have won the game
+                    break;
+                case NotificationMessage.GAME_LOSE:
+                    // TODO: inform player they have lost the game
+                    break;
+                case NotificationMessage.TIMEOUT_WIN:
+                    // TODO: inform of win due to opponent taking too long
+                    break;
+                case NotificationMessage.TIMEOUT_LOSE:
+                    // TODO: inform of loss due to taking too long
+                    break;
+                case NotificationMessage.TIMEOUT_DRAW:
+                    // TODO: inform that both took too long to place ships
+            }
         } else if (input instanceof MoveResponseMessage) {
             MoveResponseMessage move = (MoveResponseMessage) input;
             if (move.isOwnBoard()) {
