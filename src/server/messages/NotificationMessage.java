@@ -22,6 +22,8 @@ public class NotificationMessage extends ServerMessage implements Serializable {
     public final static int REPEATED_MOVE = 501;
     public final static int NOT_YOUR_TURN = 502;
     public final static int INVALID_MOVE = 503;
+    public final static int INVALID_BOARD = 504;
+    public final static int NOT_IN_GAME = 505;
 
     private int code;
     private String[] text;

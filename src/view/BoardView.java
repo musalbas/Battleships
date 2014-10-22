@@ -204,8 +204,7 @@ public class BoardView extends JPanel {
 		if ( model.isOwnBoard () ) {
 			int x = 0;
 			int y = CELL_SIZE * BOARD_SIZE + 5;
-			for ( int i = 0 ; i < NUMBER_OF_BOATS ; i++ ) {
-				Ship shipModel = new Ship (BOATS_TYPE[ i ]);
+			for ( Ship shipModel : model.getShips() ) {
 				int length = shipModel.getLength ();
 				ShipView shipView = new ShipView (length, CELL_SIZE, x, y, shipModel);
 				shipModel.setView (shipView);
