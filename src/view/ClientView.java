@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * Created by alexstoick on 10/15/14.
@@ -35,7 +36,9 @@ public class ClientView extends JFrame {
 		controlPanel.add (bottomPanel, BorderLayout.SOUTH);
 
 		JButton rotateButton = new JButton ("Rotate");
-		controlPanel.add (rotateButton, BorderLayout.WEST);
+		JPanel buttons = new JPanel (new GridLayout (2, 1, 10, 10));
+		controlPanel.add (buttons, BorderLayout.WEST);
+		buttons.add (rotateButton);
 		rotateButton.addActionListener (new ActionListener () {
 			@Override
 			public void actionPerformed (ActionEvent e) {
@@ -43,6 +46,19 @@ public class ClientView extends JFrame {
 				if ( shipView != null ) {
 					shipView.rotate ();
 					repaint ();
+				}
+			}
+		});
+
+		JButton saveShipState = new JButton ("Done placing ships!");
+		buttons.add (saveShipState);
+		saveShipState.addActionListener (new ActionListener () {
+			@Override
+			public void actionPerformed (ActionEvent e) {
+				try {
+					model.sendBoard (myBoard.getModel ());
+				} catch (IOException e1) {
+					e1.printStackTrace ();
 				}
 			}
 		});

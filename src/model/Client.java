@@ -31,6 +31,8 @@ public class Client extends Thread {
                     new BufferedOutputStream(socket.getOutputStream()));
             in = new ObjectInputStream(socket.getInputStream());
 	        out.flush ();
+	        out.writeObject (new String[]{ "join", "random" });
+	        out.flush ();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,6 +113,12 @@ public class Client extends Thread {
             }
         }
     }
+
+	//TODO: Implement this
+	public void sendBoard (Board board) throws IOException {
+		out.writeObject (board);
+		out.flush ();
+	}
 
     public void sendMove(int x, int y) throws IOException {
         out.writeObject(new MoveMessage(x, y));

@@ -11,7 +11,7 @@ public class Board implements Serializable {
 	private Square[][] squares;
 	private ArrayList<Ship> ships;
 	private boolean ownBoard;
-	private BoardView view;
+	private transient BoardView view;
 
 
 	public Board (boolean ownBoard) {

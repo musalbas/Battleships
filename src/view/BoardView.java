@@ -18,7 +18,7 @@ public class BoardView extends JPanel {
 
 	private static int CELL_SIZE = 40;
 	private int BOARD_SIZE;
-	private int NUMBER_OF_BOATS; // = 5;
+	private int NUMBER_OF_BOATS;
 	private Ship.Type[] BOATS_TYPE;
 	private CellView hoveredCell = null;
 	private ShipView selectedShipView = null;
@@ -86,41 +86,6 @@ public class BoardView extends JPanel {
 		Component c = SwingUtilities.getWindowAncestor (this);
 		if ( c != null ) {
 			c.repaint ();
-		}
-	}
-
-	private void addCellsAndShips () {
-
-		BOARD_SIZE = model.BOARD_DIMENSION;
-		NUMBER_OF_BOATS = model.getNumberOfBoats ();
-		BOATS_TYPE = model.getShipTypes ();
-
-		viewCells = new CellView[ BOARD_SIZE ][ BOARD_SIZE ];
-
-		setPreferredSize (new Dimension ((BOARD_SIZE + 5) * CELL_SIZE + 1, (BOARD_SIZE + 5) * CELL_SIZE + 50));
-		setVisible (true);
-		for ( int i = 0 ; i < BOARD_SIZE ; ++i ) {
-			for ( int j = 0 ; j < BOARD_SIZE ; ++j ) {
-				setCell (i, j, new CellView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
-			}
-		}
-		if ( model.isOwnBoard () ) {
-			int x = 0;
-			int y = CELL_SIZE * BOARD_SIZE + 5;
-			for ( int i = 0 ; i < NUMBER_OF_BOATS ; i++ ) {
-				Ship shipModel = new Ship (BOATS_TYPE[ i ]);
-				int length = shipModel.getLength ();
-				ShipView shipView = new ShipView (length, CELL_SIZE, x, y, shipModel);
-				shipModel.setView (shipView);
-				viewShips.add (shipView);
-				final int newPosition = x + length * CELL_SIZE + 5;
-				if ( newPosition + length * CELL_SIZE + 5 > CELL_SIZE * 10 ) {
-					x = 0;
-					y += CELL_SIZE + 5;
-				} else {
-					x = newPosition;
-				}
-			}
 		}
 	}
 
@@ -195,6 +160,9 @@ public class BoardView extends JPanel {
 	}
 
 	void setHoveredCell (MouseEvent e) {
+		if ( model.isOwnBoard () ) {
+			return;
+		}
 		int x = e.getX ();
 		int y = e.getY ();
 		hoveredCell = getCell (x, y);
@@ -204,13 +172,13 @@ public class BoardView extends JPanel {
 	}
 
 	void updateHoveredCell (MouseEvent e) {
-		if ( hoveredCell != null && hoveredCell.getState () == CellView.HOVER ) {
+		if ( hoveredCell != null && hoveredCell.getState () == CellView.HOVER && !model.isOwnBoard () ) {
 			hoveredCell.setState (CellView.CLEAR);
 		}
 	}
 
 	void setHoveredCellState (int state) {
-		if ( hoveredCell != null ) {
+		if ( hoveredCell != null && !model.isOwnBoard () ) {
 			if ( state == CellView.HIT ) {
 				new ExplosionAnimation (hoveredCell, this).start ();
 			}
@@ -218,6 +186,40 @@ public class BoardView extends JPanel {
 		}
 	}
 
+	private void addCellsAndShips () {
+
+		BOARD_SIZE = model.BOARD_DIMENSION;
+		NUMBER_OF_BOATS = model.getNumberOfBoats ();
+		BOATS_TYPE = model.getShipTypes ();
+
+		viewCells = new CellView[ BOARD_SIZE ][ BOARD_SIZE ];
+
+		setPreferredSize (new Dimension ((BOARD_SIZE + 5) * CELL_SIZE + 1, (BOARD_SIZE + 5) * CELL_SIZE + 50));
+		setVisible (true);
+		for ( int i = 0 ; i < BOARD_SIZE ; ++i ) {
+			for ( int j = 0 ; j < BOARD_SIZE ; ++j ) {
+				setCell (i, j, new CellView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
+			}
+		}
+		if ( model.isOwnBoard () ) {
+			int x = 0;
+			int y = CELL_SIZE * BOARD_SIZE + 5;
+			for ( int i = 0 ; i < NUMBER_OF_BOATS ; i++ ) {
+				Ship shipModel = new Ship (BOATS_TYPE[ i ]);
+				int length = shipModel.getLength ();
+				ShipView shipView = new ShipView (length, CELL_SIZE, x, y, shipModel);
+				shipModel.setView (shipView);
+				viewShips.add (shipView);
+				final int newPosition = x + length * CELL_SIZE + 5;
+				if ( newPosition + length * CELL_SIZE + 5 > CELL_SIZE * 10 ) {
+					x = 0;
+					y += CELL_SIZE + 5;
+				} else {
+					x = newPosition;
+				}
+			}
+		}
+	}
 
 	@Override
 	protected void paintComponent (Graphics g) {

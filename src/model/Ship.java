@@ -11,7 +11,7 @@ public class Ship implements Serializable {
 	private ArrayList<Square> squares;
 	private boolean vertical;
 	private int health;
-	private ShipView view;
+	private transient ShipView view;
 
 	// ////////////////////////// private int headX, headY;
 
