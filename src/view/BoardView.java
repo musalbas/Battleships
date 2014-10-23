@@ -133,7 +133,7 @@ public class BoardView extends JPanel {
         return null;
     }
 
-    private ShipView getSelectedShip() {
+    public ShipView getSelectedShip() {
         return selectedShipView;
     }
 
