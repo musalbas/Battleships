@@ -60,6 +60,8 @@ public class Player extends Thread {
 				} else if ( input instanceof Board ) {
 					Board board = (Board) input;
 					if ( Board.isValid (board) && game != null ) {
+                        writeObject(new NotificationMessage(
+                                NotificationMessage.BOARD_ACCEPTED));
 						this.board = board;
 						game.checkBoards ();
 					} else if ( game == null ) {
