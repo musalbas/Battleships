@@ -207,4 +207,23 @@ public class Board implements Serializable {
 	public void setView (BoardView view) {
 		this.view = view;
 	}
+
+	//returns true if the square is next to a ship, to be used to display near misses
+        public boolean isSquareNearShip (Square square) {
+            
+            for ( int x = square.getX() - 1 ; x <= square.getX() + 1 ; x++ ) {
+                    for ( int y = square.getY() - 1 ; y <= square.getY() + 1 ; y++ ) {
+                            if ( isCoordWithinBounds(x, y) && getSquare(x, y).isShip() ) {
+                                    return true;
+                            }
+                    }
+            }
+            
+            return false;
+        }
+        
+        //checks if x and y are between 0 and 9 inclusive
+        private boolean isCoordWithinBounds(int x, int y) {
+                return ( x >= 0 && x < 10 && y >= 0 && y < 10 );
+        }
 }
