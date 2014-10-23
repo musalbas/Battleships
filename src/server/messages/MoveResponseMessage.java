@@ -1,8 +1,8 @@
 package server.messages;
 
-import java.io.Serializable;
+import model.Ship;
 
-import logic.Ship;
+import java.io.Serializable;
 
 public class MoveResponseMessage extends ServerMessage implements Serializable {
 
