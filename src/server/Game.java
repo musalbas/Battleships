@@ -19,6 +19,9 @@ public class Game {
 	private Timer placementTimer;
 	private Timer turnTimer;
 
+    public final static int TURN_TIMEOUT = 20000;
+    public final static int PLACEMENT_TIMEOUT = 60000;
+
 	private boolean gameStarted;
 
 	public Game (Player player1, Player player2) {
@@ -36,7 +39,7 @@ public class Game {
 		player2.writeObject (placeShipsMessage);
 
 		placementTimer = new Timer ();
-		placementTimer.schedule (new PlacementTimerTask (), 60000);
+		placementTimer.schedule (new PlacementTimerTask (), PLACEMENT_TIMEOUT);
 	}
 
 	public Player getOpponent (Player self) {
@@ -57,7 +60,7 @@ public class Game {
 			turnTimer.cancel ();
 		}
 		turnTimer = new Timer ();
-		turnTimer.schedule (new TurnTimerTask (), 20000);
+		turnTimer.schedule (new TurnTimerTask (), TURN_TIMEOUT);
 		turn.writeObject (new NotificationMessage (
 				NotificationMessage.YOUR_TURN));
 		getOpponent (turn).writeObject (new NotificationMessage (
