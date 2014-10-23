@@ -36,7 +36,7 @@ public class BoardView extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                updateHoveredCell(e);
+                resetHoveredCell();
                 setHoveredCell(e);
                 repaintRoot();
             }
@@ -60,7 +60,7 @@ public class BoardView extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                updateHoveredCell(e);
+                resetHoveredCell();
 
                 if (getSelectedShip() != null) {
                     moveSelectedShip();
@@ -89,7 +89,7 @@ public class BoardView extends JPanel {
         }
     }
 
-    void setSelectedShipView(MouseEvent e) {
+    private void setSelectedShipView(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         if (selectedShipView != null) {
@@ -103,7 +103,7 @@ public class BoardView extends JPanel {
         }
     }
 
-    void moveSelectedShip() {
+    private void moveSelectedShip() {
         final int x = selectedShipView.getX() + CELL_SIZE / 2;
         final int y = selectedShipView.getY() + CELL_SIZE / 2;
         CellView hovered = getCell(x, y);
@@ -133,7 +133,7 @@ public class BoardView extends JPanel {
         return null;
     }
 
-    ShipView getSelectedShip() {
+    private ShipView getSelectedShip() {
         return selectedShipView;
     }
 
@@ -141,17 +141,17 @@ public class BoardView extends JPanel {
         return new int[]{x / CELL_SIZE, y / CELL_SIZE};
     }
 
-    CellView getCell(int x, int y) {
+    private CellView getCell(int x, int y) {
         int i = x / CELL_SIZE;
         int j = y / CELL_SIZE;
         return i >= 0 && j >= 0 && i < 10 && j < 10 ? viewCells[i][j] : null;
     }
 
-    void setCell(int i, int j, CellView cell) {
+    private void setCell(int i, int j, CellView cell) {
         viewCells[i][j] = cell;
     }
 
-    void updateSelectedShip(MouseEvent e) {
+    private void updateSelectedShip(MouseEvent e) {
         ShipView selectedShipView = getSelectedShip();
         if (selectedShipView != null) {
             selectedShipView.setX(e.getX() - xDistance);
@@ -159,7 +159,7 @@ public class BoardView extends JPanel {
         }
     }
 
-    void setHoveredCell(MouseEvent e) {
+    private void setHoveredCell(MouseEvent e) {
         if (model.isOwnBoard()) {
             return;
         }
@@ -171,13 +171,13 @@ public class BoardView extends JPanel {
         }
     }
 
-    void updateHoveredCell(MouseEvent e) {
+    private void resetHoveredCell() {
         if (hoveredCell != null && hoveredCell.getState() == CellView.HOVER && !model.isOwnBoard()) {
             hoveredCell.setState(CellView.CLEAR);
         }
     }
 
-    void setHoveredCellState(int state) {
+    private void setHoveredCellState(int state) {
         if (hoveredCell != null && !model.isOwnBoard()) {
             if (state == CellView.HIT) {
                 new ExplosionAnimation(hoveredCell, this).start();
