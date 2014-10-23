@@ -25,6 +25,10 @@ public class Client extends Thread {
         this.opponentBoard = opponentBoard;
 	    this.view = clientView;
 
+	    //TODO: MAKE THIS SHIT BETTER
+	    ownBoard.setClient (this);
+	    opponentBoard.setClient (this);
+
         try {
             Socket socket = new Socket("localhost", 8900);
             out = new ObjectOutputStream(

@@ -8,8 +8,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by user on 13.10.2014.
@@ -66,8 +66,13 @@ public class BoardView extends JPanel {
                     moveSelectedShip();
                 } else {
                     setHoveredCell(e);
-                    final int state = new Random().nextInt(2) + 2;
-                    setHoveredCellState(state);
+	                // send move
+	                int[] coords = translateCoordinates (e.getX (), e.getY ());
+	                try {
+		                model.sendMove (coords[ 0 ], coords[ 1 ]);
+	                } catch (IOException e1) {
+		                e1.printStackTrace ();
+	                }
                 }
                 repaintRoot();
             }
@@ -177,8 +182,8 @@ public class BoardView extends JPanel {
         }
     }
 
-    private void setHoveredCellState(int state) {
-        if (hoveredCell != null && !model.isOwnBoard()) {
+	public void setHoveredCellState (int state) {
+		if (hoveredCell != null && !model.isOwnBoard()) {
             if (state == CellView.HIT) {
                 new ExplosionAnimation(hoveredCell, this).start();
             }
