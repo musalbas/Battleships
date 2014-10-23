@@ -220,7 +220,8 @@ public class Board implements Serializable {
 
 		for ( int x = square.getX () - 1 ; x <= square.getX () + 1 ; x++ ) {
 			for ( int y = square.getY () - 1 ; y <= square.getY () + 1 ; y++ ) {
-				if ( isCoordWithinBounds (x, y) && getSquare (x, y).isShip () ) {
+				if ( isCoordWithinBounds (x, y) && getSquare (x, y).isShip () &&
+				     !(x == square.getX() && y == square.getY())) {
 					return true;
 				}
 			}
