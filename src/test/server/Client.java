@@ -1,14 +1,10 @@
 package test.server;
 
-import logic.Board;
-import logic.Ship;
-import logic.Square;
-import server.Game;
+import model.Board;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
 import server.messages.NotificationMessage;
 
-import javax.sound.midi.Soundbank;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -32,6 +28,7 @@ public class Client {
             final Board board = TestBoards.getTestBoard(Integer.parseInt(args[1]));
             final Board opponentsBoard = new Board(false);
             board.printBoard(true);
+            System.out.println("Board valid: " + Board.isValid(board));
 
             final ArrayList<Integer[]> coordinates =
                     new ArrayList<>();
