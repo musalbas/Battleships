@@ -2,7 +2,9 @@ package model;
 
 import server.messages.MoveResponseMessage;
 import view.BoardView;
+import view.CellView;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,6 +14,7 @@ public class Board implements Serializable {
 	private ArrayList<Ship> ships;
 	private boolean ownBoard;
 	private transient BoardView view;
+	private transient Client client;
 
 
 	public Board (boolean ownBoard) {
@@ -158,9 +161,16 @@ public class Board implements Serializable {
 			for ( Square s : ship.getSquares () ) {
 				getSquare (s.getX (), s.getY ()).update (true, ship);
 			}
+			//TODO: Fix me
+			client.getView ().addChatMessage ("SUNK SHIP" + ship.toString ());
 		} else {
 			Square square = getSquare (move.getX (), move.getY ());
 			square.update (move.isHit (), null);
+		}
+		if ( move.isHit () ) {
+			view.setHoveredCellState (CellView.HIT);
+		} else {
+			view.setHoveredCellState (CellView.MISS);
 		}
 	}
 
@@ -209,21 +219,29 @@ public class Board implements Serializable {
 	}
 
 	//returns true if the square is next to a ship, to be used to display near misses
-        public boolean isSquareNearShip (Square square) {
-            
-            for ( int x = square.getX() - 1 ; x <= square.getX() + 1 ; x++ ) {
-                    for ( int y = square.getY() - 1 ; y <= square.getY() + 1 ; y++ ) {
-                            if ( isCoordWithinBounds(x, y) && getSquare(x, y).isShip() ) {
-                                    return true;
-                            }
-                    }
-            }
-            
-            return false;
-        }
-        
-        //checks if x and y are between 0 and 9 inclusive
-        private boolean isCoordWithinBounds(int x, int y) {
-                return ( x >= 0 && x < 10 && y >= 0 && y < 10 );
-        }
+	public boolean isSquareNearShip (Square square) {
+
+		for ( int x = square.getX () - 1 ; x <= square.getX () + 1 ; x++ ) {
+			for ( int y = square.getY () - 1 ; y <= square.getY () + 1 ; y++ ) {
+				if ( isCoordWithinBounds (x, y) && getSquare (x, y).isShip () &&
+				     !(x == square.getX() && y == square.getY())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	//checks if x and y are between 0 and 9 inclusive
+	private boolean isCoordWithinBounds (int x, int y) {
+		return (x >= 0 && x < 10 && y >= 0 && y < 10);
+	}
+
+	public void setClient (Client client) {
+		this.client = client;
+	}
+
+	public void sendMove (int x, int y) throws IOException {
+		client.sendMove (x, y);
+	}
 }

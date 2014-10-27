@@ -25,6 +25,10 @@ public class Client extends Thread {
         this.opponentBoard = opponentBoard;
 	    this.view = clientView;
 
+	    //TODO: MAKE THIS SHIT BETTER
+	    ownBoard.setClient (this);
+	    opponentBoard.setClient (this);
+
         try {
             Socket socket = new Socket("localhost", 8900);
             out = new ObjectOutputStream(
@@ -120,8 +124,12 @@ public class Client extends Thread {
 		out.flush ();
 	}
 
-    public void sendMove(int x, int y) throws IOException {
-        out.writeObject(new MoveMessage(x, y));
+	public ClientView getView () {
+		return view;
+	}
+
+	public void sendMove (int x, int y) throws IOException {
+		out.writeObject(new MoveMessage(x, y));
         out.flush();
     }
 }
