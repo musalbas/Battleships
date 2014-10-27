@@ -22,8 +22,9 @@ public class ClientView extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-
+            // TODO handle
         }
+
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
         rootPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
