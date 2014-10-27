@@ -15,7 +15,7 @@ public class Board implements Serializable {
 	private boolean ownBoard;
 	private transient BoardView view;
 	private transient Client client;
-
+	private transient boolean boatPositionLocked = false;
 
 	public Board (boolean ownBoard) {
 		this.ownBoard = ownBoard;
@@ -50,6 +50,15 @@ public class Board implements Serializable {
 			}
 		}
 		return tempBoard.shipPlacementEquals (board);
+	}
+
+	public boolean isBoatPositionLocked () {
+		return boatPositionLocked;
+	}
+
+	public void setBoatPositionLocked (boolean boatPositionLocked) {
+		this.boatPositionLocked = boatPositionLocked;
+		view.resetSelectedShipView ();
 	}
 
 	public boolean isOwnBoard () {

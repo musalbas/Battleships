@@ -67,17 +67,25 @@ public class BoardView extends JPanel {
                 } else {
                     setHoveredCell(e);
 	                // send move
-	                int[] coords = translateCoordinates (e.getX (), e.getY ());
-	                try {
-		                model.sendMove (coords[ 0 ], coords[ 1 ]);
-	                } catch (IOException e1) {
-		                e1.printStackTrace ();
+	                if ( !model.isOwnBoard () ) {
+		                int[] coords = translateCoordinates (e.getX (), e.getY ());
+		                try {
+			                model.sendMove (coords[ 0 ], coords[ 1 ]);
+		                } catch (IOException e1) {
+			                e1.printStackTrace ();
+		                }
 	                }
                 }
                 repaint();
             }
         });
     }
+
+	public void resetSelectedShipView () {
+		selectedShipView.setSelected (false);
+		selectedShipView = null;
+		repaint ();
+	}
 
     public Board getModel() {
         return model;
@@ -89,6 +97,9 @@ public class BoardView extends JPanel {
         if (selectedShipView != null) {
             selectedShipView.setSelected(false);
         }
+	    if ( model.isBoatPositionLocked () ) {
+		    return;
+	    }
         selectedShipView = getShip(x, y);
         if (selectedShipView != null) {
             selectedShipView.setSelected(true);
