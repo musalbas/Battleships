@@ -2,6 +2,7 @@ package view;
 
 import model.Board;
 import model.Ship;
+import model.Square;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +49,7 @@ public class BoardView extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-	            setHoveredCellState (SquareView.CLEAR);
+	            setCellState (hoveredCell, SquareView.CLEAR);
             }
 
             @Override
@@ -82,7 +83,7 @@ public class BoardView extends JPanel {
 	public void resetSelectedShipView () {
 		selectedShipView.setSelected (false);
 		selectedShipView = null;
-		repaint ();
+		repaint();
 	}
 
     public Board getModel() {
@@ -170,7 +171,7 @@ public class BoardView extends JPanel {
         int y = e.getY();
         hoveredCell = getCell(x, y);
 	    if ( hoveredCell != null && hoveredCell.getState () == SquareView.CLEAR ) {
-		    hoveredCell.setState (SquareView.HOVER);
+		    hoveredCell.setState(SquareView.HOVER);
 	    }
     }
 
@@ -180,12 +181,11 @@ public class BoardView extends JPanel {
 	    }
     }
 
-	public void setHoveredCellState (int state) {
-		if (hoveredCell != null && !model.isOwnBoard()) {
+	public void setCellState (SquareView squareView, int state) {
+		if (squareView != null && !model.isOwnBoard()) {
 			if ( state == SquareView.HIT ) {
-				new ExplosionAnimation(hoveredCell, this).start();
+				new ExplosionAnimation(squareView, this).start();
             }
-            hoveredCell.setState(state);
         }
     }
 
@@ -199,7 +199,7 @@ public class BoardView extends JPanel {
         setVisible(true);
         for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
-	            setCell (i, j, new SquareView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
+	            setCell (i, j, new SquareView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE, this, model.getSquare(i, j)));
             }
         }
         if (model.isOwnBoard()) {
