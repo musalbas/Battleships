@@ -34,7 +34,7 @@ public class ExplosionAnimation {
         this.board = board;
         currentIndex = 0;
         cell.setExplosionImage(images.get(currentIndex));
-        board.repaintRoot();
+        board.repaint();
     }
 
     public void start() {
@@ -49,7 +49,7 @@ public class ExplosionAnimation {
                 } else if (currentIndex < images.size()) {
                     cell.setExplosionImage(images.get(currentIndex));
                 }
-                board.repaintRoot();
+                board.repaint();
             }
         });
         t.start();

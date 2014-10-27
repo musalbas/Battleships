@@ -38,13 +38,13 @@ public class BoardView extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 resetHoveredCell();
                 setHoveredCell(e);
-                repaintRoot();
+                repaint();
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
                 updateSelectedShip(e);
-                repaintRoot();
+                repaint();
             }
         });
         addMouseListener(new MouseAdapter() {
@@ -69,24 +69,13 @@ public class BoardView extends JPanel {
                     final int state = new Random().nextInt(2) + 2;
                     setHoveredCellState(state);
                 }
-                repaintRoot();
+                repaint();
             }
         });
     }
 
     public Board getModel() {
         return model;
-    }
-
-    /**
-     * Calling repaint() works only on Mac and Linux, on Windows repaint() causes issues with components layout.
-     * The whole JFrame has to repainted.
-     */
-    public void repaintRoot() {
-        Component c = SwingUtilities.getWindowAncestor(this);
-        if (c != null) {
-            c.repaint();
-        }
     }
 
     private void setSelectedShipView(MouseEvent e) {
@@ -222,6 +211,7 @@ public class BoardView extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         for (CellView[] row : viewCells) {
             for (CellView cell : row) {
                 cell.paint(g);
