@@ -173,13 +173,8 @@ public class Board implements Serializable {
 			//TODO: Fix me
 			client.getView ().addChatMessage ("SUNK SHIP" + ship.toString ());
 		} else {
-			Square square = getSquare (move.getX (), move.getY ());
-			square.update (move.isHit (), null);
-		}
-		if ( move.isHit () ) {
-			view.setHoveredCellState (SquareView.HIT);
-		} else {
-			view.setHoveredCellState (SquareView.MISS);
+			Square square = getSquare(move.getX(), move.getY());
+			square.update(move.isHit(), null);
 		}
 	}
 

@@ -1,12 +1,16 @@
 package model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Square implements Serializable {
 	private Ship ship;
 	private boolean guessed;
 	private int x, y;
 	private State state;
+	private transient ArrayList<PropertyChangeListener> changeListeners;
 
 	public Square (int x, int y, boolean ownBoard) {
 		this.ship = null;
@@ -14,6 +18,7 @@ public class Square implements Serializable {
 		this.x = x;
 		this.y = y;
 		this.state = (ownBoard) ? State.NO_SHIP : State.UNKNOWN;
+		this.changeListeners = new ArrayList<>();
 	}
 
 	public boolean isShip () {
@@ -49,6 +54,7 @@ public class Square implements Serializable {
 	}
 
 	public void update (boolean hit, Ship shipSunk) {
+		State oldState = this.state;
 		this.guessed = true;
 		if ( this.state == State.UNKNOWN ) {
 			this.state = (hit) ? State.CONTAINS_SHIP : State.NO_SHIP;
@@ -58,6 +64,7 @@ public class Square implements Serializable {
 		if ( this.ship == null ) {
 			this.ship = shipSunk;
 		}
+		firePropertyChange(oldState, this.state);
 	}
 
 	public int getX () {
@@ -78,4 +85,16 @@ public class Square implements Serializable {
 		UNKNOWN
 	}
 
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	private void firePropertyChange(State oldState, State newState) {
+		PropertyChangeEvent event =
+				new PropertyChangeEvent(this, "state", oldState, newState);
+		for (PropertyChangeListener listener : changeListeners) {
+			listener.propertyChange(event);
+		}
+
+	}
 }
