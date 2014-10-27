@@ -188,7 +188,7 @@ public class BoardView extends JPanel {
 
         viewCells = new CellView[BOARD_SIZE][BOARD_SIZE];
 
-        setPreferredSize(new Dimension((BOARD_SIZE + 5) * CELL_SIZE + 1, (BOARD_SIZE + 5) * CELL_SIZE + 50));
+        setPreferredSize(new Dimension((BOARD_SIZE) * CELL_SIZE + 1, (BOARD_SIZE + 3) * CELL_SIZE + 15));
         setVisible(true);
         for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
