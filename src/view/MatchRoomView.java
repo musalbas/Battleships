@@ -8,11 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-public class MatchroomView extends JFrame {
+public class MatchRoomView extends JFrame {
     
     private DefaultListModel playersListModel = new DefaultListModel();
 
-    public MatchroomView() {
+    public MatchRoomView() {
         JList playersList = new JList();
         playersList.setModel(this.playersListModel);
         playersList.addMouseListener(new PlayersListMouseAdapter());
@@ -49,7 +49,7 @@ public class MatchroomView extends JFrame {
     }
     
     public static void main(String[] args) {
-        new MatchroomView();
+        new MatchRoomView();
     }
 
 }
