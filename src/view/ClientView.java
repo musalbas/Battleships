@@ -3,6 +3,7 @@ package view;
 import model.Client;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,72 +14,93 @@ import java.io.IOException;
  */
 public class ClientView extends JFrame {
 
-	private JTextArea chat = new JTextArea ();
-	private Client model;
+    private JTextArea chat = new JTextArea();
+    private Client model;
 
-	ClientView () {
+    ClientView() {
 
-		JPanel rootPanel = new JPanel (new GridLayout (1, 3, 5, 5));
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
 
-		final BoardView myBoard = new BoardView (true);
-		final BoardView enemyBoard = new BoardView (false);
+        }
+        JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
+        rootPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		model = new Client (this, myBoard.getModel (), enemyBoard.getModel ());
+        final BoardView myBoard = new BoardView(true);
+        final BoardView enemyBoard = new BoardView(false);
 
-		JPanel controlPanel = new JPanel (new BorderLayout ());
-		controlPanel.add (new JScrollPane (chat), BorderLayout.CENTER);
-		final JTextField inputField = new JTextField ();
-		final JButton submitButton = new JButton ("Submit");
-		JPanel bottomPanel = new JPanel (new GridLayout (1, 2, 10, 10));
-		chat.setEditable (false);
-		bottomPanel.add (inputField);
-		bottomPanel.add (submitButton);
-		controlPanel.add (bottomPanel, BorderLayout.SOUTH);
+        model = new Client(this, myBoard.getModel(), enemyBoard.getModel());
 
-		JButton rotateButton = new JButton ("Rotate");
-		JPanel buttons = new JPanel (new GridLayout (2, 1, 10, 10));
-		controlPanel.add (buttons, BorderLayout.WEST);
-		buttons.add (rotateButton);
-		rotateButton.addActionListener (new ActionListener () {
-			@Override
-			public void actionPerformed (ActionEvent e) {
-				ShipView shipView = myBoard.getSelectedShip ();
-				if ( shipView != null ) {
-					shipView.rotate ();
-					repaint ();
-				}
-			}
-		});
+        JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
+        controlPanel.add(new JScrollPane(chat), BorderLayout.CENTER);
+        chat.setEditable(false);
 
-		JButton saveShipState = new JButton ("Done placing ships!");
-		buttons.add (saveShipState);
-		saveShipState.addActionListener (new ActionListener () {
-			@Override
-			public void actionPerformed (ActionEvent e) {
-				try {
-					model.sendBoard (myBoard.getModel ());
-				} catch (IOException e1) {
-					e1.printStackTrace ();
-				}
-			}
-		});
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        final JTextField inputField = new JTextField();
+        final JButton submitButton = new JButton("Submit");
+        bottomPanel.add(inputField, BorderLayout.CENTER);
+        bottomPanel.add(submitButton, BorderLayout.EAST);
 
-		setContentPane (rootPanel);
-		rootPanel.add (enemyBoard);
-		rootPanel.add (myBoard);
-		rootPanel.add (controlPanel);
-		setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-		pack ();
-		setVisible (true);
+        controlPanel.add(bottomPanel, BorderLayout.SOUTH);
+        controlPanel.setPreferredSize(new Dimension(300, 150));
 
-	}
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-	public static void main (String[] args) {
-		new ClientView ();
-	}
+        JButton rotateButton = new JButton("Rotate");
+        JButton saveShipState = new JButton("Done placing ships!");
 
-	public void addChatMessage (String text) {
-		chat.append (text + "\n");
-	}
+        rotateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ShipView shipView = myBoard.getSelectedShip();
+                if (shipView != null) {
+                    shipView.rotate();
+                    repaint();
+                }
+            }
+        });
+
+        saveShipState.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    model.sendBoard(myBoard.getModel());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
+
+        buttons.add(saveShipState);
+        buttons.add(rotateButton);
+
+        setContentPane(rootPanel);
+
+        boards.add(enemyBoard);
+        boards.add(myBoard);
+
+        JPanel gamePanel = new JPanel(new BorderLayout(10, 10));
+
+        gamePanel.add(boards, BorderLayout.CENTER);
+        gamePanel.add(buttons, BorderLayout.SOUTH);
+
+        rootPanel.add(gamePanel, BorderLayout.CENTER);
+        rootPanel.add(controlPanel, BorderLayout.EAST);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
+        setVisible(true);
+
+    }
+
+    public static void main(String[] args) {
+        new ClientView();
+    }
+
+    public void addChatMessage(String text) {
+        chat.append(text + "\n");
+    }
 
 }
