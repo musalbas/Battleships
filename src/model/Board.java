@@ -2,7 +2,7 @@ package model;
 
 import server.messages.MoveResponseMessage;
 import view.BoardView;
-import view.CellView;
+import view.SquareView;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -177,9 +177,9 @@ public class Board implements Serializable {
 			square.update (move.isHit (), null);
 		}
 		if ( move.isHit () ) {
-			view.setHoveredCellState (CellView.HIT);
+			view.setHoveredCellState (SquareView.HIT);
 		} else {
-			view.setHoveredCellState (CellView.MISS);
+			view.setHoveredCellState (SquareView.MISS);
 		}
 	}
 

@@ -18,12 +18,10 @@ public class BoardView extends JPanel {
 
     private static int CELL_SIZE = 40;
     private int BOARD_SIZE;
-    private int NUMBER_OF_BOATS;
-    private Ship.Type[] BOATS_TYPE;
-    private CellView hoveredCell = null;
-    private ShipView selectedShipView = null;
-    private CellView[][] viewCells;
-    private ArrayList<ShipView> viewShips = new ArrayList<ShipView>();
+	private SquareView hoveredCell = null;
+	private ShipView selectedShipView = null;
+	private SquareView[][] viewCells;
+	private ArrayList<ShipView> viewShips = new ArrayList<ShipView>();
     private int xDistance;
     private int yDistance;
     private Board model;
@@ -50,7 +48,7 @@ public class BoardView extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-                setHoveredCellState(CellView.CLEAR);
+	            setHoveredCellState (SquareView.CLEAR);
             }
 
             @Override
@@ -111,8 +109,8 @@ public class BoardView extends JPanel {
     private void moveSelectedShip() {
         final int x = selectedShipView.getX() + CELL_SIZE / 2;
         final int y = selectedShipView.getY() + CELL_SIZE / 2;
-        CellView hovered = getCell(x, y);
-        int[] newPosition = translateCoordinates(x, y);
+	    SquareView hovered = getCell (x, y);
+	    int[] newPosition = translateCoordinates(x, y);
         boolean shouldReset = true;
         if (hovered != null) {
             boolean result = this.model.placeShip(selectedShipView.getModel(), newPosition[0], newPosition[1]);
@@ -146,14 +144,14 @@ public class BoardView extends JPanel {
         return new int[]{x / CELL_SIZE, y / CELL_SIZE};
     }
 
-    private CellView getCell(int x, int y) {
-        int i = x / CELL_SIZE;
+	private SquareView getCell (int x, int y) {
+		int i = x / CELL_SIZE;
         int j = y / CELL_SIZE;
         return i >= 0 && j >= 0 && i < 10 && j < 10 ? viewCells[i][j] : null;
     }
 
-    private void setCell(int i, int j, CellView cell) {
-        viewCells[i][j] = cell;
+	private void setCell (int i, int j, SquareView cell) {
+		viewCells[i][j] = cell;
     }
 
     private void updateSelectedShip(MouseEvent e) {
@@ -171,21 +169,21 @@ public class BoardView extends JPanel {
         int x = e.getX();
         int y = e.getY();
         hoveredCell = getCell(x, y);
-        if (hoveredCell != null && hoveredCell.getState() == CellView.CLEAR) {
-            hoveredCell.setState(CellView.HOVER);
-        }
+	    if ( hoveredCell != null && hoveredCell.getState () == SquareView.CLEAR ) {
+		    hoveredCell.setState (SquareView.HOVER);
+	    }
     }
 
     private void resetHoveredCell() {
-        if (hoveredCell != null && hoveredCell.getState() == CellView.HOVER && !model.isOwnBoard()) {
-            hoveredCell.setState(CellView.CLEAR);
-        }
+	    if ( hoveredCell != null && hoveredCell.getState () == SquareView.HOVER && !model.isOwnBoard () ) {
+		    hoveredCell.setState (SquareView.CLEAR);
+	    }
     }
 
 	public void setHoveredCellState (int state) {
 		if (hoveredCell != null && !model.isOwnBoard()) {
-            if (state == CellView.HIT) {
-                new ExplosionAnimation(hoveredCell, this).start();
+			if ( state == SquareView.HIT ) {
+				new ExplosionAnimation(hoveredCell, this).start();
             }
             hoveredCell.setState(state);
         }
@@ -194,16 +192,14 @@ public class BoardView extends JPanel {
     private void addCellsAndShips() {
 
         BOARD_SIZE = model.BOARD_DIMENSION;
-        NUMBER_OF_BOATS = model.getNumberOfBoats();
-        BOATS_TYPE = model.getShipTypes();
 
-        viewCells = new CellView[BOARD_SIZE][BOARD_SIZE];
+	    viewCells = new SquareView[ BOARD_SIZE ][ BOARD_SIZE ];
 
         setPreferredSize(new Dimension((BOARD_SIZE + 5) * CELL_SIZE + 1, (BOARD_SIZE + 5) * CELL_SIZE + 50));
         setVisible(true);
         for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
-                setCell(i, j, new CellView(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
+	            setCell (i, j, new SquareView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
             }
         }
         if (model.isOwnBoard()) {
@@ -228,9 +224,9 @@ public class BoardView extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (CellView[] row : viewCells) {
-            for (CellView cell : row) {
-                cell.paint(g);
+	    for ( SquareView[] row : viewCells ) {
+		    for ( SquareView cell : row ) {
+			    cell.paint(g);
             }
         }
         for (ShipView s : viewShips) {
