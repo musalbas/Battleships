@@ -68,7 +68,12 @@ public class Client extends Thread {
                     // TODO: handle receiving opponents name
 	                view.addChatMessage ("received opponents_name");
 	                break;
-                case NotificationMessage.GAME_TOKEN:
+	            case NotificationMessage.BOARD_ACCEPTED:
+		            //TODO: board is good, can start game
+		            view.addChatMessage ("board OK!");
+		            ownBoard.setBoatPositionLocked (true);
+		            break;
+	            case NotificationMessage.GAME_TOKEN:
                     // TODO: handle receiving game token to share with friend
 	                view.addChatMessage ("received game_Token");
 	                break;

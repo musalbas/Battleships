@@ -2,7 +2,7 @@ package model;
 
 import server.messages.MoveResponseMessage;
 import view.BoardView;
-import view.CellView;
+import view.SquareView;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,7 +15,7 @@ public class Board implements Serializable {
 	private boolean ownBoard;
 	private transient BoardView view;
 	private transient Client client;
-
+	private transient boolean boatPositionLocked = false;
 
 	public Board (boolean ownBoard) {
 		this.ownBoard = ownBoard;
@@ -50,6 +50,15 @@ public class Board implements Serializable {
 			}
 		}
 		return tempBoard.shipPlacementEquals (board);
+	}
+
+	public boolean isBoatPositionLocked () {
+		return boatPositionLocked;
+	}
+
+	public void setBoatPositionLocked (boolean boatPositionLocked) {
+		this.boatPositionLocked = boatPositionLocked;
+		view.resetSelectedShipView ();
 	}
 
 	public boolean isOwnBoard () {
@@ -168,9 +177,9 @@ public class Board implements Serializable {
 			square.update (move.isHit (), null);
 		}
 		if ( move.isHit () ) {
-			view.setHoveredCellState (CellView.HIT);
+			view.setHoveredCellState (SquareView.HIT);
 		} else {
-			view.setHoveredCellState (CellView.MISS);
+			view.setHoveredCellState (SquareView.MISS);
 		}
 	}
 
