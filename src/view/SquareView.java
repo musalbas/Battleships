@@ -2,14 +2,14 @@ package view;
 
 import model.Square;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * Created by user on 13.10.2014.
  */
-public class SquareView implements PropertyChangeListener {
+public class SquareView implements ChangeListener {
 
 	public static final int CLEAR = 0;
 	public static final int HOVER = 1;
@@ -39,7 +39,7 @@ public class SquareView implements PropertyChangeListener {
 		state = CLEAR;
 		this.boardView = boardView;
 		this.squareModel = squareModel;
-		squareModel.addPropertyChangeListener(this);
+		squareModel.addChangeListener(this);
 	}
 
 	public boolean mouseEntered (int x, int y) {
@@ -113,10 +113,8 @@ public class SquareView implements PropertyChangeListener {
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		Square.State newState = (Square.State) evt.getNewValue();
-		Square.State oldState = (Square.State) evt.getOldValue();
-		switch (newState) {
+	public void stateChanged(ChangeEvent e) {
+		switch (squareModel.getState()) {
 			case CONTAINS_SHIP:
 				this.state = HIT;
 				break;
@@ -126,4 +124,5 @@ public class SquareView implements PropertyChangeListener {
 		boardView.setCellState(this, this.state);
 		boardView.repaint();
 	}
+
 }

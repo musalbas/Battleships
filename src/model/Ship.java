@@ -98,4 +98,12 @@ public class Ship implements Serializable {
         }
     }
 
+    public void updateSquareReferences(Board board) {
+        ArrayList<Square> newSquares = new ArrayList<>();
+        for (Square s : squares) {
+            newSquares.add(board.getSquare(s.getX(), s.getY()));
+        }
+        this.squares = newSquares;
+    }
+
 }
