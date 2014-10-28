@@ -2,8 +2,9 @@ package model;
 
 import server.messages.MoveResponseMessage;
 import view.BoardView;
-import view.SquareView;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Board implements Serializable {
 	private transient BoardView view;
 	private transient Client client;
 	private transient boolean boatPositionLocked = false;
+	private transient ArrayList<PropertyChangeListener> changeListeners;
 
 	public Board (boolean ownBoard) {
 		this.ownBoard = ownBoard;
@@ -34,6 +36,8 @@ public class Board implements Serializable {
 		ships.add (new Ship (Ship.Type.DESTROYER));
 		ships.add (new Ship (Ship.Type.PATROL_BOAT));
 		ships.add (new Ship (Ship.Type.SUBMARINE));
+
+		this.changeListeners = new ArrayList<>();
 	}
 
 	public static boolean isValid (Board board) {
@@ -167,8 +171,14 @@ public class Board implements Serializable {
 		Ship ship = move.shipSank ();
 		if ( ship != null ) {
 			ship.sink ();
-			for ( Square s : ship.getSquares () ) {
-				getSquare (s.getX (), s.getY ()).update (true, ship);
+			if (!ownBoard) {
+				ship.updateSquareReferences(this);
+				ships.add(ship);
+				firePropertyChange("sankShip", null, ship);
+			}
+			for ( Square shipSquare : ship.getSquares () ) {
+				Square boardSquare = getSquare(shipSquare.getX(), shipSquare.getY());
+				boardSquare.update (true, ship);
 			}
 			//TODO: Fix me
 			client.getView ().addChatMessage ("SUNK SHIP" + ship.toString ());
@@ -247,5 +257,17 @@ public class Board implements Serializable {
 
 	public void sendMove (int x, int y) throws IOException {
 		client.sendMove (x, y);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	private void firePropertyChange(String property, Object oldValue, Object newValue) {
+		PropertyChangeEvent event =
+				new PropertyChangeEvent(this, property, oldValue, newValue);
+		for (PropertyChangeListener listener : changeListeners) {
+			listener.propertyChange(event);
+		}
 	}
 }
