@@ -38,14 +38,9 @@ public class MatchRoomView extends JFrame {
             int index = list.locationToIndex(e.getPoint());
             String playerName = (String) playersListModel.get(index);
             
-            SendMatchRequest(playerName);
+            // Code to start game here
         }
         
-    }
-    
-    private void SendMatchRequest(String playerName) {
-        Object[] options = {"Cancel"};
-        JOptionPane.showOptionDialog(null, "Waiting for player to respond to match request...", "Match", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);        
     }
     
     public static void main(String[] args) {
