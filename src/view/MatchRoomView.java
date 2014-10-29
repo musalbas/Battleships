@@ -8,11 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-public class MatchroomView extends JFrame {
+public class MatchRoomView extends JFrame {
     
     private DefaultListModel playersListModel = new DefaultListModel();
 
-    public MatchroomView() {
+    public MatchRoomView() {
         JList playersList = new JList();
         playersList.setModel(this.playersListModel);
         playersList.addMouseListener(new PlayersListMouseAdapter());
@@ -38,18 +38,13 @@ public class MatchroomView extends JFrame {
             int index = list.locationToIndex(e.getPoint());
             String playerName = (String) playersListModel.get(index);
             
-            SendMatchRequest(playerName);
+            // Code to start game here
         }
         
     }
     
-    private void SendMatchRequest(String playerName) {
-        Object[] options = {"Cancel"};
-        JOptionPane.showOptionDialog(null, "Waiting for player to respond to match request...", "Match", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);        
-    }
-    
     public static void main(String[] args) {
-        new MatchroomView();
+        new MatchRoomView();
     }
 
 }
