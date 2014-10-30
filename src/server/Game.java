@@ -77,7 +77,7 @@ public class Game {
 	private void startGame () {
 		System.out.println ("Game started");
 		gameStarted = true;
-		if ( new Random ().nextInt (1) == 0 ) {
+		if ( new Random ().nextInt (2) == 0 ) {
 			setTurn (player1);
 		} else {
 			setTurn (player2);
@@ -85,13 +85,15 @@ public class Game {
 	}
 
 	public synchronized void applyMove (MoveMessage move, Player player) {
+		if (player != turn) {
+			player.writeObject (new NotificationMessage (
+					NotificationMessage.NOT_YOUR_TURN));
+			return;
+		}
 		int x = move.getX ();
 		int y = move.getY ();
 		int max = player.getBoard ().BOARD_DIMENSION;
-		if ( player != turn ) {
-			turn.writeObject (new NotificationMessage (
-					NotificationMessage.NOT_YOUR_TURN));
-		} else if ( x < 0 || x >= max || y < 0 || y >= max ) {
+		if ( x < 0 || x >= max || y < 0 || y >= max ) {
 			player.writeObject (new NotificationMessage (
 					NotificationMessage.INVALID_MOVE));
 		} else {
