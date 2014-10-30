@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class BoardView extends JPanel {
 
-    private static int CELL_SIZE = 40;
+    private static int CELL_SIZE = 35;
     private int BOARD_SIZE;
 	private SquareView hoveredCell = null;
 	private ShipView selectedShipView = null;

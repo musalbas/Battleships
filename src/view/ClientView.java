@@ -44,7 +44,7 @@ public class ClientView extends JFrame {
         bottomPanel.add(submitButton, BorderLayout.EAST);
 
         controlPanel.add(bottomPanel, BorderLayout.SOUTH);
-        controlPanel.setPreferredSize(new Dimension(300, 150));
+        controlPanel.setPreferredSize(new Dimension(200, 150));
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
@@ -73,12 +73,11 @@ public class ClientView extends JFrame {
             }
         });
 
-        JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
 
         buttons.add(saveShipState);
         buttons.add(rotateButton);
 
-        setContentPane(rootPanel);
+        JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
 
         boards.add(enemyBoard);
         boards.add(myBoard);
@@ -91,7 +90,11 @@ public class ClientView extends JFrame {
         rootPanel.add(gamePanel, BorderLayout.CENTER);
         rootPanel.add(controlPanel, BorderLayout.EAST);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setContentPane(rootPanel);
+
         pack();
+        System.out.println(getSize());
         setVisible(true);
 
     }
