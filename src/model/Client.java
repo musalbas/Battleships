@@ -140,6 +140,7 @@ public class Client extends Thread {
 
 	//TODO: Implement this
 	public void sendBoard (Board board) throws IOException {
+        out.reset();
 		out.writeObject (board);
 		out.flush ();
 	}
