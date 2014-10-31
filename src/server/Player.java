@@ -15,7 +15,7 @@ public class Player extends Thread {
 
 	private Socket socket;
 	private MatchRoom matchRoom;
-	private String name;
+	private String name = "(new player)";
 	private ObjectOutputStream out;
 	private Game game;
 	private Board board;
@@ -52,8 +52,9 @@ public class Player extends Thread {
 								}
 								break;
 							case "name":
-								if ( length == 2 ) {
+								if ( length == 2 && !matchRoom.playerNameExists(array[ 1 ]) && !array[ 1 ].equals("") ) {
 									name = array[ 1 ];
+									matchRoom.sendMatchRoomList();
 								}
 								break;
 						}

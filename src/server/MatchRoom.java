@@ -101,12 +101,22 @@ public class MatchRoom {
 		}
 	}
 	
+	public boolean playerNameExists(String name) {
+	    boolean exists = false;
+            for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+                if (entry.getValue().equals(name)) {
+                    return true;
+                }
+            }
+	    return exists;
+	}
+	
 	public synchronized void sendMatchRoomList () {
 	    HashMap<String, String> matchRoomList = new HashMap<String, String>();
 	    for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
 	        String key = entry.getKey();
 	        Player player = entry.getValue();
-	        matchRoomList.put(key, player.getName());
+	        matchRoomList.put(key, player.getPlayerName());
 	    }
             for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
                 Player player = entry.getValue();

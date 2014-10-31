@@ -49,6 +49,15 @@ public class MatchRoom extends Thread {
         }
     }
     
+    public void sendName(String name) {
+        try {
+            out.writeObject(new String[]{ "name", name });
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void parseInput(Object input) {
         if (input instanceof MatchRoomListMessage) {
             HashMap<String, String> matchRoomList = ((MatchRoomListMessage) input).getMatchRoomList();
