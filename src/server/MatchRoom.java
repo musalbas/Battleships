@@ -1,9 +1,11 @@
 package server;
 
-import server.messages.NotificationMessage;
-
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+
+import server.messages.MatchRoomListMessage;
+import server.messages.NotificationMessage;
 
 public class MatchRoom {
 
@@ -67,6 +69,7 @@ public class MatchRoom {
 		waitingPlayerList.put (key, player);
 		player.writeObject (new NotificationMessage (
 				NotificationMessage.GAME_TOKEN, key));
+		sendMatchRoomList();
 	}
 
 	/**
@@ -96,6 +99,29 @@ public class MatchRoom {
 		} else {
 			waitingPlayerList.values ().remove (player);
 		}
+	}
+	
+	public boolean playerNameExists(String name) {
+	    boolean exists = false;
+            for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+                if (entry.getValue().equals(name)) {
+                    return true;
+                }
+            }
+	    return exists;
+	}
+	
+	public synchronized void sendMatchRoomList () {
+	    HashMap<String, String> matchRoomList = new HashMap<String, String>();
+	    for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+	        String key = entry.getKey();
+	        Player player = entry.getValue();
+	        matchRoomList.put(key, player.getPlayerName());
+	    }
+            for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+                Player player = entry.getValue();
+                player.writeObject(new MatchRoomListMessage(matchRoomList));
+            }
 	}
 
 }
