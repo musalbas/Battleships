@@ -1,11 +1,15 @@
 package view;
 
+import model.Square;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 /**
  * Created by user on 13.10.2014.
  */
-public class SquareView {
+public class SquareView implements ChangeListener {
 
 	public static final int CLEAR = 0;
 	public static final int HOVER = 1;
@@ -18,6 +22,8 @@ public class SquareView {
 	private int height;
 	private int state;
 	private Image explosionImage;
+	private BoardView boardView;
+	private Square squareModel;
 
 	/* (x,y)
 		   *----*
@@ -25,12 +31,15 @@ public class SquareView {
 		   *----*
 		   width
 	 */
-	public SquareView (int x, int y, int width, int height) {
+	public SquareView (int x, int y, int width, int height, BoardView boardView, Square squareModel) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		state = CLEAR;
+		this.boardView = boardView;
+		this.squareModel = squareModel;
+		squareModel.addChangeListener(this);
 	}
 
 	public boolean mouseEntered (int x, int y) {
@@ -102,4 +111,18 @@ public class SquareView {
 		g.drawLine (x + padding, y + padding, x + width - padding, y + height - padding);
 		g.drawLine (x + width - padding, y + padding, x + padding, y + height - padding);
 	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		switch (squareModel.getState()) {
+			case CONTAINS_SHIP:
+				this.state = HIT;
+				break;
+			case NO_SHIP:
+				this.state = MISS;
+		}
+		boardView.setCellState(this, this.state);
+		boardView.repaint();
+	}
+
 }

@@ -2,8 +2,10 @@ package view;
 
 import model.Ship;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  * Created by user on 13.10.2014.
@@ -17,7 +19,8 @@ public class ShipView {
     private int y;
     private boolean horizontal;
     private boolean selected;
-    private BufferedImage image; // TODO ship image. If we decide to replace a squares with proper image of a ship.
+    private Image horizontalImage;
+    private Image verticalImage;
     private Ship model;
 
     public ShipView(int length, int cellSize, int x, int y, Ship model) {
@@ -28,6 +31,15 @@ public class ShipView {
         this.model = model;
         horizontal = true;
         selected = false;
+
+        String filename = "resources/ships/" + model.getType().getName();
+        try {
+            horizontalImage = ImageIO.read(new File(filename + ".png"));
+            verticalImage = ImageIO.read(new File(filename + "_v.png"));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Some files have been deleted", "Fatal error", JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
+        }
     }
 
     public void setSelected(boolean selected) {
@@ -73,15 +85,19 @@ public class ShipView {
     }
 
     public void paint(Graphics g) {
-        if (selected) {
-            g.setColor(Color.GREEN);
-        } else {
-            g.setColor(Color.GRAY);
-        }
+
         if (horizontal) {
-            g.fillRect(x, y, length * cellSize, cellSize);
+            if (selected) {
+                g.setColor(Color.GREEN);
+                g.fillRect(x, y, length * cellSize, cellSize);
+            }
+            g.drawImage(horizontalImage, x, y, length * cellSize, cellSize, null);
         } else {
-            g.fillRect(x, y, cellSize, length * cellSize);
+            if (selected) {
+                g.setColor(Color.GREEN);
+                g.fillRect(x, y, cellSize, length * cellSize);
+            }
+            g.drawImage(verticalImage, x, y, cellSize, length * cellSize, null);
         }
     }
 }

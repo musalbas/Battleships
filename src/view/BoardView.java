@@ -2,21 +2,24 @@ package view;
 
 import model.Board;
 import model.Ship;
+import model.Square;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by user on 13.10.2014.
  */
-public class BoardView extends JPanel {
+public class BoardView extends JPanel implements PropertyChangeListener {
 
-    private static int CELL_SIZE = 40;
+    private static int CELL_SIZE = 35;
     private int BOARD_SIZE;
 	private SquareView hoveredCell = null;
 	private ShipView selectedShipView = null;
@@ -29,6 +32,7 @@ public class BoardView extends JPanel {
     public BoardView(boolean ownBoard) {
         this.model = new Board(ownBoard);
         model.setView(this);
+        model.addPropertyChangeListener(this);
 
         addCellsAndShips();
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -48,7 +52,7 @@ public class BoardView extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-	            setHoveredCellState (SquareView.CLEAR);
+	            setCellState(hoveredCell, SquareView.CLEAR);
             }
 
             @Override
@@ -82,7 +86,7 @@ public class BoardView extends JPanel {
 	public void resetSelectedShipView () {
 		selectedShipView.setSelected (false);
 		selectedShipView = null;
-		repaint ();
+		repaint();
 	}
 
     public Board getModel() {
@@ -170,7 +174,7 @@ public class BoardView extends JPanel {
         int y = e.getY();
         hoveredCell = getCell(x, y);
 	    if ( hoveredCell != null && hoveredCell.getState () == SquareView.CLEAR ) {
-		    hoveredCell.setState (SquareView.HOVER);
+		    hoveredCell.setState(SquareView.HOVER);
 	    }
     }
 
@@ -180,13 +184,21 @@ public class BoardView extends JPanel {
 	    }
     }
 
-	public void setHoveredCellState (int state) {
-		if (hoveredCell != null && !model.isOwnBoard()) {
+	public void setCellState (SquareView squareView, int state) {
+		if (squareView != null && !model.isOwnBoard()) {
 			if ( state == SquareView.HIT ) {
-				new ExplosionAnimation(hoveredCell, this).start();
+				new ExplosionAnimation(squareView, this).start();
             }
-            hoveredCell.setState(state);
         }
+    }
+
+    public void addShipView (Ship ship) {
+        int topLeft[] = ship.getTopLeft();
+        ShipView shipView = new ShipView(ship.getLength(), CELL_SIZE, topLeft[0] * CELL_SIZE, topLeft[1] * CELL_SIZE, ship);
+        if (ship.isVertical()) {
+            shipView.rotate();
+        }
+        viewShips.add(shipView);
     }
 
     private void addCellsAndShips() {
@@ -195,11 +207,11 @@ public class BoardView extends JPanel {
 
 	    viewCells = new SquareView[ BOARD_SIZE ][ BOARD_SIZE ];
 
-        setPreferredSize(new Dimension((BOARD_SIZE + 5) * CELL_SIZE + 1, (BOARD_SIZE + 5) * CELL_SIZE + 50));
+        setPreferredSize(new Dimension((BOARD_SIZE) * CELL_SIZE + 1, (BOARD_SIZE + 3) * CELL_SIZE + 15));
         setVisible(true);
         for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
-	            setCell (i, j, new SquareView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE));
+	            setCell (i, j, new SquareView (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE, this, model.getSquare(i, j)));
             }
         }
         if (model.isOwnBoard()) {
@@ -231,6 +243,13 @@ public class BoardView extends JPanel {
         }
         for (ShipView s : viewShips) {
             s.paint(g);
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("sankShip")) {
+            addShipView((Ship) evt.getNewValue());
         }
     }
 }

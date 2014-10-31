@@ -1,12 +1,16 @@
 package model;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Square implements Serializable {
 	private Ship ship;
 	private boolean guessed;
 	private int x, y;
 	private State state;
+	private transient ArrayList<ChangeListener> changeListeners;
 
 	public Square (int x, int y, boolean ownBoard) {
 		this.ship = null;
@@ -14,6 +18,7 @@ public class Square implements Serializable {
 		this.x = x;
 		this.y = y;
 		this.state = (ownBoard) ? State.NO_SHIP : State.UNKNOWN;
+		this.changeListeners = new ArrayList<>();
 	}
 
 	public boolean isShip () {
@@ -58,6 +63,7 @@ public class Square implements Serializable {
 		if ( this.ship == null ) {
 			this.ship = shipSunk;
 		}
+		fireChange();
 	}
 
 	public int getX () {
@@ -78,4 +84,15 @@ public class Square implements Serializable {
 		UNKNOWN
 	}
 
+	public void addChangeListener(ChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	private void fireChange() {
+		ChangeEvent event = new ChangeEvent(this);
+		for (ChangeListener listener : changeListeners) {
+			listener.stateChanged(event);
+		}
+
+	}
 }

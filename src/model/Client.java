@@ -112,6 +112,21 @@ public class Client extends Thread {
                 case NotificationMessage.TIMEOUT_DRAW:
 	                view.addChatMessage ("TIMEOUT_DRAW");
 	                // TODO: inform that both took too long to place ships
+                    break;
+                case NotificationMessage.NOT_YOUR_TURN:
+                    view.addChatMessage("NOT_YOUR_TURN");
+                    break;
+                case NotificationMessage.INVALID_BOARD:
+                    view.addChatMessage("INVALID_BOARD");
+                    break;
+                case NotificationMessage.NOT_IN_GAME:
+                    view.addChatMessage("NOT_IN_GAME");
+                    break;
+                case NotificationMessage.INVALID_MOVE:
+                    view.addChatMessage("INVALID_MOVE");
+                    break;
+                case NotificationMessage.REPEATED_MOVE:
+                    view.addChatMessage("REPEATED_MOVE");
             }
         } else if (input instanceof MoveResponseMessage) {
             MoveResponseMessage move = (MoveResponseMessage) input;
@@ -125,6 +140,7 @@ public class Client extends Thread {
 
 	//TODO: Implement this
 	public void sendBoard (Board board) throws IOException {
+        out.reset();
 		out.writeObject (board);
 		out.flush ();
 	}

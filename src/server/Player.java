@@ -1,6 +1,7 @@
 package server;
 
 import model.Board;
+import server.messages.ChatMessage;
 import server.messages.MoveMessage;
 import server.messages.NotificationMessage;
 
@@ -74,6 +75,13 @@ public class Player extends Thread {
 				} else if ( input instanceof MoveMessage ) {
 					if ( game != null ) {
 						game.applyMove ((MoveMessage) input, this);
+					}
+				} else if ( input instanceof ChatMessage ) {
+					if ( game != null ) {
+						Player opponent = game.getOpponent(this);
+						if ( opponent != null ) {
+							opponent.writeObject(input);
+						}
 					}
 				}
 			}
