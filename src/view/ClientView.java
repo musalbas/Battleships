@@ -60,10 +60,10 @@ public class ClientView extends JFrame {
         controlPanel.setPreferredSize(new Dimension(200, 150));
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
-        rotateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+		rotateButton.setEnabled (false);
+		rotateButton.addActionListener (new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
                 ShipView shipView = myBoard.getSelectedShip();
                 if (shipView != null) {
 	                myBoard.getModel ().selectedShipRotated ();
@@ -98,7 +98,7 @@ public class ClientView extends JFrame {
 
         rootPanel.add(gamePanel, BorderLayout.CENTER);
         rootPanel.add(controlPanel, BorderLayout.EAST);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation (WindowConstants.EXIT_ON_CLOSE);
 
         setContentPane(rootPanel);
 

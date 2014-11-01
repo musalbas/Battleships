@@ -1,7 +1,6 @@
 package model;
 
 import server.messages.MoveResponseMessage;
-import view.BoardView;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,7 +13,6 @@ public class Board implements Serializable {
 	private Square[][] squares;
 	private ArrayList<Ship> ships;
 	private boolean ownBoard;
-	private transient BoardView view;
 	private transient Client client;
 	private transient boolean boatPositionLocked = true;
 	private transient ArrayList<PropertyChangeListener> changeListeners;
@@ -30,7 +28,7 @@ public class Board implements Serializable {
 			}
 		}
 
-		ships = new ArrayList<Ship> ();
+		ships = new ArrayList<> ();
 		ships.add (new Ship (Ship.Type.AIRCRAFT_CARRIER));
 		ships.add (new Ship (Ship.Type.BATTLESHIP));
 		ships.add (new Ship (Ship.Type.DESTROYER));
@@ -62,7 +60,7 @@ public class Board implements Serializable {
 
 	public void setBoatPositionLocked (boolean boatPositionLocked) {
 		this.boatPositionLocked = boatPositionLocked;
-		client.getView ().setSendShipState (boatPositionLocked);
+		client.getView ().setSendShipState (!boatPositionLocked);
 		firePropertyChange ("resetSelectedShipView", null, null);
 	}
 
@@ -115,10 +113,6 @@ public class Board implements Serializable {
 			s.setShip (null);
 		}
 		ship.clearSquares ();
-	}
-
-	public void setHit (Square s) {
-		s.setGuessed (true);
 	}
 
 	public boolean gameOver () {
@@ -213,24 +207,6 @@ public class Board implements Serializable {
 			}
 		}
 		return null;
-	}
-
-	// TODO: Fix me!
-	public int getNumberOfBoats () {
-		return 5;
-	}
-
-	public Ship.Type[] getShipTypes () {
-		return new Ship.Type[]{ Ship.Type.AIRCRAFT_CARRIER,
-				Ship.Type.BATTLESHIP,
-				Ship.Type.DESTROYER,
-				Ship.Type.PATROL_BOAT,
-				Ship.Type.SUBMARINE
-		};
-	}
-
-	public void setView (BoardView view) {
-		this.view = view;
 	}
 
 	//returns true if the square is next to a ship, to be used to display near misses
