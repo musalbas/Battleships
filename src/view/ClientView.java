@@ -56,8 +56,7 @@ public class ClientView extends JFrame {
                 ShipView shipView = myBoard.getSelectedShip();
                 if (shipView != null) {
 	                myBoard.getModel ().selectedShipRotated ();
-	                shipView.rotate();
-                    repaint();
+
                 }
             }
         });
@@ -109,5 +108,9 @@ public class ClientView extends JFrame {
 
 	public void setSendShipState (boolean state) {
 		saveShipState.setEnabled (state);
+	}
+
+	public void setRotateButtonState (boolean state) {
+		rotateButton.setEnabled (state);
 	}
 }

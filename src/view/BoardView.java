@@ -116,9 +116,11 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 	    SquareView hovered = getCell (x, y);
 	    int[] newPosition = translateCoordinates(x, y);
         boolean shouldReset = true;
-        if (hovered != null) {
+	    model.pickUpShip (selectedShipView.getModel ());
+	    if (hovered != null) {
             boolean result = this.model.placeShip(selectedShipView.getModel(), newPosition[0], newPosition[1]);
-            if (result) {
+	        System.out.println (result);
+		    if (result) {
                 selectedShipView.setX(hovered.getX());
                 selectedShipView.setY(hovered.getY());
                 shouldReset = false;
@@ -233,6 +235,12 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
     }
 
+	private void rotateSelectedShip () {
+		selectedShipView.rotate ();
+		repaint ();
+		moveSelectedShip ();
+	}
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -249,7 +257,11 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("sankShip")) {
-            addShipView((Ship) evt.getNewValue());
+	        addShipView ((Ship) evt.getNewValue ());
+        } else if ( evt.getPropertyName ().equals ("rotateSelectedShip") ) {
+	        rotateSelectedShip ();
+        } else if ( evt.getPropertyName ().equals ("resetSelectedShip") ) {
+	        resetSelectedShipView ();
         }
     }
 }

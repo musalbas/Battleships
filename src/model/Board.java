@@ -16,7 +16,7 @@ public class Board implements Serializable {
 	private boolean ownBoard;
 	private transient BoardView view;
 	private transient Client client;
-	private transient boolean boatPositionLocked = true;
+	private transient boolean boatPositionLocked = false;
 	private transient ArrayList<PropertyChangeListener> changeListeners;
 
 	public Board (boolean ownBoard) {
@@ -63,7 +63,7 @@ public class Board implements Serializable {
 	public void setBoatPositionLocked (boolean boatPositionLocked) {
 		this.boatPositionLocked = boatPositionLocked;
 		client.getView ().setSendShipState (boatPositionLocked);
-		view.resetSelectedShipView ();
+		firePropertyChange ("resetSelectedShipView", null, null);
 	}
 
 	public boolean isOwnBoard () {
