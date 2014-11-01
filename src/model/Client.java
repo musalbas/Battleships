@@ -84,6 +84,7 @@ public class Client extends Thread {
                 case NotificationMessage.PLACE_SHIPS:
                     // TODO: allow player to start positioning ships
 	                view.addChatMessage ("can place ships now");
+	                ownBoard.setBoatPositionLocked (false);
 	                break;
                 case NotificationMessage.YOUR_TURN:
                     // TODO: inform player it's their turn and to make a move

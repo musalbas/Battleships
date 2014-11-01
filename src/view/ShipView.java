@@ -71,8 +71,10 @@ public class ShipView {
     }
 
     public void resetPosition() {
-        setX(initialX);
-        setY(initialY);
+	    horizontal = true;
+	    model.setVertical (false);
+	    setX (initialX);
+	    setY(initialY);
     }
 
     public Ship getModel() {

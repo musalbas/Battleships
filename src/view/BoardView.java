@@ -2,7 +2,6 @@ package view;
 
 import model.Board;
 import model.Ship;
-import model.Square;
 
 import javax.swing.*;
 import java.awt.*;
@@ -105,7 +104,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         selectedShipView = getShip(x, y);
         if (selectedShipView != null) {
             selectedShipView.setSelected(true);
-            xDistance = e.getX() - selectedShipView.getX();
+	        this.model.pickUpShip (selectedShipView.getModel ());
+	        xDistance = e.getX() - selectedShipView.getX();
             yDistance = e.getY() - selectedShipView.getY();
         }
     }
