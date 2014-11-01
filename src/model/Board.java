@@ -16,7 +16,7 @@ public class Board implements Serializable {
 	private boolean ownBoard;
 	private transient BoardView view;
 	private transient Client client;
-	private transient boolean boatPositionLocked = false;
+	private transient boolean boatPositionLocked = true;
 	private transient ArrayList<PropertyChangeListener> changeListeners;
 
 	public Board (boolean ownBoard) {

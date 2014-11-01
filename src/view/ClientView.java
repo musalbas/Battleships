@@ -45,6 +45,17 @@ public class ClientView extends JFrame {
         bottomPanel.add(inputField, BorderLayout.CENTER);
         bottomPanel.add(submitButton, BorderLayout.EAST);
 
+		submitButton.addActionListener (new ActionListener () {
+			@Override
+			public void actionPerformed (ActionEvent e) {
+				try {
+					model.sendChatMessage (inputField.getText ());
+				} catch (IOException e1) {
+					e1.printStackTrace ();
+				}
+			}
+		});
+
         controlPanel.add(bottomPanel, BorderLayout.SOUTH);
         controlPanel.setPreferredSize(new Dimension(200, 150));
 
@@ -56,7 +67,6 @@ public class ClientView extends JFrame {
                 ShipView shipView = myBoard.getSelectedShip();
                 if (shipView != null) {
 	                myBoard.getModel ().selectedShipRotated ();
-
                 }
             }
         });
