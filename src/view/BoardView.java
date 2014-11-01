@@ -108,6 +108,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 	        xDistance = e.getX() - selectedShipView.getX();
             yDistance = e.getY() - selectedShipView.getY();
         }
+	    updateRotateButtonState ();
     }
 
     private void moveSelectedShip() {
@@ -119,19 +120,30 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 	    model.pickUpShip (selectedShipView.getModel ());
 	    if (hovered != null) {
             boolean result = this.model.placeShip(selectedShipView.getModel(), newPosition[0], newPosition[1]);
-	        System.out.println (result);
 		    if (result) {
                 selectedShipView.setX(hovered.getX());
                 selectedShipView.setY(hovered.getY());
+			    System.out.println ();
+
                 shouldReset = false;
             }
         }
         if (shouldReset) {
-            selectedShipView.resetPosition();
-            this.model.pickUpShip(selectedShipView.getModel());
+            selectedShipView.resetPosition ();
         }
-        this.model.printBoard(true);
+	    updateRotateButtonState ();
+	    this.model.printBoard (true);
     }
+
+	private void updateRotateButtonState () {
+		if ( selectedShipView == null ) {
+			model.getClient ().getView ().setRotateButtonState (false);
+		} else if ( selectedShipView.getModel ().getSquares ().isEmpty () ) {
+			model.getClient ().getView ().setRotateButtonState (false);
+		} else {
+			model.getClient ().getView ().setRotateButtonState (true);
+		}
+	}
 
     private ShipView getShip(int x, int y) {
         for (ShipView shipView : viewShips) {

@@ -252,20 +252,24 @@ public class Board implements Serializable {
 		return (x >= 0 && x < 10 && y >= 0 && y < 10);
 	}
 
-	public void setClient (Client client) {
-		this.client = client;
-	}
-
 	public void sendMove (int x, int y) throws IOException {
 		client.sendMove (x, y);
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		changeListeners.add(listener);
+	public void addPropertyChangeListener (PropertyChangeListener listener) {
+		changeListeners.add (listener);
 	}
 
 	public void selectedShipRotated () {
 		firePropertyChange ("rotateSelectedShip", null, null);
+	}
+
+	public Client getClient () {
+		return client;
+	}
+
+	public void setClient (Client client) {
+		this.client = client;
 	}
 
 	private void firePropertyChange(String property, Object oldValue, Object newValue) {
