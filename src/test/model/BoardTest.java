@@ -2,6 +2,7 @@
  * JUnit testing for Board class
  */
 
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
  *
  * @author Olly
  */
+
 public class BoardTest {
     
     @Test
@@ -30,6 +32,13 @@ public class BoardTest {
     public void isGameOverTest () {
             Assert.assertTrue("Is the game over", isGameOver());
     }
+    
+    @Test
+    public void isShipPlacementEqualsTest () {
+            Assert.assertTrue("Is ship placement equal", isShipPlacementEqualsCorrect());
+    }
+    
+    
     
     //checks for correct placement of ship
     public boolean isShipCorrect () {
@@ -91,5 +100,33 @@ public class BoardTest {
             
             //should return true as all ships have been sunk
             return board.gameOver();
+    }
+    
+    //checks whether shipPlacementEquals correctly tests board equality
+    public boolean isShipPlacementEqualsCorrect () {
+            model.Board board1 = new model.Board(true);
+            model.Board board2 = new model.Board(true);
+            
+            //places ships on board1
+            ArrayList<model.Ship> board1Ships = board1.getShips();
+            board1.placeShip(board1Ships.get(0), 1, 1); //AIRCRAFT_CARRIER
+            board1.placeShip(board1Ships.get(1), 0, 3); //BATTLESHIP
+            board1.placeShip(board1Ships.get(2), 2, 5); //DESTROYER
+            board1Ships.get(3).setVertical(true);
+            board1.placeShip(board1Ships.get(3), 1, 7); //PATROL_BOAT
+            board1Ships.get(4).setVertical(true);
+            board1.placeShip(board1Ships.get(4), 8, 3); //SUBMARINE
+            
+            //places ships on board2 in same locations
+            ArrayList<model.Ship> board2Ships = board2.getShips();
+            board2.placeShip(board2Ships.get(0), 1, 1); //AIRCRAFT_CARRIER
+            board2.placeShip(board2Ships.get(1), 0, 3); //BATTLESHIP
+            board2.placeShip(board2Ships.get(2), 2, 5); //DESTROYER
+            board2Ships.get(3).setVertical(true);
+            board2.placeShip(board2Ships.get(3), 1, 7); //PATROL_BOAT
+            board2Ships.get(4).setVertical(true);
+            board2.placeShip(board2Ships.get(4), 8, 3); //SUBMARINE
+            
+            return board1.shipPlacementEquals(board2);
     }
 }
