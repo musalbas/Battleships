@@ -1,5 +1,6 @@
 package model;
 
+import server.messages.ChatMessage;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
 import server.messages.NotificationMessage;
@@ -84,6 +85,7 @@ public class Client extends Thread {
                 case NotificationMessage.PLACE_SHIPS:
                     // TODO: allow player to start positioning ships
 	                view.addChatMessage ("can place ships now");
+	                ownBoard.setBoatPositionLocked (false);
 	                break;
                 case NotificationMessage.YOUR_TURN:
                     // TODO: inform player it's their turn and to make a move
@@ -135,10 +137,11 @@ public class Client extends Thread {
             } else {
                 opponentBoard.applyMove(move);
             }
+        } else if ( input instanceof ChatMessage ) {
+	        view.addChatMessage (((ChatMessage) input).getMessage ());
         }
     }
 
-	//TODO: Implement this
 	public void sendBoard (Board board) throws IOException {
         out.reset();
 		out.writeObject (board);
@@ -147,6 +150,12 @@ public class Client extends Thread {
 
 	public ClientView getView () {
 		return view;
+	}
+
+	public void sendChatMessage (String message) throws IOException {
+		System.out.println (message);
+		out.writeObject (new ChatMessage (message));
+		out.flush ();
 	}
 
 	public void sendMove (int x, int y) throws IOException {

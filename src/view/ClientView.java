@@ -14,10 +14,14 @@ import java.io.IOException;
  */
 public class ClientView extends JFrame {
 
-    private JTextArea chat = new JTextArea();
+	private final JTextField inputField = new JTextField ();
+	private final JButton submitButton = new JButton ("Submit");
+	private final JButton rotateButton = new JButton ("Rotate");
+	private final JButton saveShipState = new JButton ("Done placing ships!");
+	private JTextArea chat = new JTextArea();
     private Client model;
 
-    ClientView() {
+	ClientView () {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -38,26 +42,31 @@ public class ClientView extends JFrame {
         chat.setEditable(false);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        final JTextField inputField = new JTextField();
-        final JButton submitButton = new JButton("Submit");
         bottomPanel.add(inputField, BorderLayout.CENTER);
         bottomPanel.add(submitButton, BorderLayout.EAST);
+
+		submitButton.addActionListener (new ActionListener () {
+			@Override
+			public void actionPerformed (ActionEvent e) {
+				try {
+					model.sendChatMessage (inputField.getText ());
+				} catch (IOException e1) {
+					e1.printStackTrace ();
+				}
+			}
+		});
 
         controlPanel.add(bottomPanel, BorderLayout.SOUTH);
         controlPanel.setPreferredSize(new Dimension(200, 150));
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
-        JButton rotateButton = new JButton("Rotate");
-        JButton saveShipState = new JButton("Done placing ships!");
-
-        rotateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+		rotateButton.setEnabled (false);
+		rotateButton.addActionListener (new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent e) {
                 ShipView shipView = myBoard.getSelectedShip();
                 if (shipView != null) {
-                    shipView.rotate();
-                    repaint();
+	                myBoard.getModel ().selectedShipRotated ();
                 }
             }
         });
@@ -73,8 +82,8 @@ public class ClientView extends JFrame {
             }
         });
 
-
-        buttons.add(saveShipState);
+		saveShipState.setEnabled (false);
+		buttons.add(saveShipState);
         buttons.add(rotateButton);
 
         JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -89,7 +98,7 @@ public class ClientView extends JFrame {
 
         rootPanel.add(gamePanel, BorderLayout.CENTER);
         rootPanel.add(controlPanel, BorderLayout.EAST);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation (WindowConstants.EXIT_ON_CLOSE);
 
         setContentPane(rootPanel);
 
@@ -107,4 +116,11 @@ public class ClientView extends JFrame {
         chat.append(text + "\n");
     }
 
+	public void setSendShipState (boolean state) {
+		saveShipState.setEnabled (state);
+	}
+
+	public void setRotateButtonState (boolean state) {
+		rotateButton.setEnabled (state);
+	}
 }
