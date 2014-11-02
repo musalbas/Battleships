@@ -43,9 +43,9 @@ public class MatchRoomView extends JFrame {
             
             JList list = (JList) e.getSource();
             int index = list.locationToIndex(e.getPoint());
-            String playerName = (String) playersListModel.get(index);
+            RoomPlayer player = (RoomPlayer) playersListModel.get(index);
             
-            // Code to start game here
+            matchRoom.sendJoinFriend(player.getKey());
         }
         
     }

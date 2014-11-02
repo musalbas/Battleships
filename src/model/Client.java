@@ -21,7 +21,7 @@ public class Client extends Thread {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public Client(ClientView clientView, Board ownBoard, Board opponentBoard) {
+    public Client(ClientView clientView, Board ownBoard, Board opponentBoard, ObjectOutputStream out, ObjectInputStream in) {
         this.ownBoard = ownBoard;
         this.opponentBoard = opponentBoard;
 	    this.view = clientView;
@@ -30,19 +30,10 @@ public class Client extends Thread {
 	    ownBoard.setClient (this);
 	    opponentBoard.setClient (this);
 
-        try {
-            Socket socket = new Socket("localhost", 8900);
-            out = new ObjectOutputStream(
-                    new BufferedOutputStream(socket.getOutputStream()));
-            in = new ObjectInputStream(socket.getInputStream());
-	        out.flush ();
-	        out.writeObject (new String[]{ "join", "random" });
-	        out.flush ();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.out = out;
+        this.in = in;
 
-        start();
+        //start();
     }
 
     @Override
@@ -61,7 +52,7 @@ public class Client extends Thread {
 
     }
 
-    private void parseInput(Object input) {
+    public void parseInput(Object input) {
         if (input instanceof NotificationMessage) {
             NotificationMessage n = (NotificationMessage) input;
             switch (n.getCode()) {

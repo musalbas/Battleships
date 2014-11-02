@@ -1,13 +1,26 @@
 package view;
 
-import model.Client;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
+
+import model.Client;
 
 /**
  * Created by alexstoick on 10/15/14.
@@ -21,7 +34,7 @@ public class ClientView extends JFrame {
 	private JTextArea chat = new JTextArea();
     private Client model;
 
-	ClientView () {
+	public ClientView (ObjectOutputStream out, ObjectInputStream in) {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -35,7 +48,7 @@ public class ClientView extends JFrame {
         final BoardView myBoard = new BoardView(true);
         final BoardView enemyBoard = new BoardView(false);
 
-        model = new Client(this, myBoard.getModel(), enemyBoard.getModel());
+        model = new Client(this, myBoard.getModel(), enemyBoard.getModel(), out, in);
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
         controlPanel.add(new JScrollPane(chat), BorderLayout.CENTER);
@@ -109,7 +122,7 @@ public class ClientView extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ClientView();
+        //new ClientView();
     }
 
     public void addChatMessage(String text) {
@@ -122,5 +135,9 @@ public class ClientView extends JFrame {
 
 	public void setRotateButtonState (boolean state) {
 		rotateButton.setEnabled (state);
+	}
+	
+	public Client getModel() {
+	    return this.model;
 	}
 }

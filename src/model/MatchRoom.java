@@ -7,7 +7,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
+import javax.swing.JFrame;
+
 import server.messages.MatchRoomListMessage;
+import server.messages.NotificationMessage;
+import view.ClientView;
 import view.MatchRoomView;
 
 public class MatchRoom extends Thread {
@@ -15,6 +19,7 @@ public class MatchRoom extends Thread {
     private MatchRoomView matchRoomView;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private volatile Client clientModel;
 
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
@@ -40,11 +45,25 @@ public class MatchRoom extends Thread {
         Object input;
         try {
             while ((input = in.readObject()) != null) {
-                parseInput(input);
+                if (clientModel != null) {
+                    clientModel.parseInput(input);
+                } else {
+                    parseInput(input);
+                }
             }
+            System.out.println("stopped");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void sendJoinFriend(String key) {
+        try {
+            out.writeObject(new String[]{"join", "join", key});
+            out.flush();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -62,7 +81,20 @@ public class MatchRoom extends Thread {
         if (input instanceof MatchRoomListMessage) {
             HashMap<String, String> matchRoomList = ((MatchRoomListMessage) input).getMatchRoomList();
             this.matchRoomView.updateMatchRoomList(matchRoomList);
+        } else if (input instanceof NotificationMessage) {
+            NotificationMessage n = (NotificationMessage) input;
+            switch (n.getCode()) {
+                case NotificationMessage.OPPONENTS_NAME:
+                    startGame(input);
+                    break;
+            }
         }
+    }
+    
+    private void startGame(Object firstInput) {
+        ClientView clientView = new ClientView(this.out, this.in);
+        clientModel = clientView.getModel();
+        clientModel.parseInput(firstInput);
     }
     
 }
