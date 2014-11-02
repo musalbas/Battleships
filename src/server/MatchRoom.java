@@ -81,9 +81,10 @@ public class MatchRoom {
 	 */
 	private synchronized void joinFriend (Player player, String key) {
 		Player opponent = waitingPlayerList.remove (key);
-		waitingPlayerList.values().remove(player);
 		if ( opponent != null ) {
+			waitingPlayerList.values ().remove (player);
 			new Game (opponent, player);
+			sendMatchRoomList ();
 		} else {
 			player.writeMessage ("That game does not exist");
 		}
