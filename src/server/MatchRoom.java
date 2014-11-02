@@ -82,7 +82,7 @@ public class MatchRoom {
 	private synchronized void joinFriend (Player player, String key) {
 		Player opponent = waitingPlayerList.remove (key);
 		if ( opponent != null ) {
-			waitingPlayerList.values().remove(player);
+			waitingPlayerList.values ().remove (player);
 			new Game (opponent, player);
 			sendMatchRoomList ();
 		} else {
