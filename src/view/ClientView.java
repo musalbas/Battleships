@@ -1,26 +1,17 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import model.Client;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-
-import model.Client;
 
 /**
  * Created by alexstoick on 10/15/14.
@@ -34,7 +25,7 @@ public class ClientView extends JFrame {
 	private JTextArea chat = new JTextArea();
     private Client model;
 
-	public ClientView (ObjectOutputStream out, ObjectInputStream in) {
+	public ClientView (ObjectOutputStream out, final ObjectInputStream in) {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -51,21 +42,32 @@ public class ClientView extends JFrame {
         model = new Client(this, myBoard.getModel(), enemyBoard.getModel(), out, in);
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
-        controlPanel.add(new JScrollPane(chat), BorderLayout.CENTER);
-        chat.setEditable(false);
+		JScrollPane chatScrollPane = new JScrollPane (chat);
+
+		chatScrollPane.getVerticalScrollBar ().addAdjustmentListener (new AdjustmentListener () {
+			public void adjustmentValueChanged (AdjustmentEvent e) {
+				e.getAdjustable ().setValue (e.getAdjustable ().getMaximum ());
+			}
+		});
+
+		controlPanel.add (chatScrollPane, BorderLayout.CENTER);
+		chat.setEditable(false);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(inputField, BorderLayout.CENTER);
         bottomPanel.add(submitButton, BorderLayout.EAST);
 
+		inputField.addActionListener (new ActionListener () {
+			@Override
+			public void actionPerformed (ActionEvent e) {
+				sendChatMessage ();
+			}
+		});
+
 		submitButton.addActionListener (new ActionListener () {
 			@Override
 			public void actionPerformed (ActionEvent e) {
-				try {
-					model.sendChatMessage (inputField.getText ());
-				} catch (IOException e1) {
-					e1.printStackTrace ();
-				}
+				sendChatMessage ();
 			}
 		});
 
@@ -124,6 +126,15 @@ public class ClientView extends JFrame {
     public static void main(String[] args) {
         //new ClientView();
     }
+
+	public void sendChatMessage () {
+		try {
+			model.sendChatMessage (inputField.getText ());
+			inputField.setText ("");
+		} catch (IOException e1) {
+			e1.printStackTrace ();
+		}
+	}
 
     public void addChatMessage(String text) {
         chat.append(text + "\n");
