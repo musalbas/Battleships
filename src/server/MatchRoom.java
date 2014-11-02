@@ -81,6 +81,7 @@ public class MatchRoom {
 	 */
 	private synchronized void joinFriend (Player player, String key) {
 		Player opponent = waitingPlayerList.remove (key);
+		waitingPlayerList.values().remove(player);
 		if ( opponent != null ) {
 			new Game (opponent, player);
 		} else {
