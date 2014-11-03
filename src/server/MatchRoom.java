@@ -81,8 +81,8 @@ public class MatchRoom {
 	private synchronized void joinFriend (Player player, String key) {
 		Player opponent = waitingPlayerList.remove (key);
 		if (player == opponent) {
-			player.writeObject(new NotificationMessage(NotificationMessage.CANNOT_PLAY_YOURSELF));
-			waitingPlayerList.put(key, opponent);
+			player.writeNotification (NotificationMessage.CANNOT_PLAY_YOURSELF);
+			waitingPlayerList.put (key, opponent);
 			return;
 		}
 		if ( opponent != null ) {
