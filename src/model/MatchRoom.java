@@ -20,6 +20,7 @@ public class MatchRoom extends Thread {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private volatile Client clientModel;
+    private String key = "";
 
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
@@ -84,6 +85,11 @@ public class MatchRoom extends Thread {
         } else if (input instanceof NotificationMessage) {
             NotificationMessage n = (NotificationMessage) input;
             switch (n.getCode()) {
+                case NotificationMessage.GAME_TOKEN:
+                    if (n.getText().length == 1) {
+                        key = n.getText()[0];
+                    }
+                    break;
                 case NotificationMessage.OPPONENTS_NAME:
                     startGame(input);
                     break;
@@ -95,6 +101,10 @@ public class MatchRoom extends Thread {
         ClientView clientView = new ClientView(this.out, this.in);
         clientModel = clientView.getModel();
         clientModel.parseInput(firstInput);
+    }
+
+    public String getKey() {
+        return key;
     }
     
 }
