@@ -29,10 +29,10 @@ public class Game {
 		this.player2 = player2;
 		player1.setGame (this);
 		player2.setGame (this);
-		player1.writeObject (new NotificationMessage (
-				NotificationMessage.OPPONENTS_NAME, player2.getPlayerName ()));
-		player2.writeObject (new NotificationMessage (
-				NotificationMessage.OPPONENTS_NAME, player1.getPlayerName ()));
+		player1.writeNotification (NotificationMessage.OPPONENTS_NAME,
+				player2.getPlayerName ());
+		player2.writeNotification (NotificationMessage.OPPONENTS_NAME,
+				player1.getPlayerName ());
 		NotificationMessage placeShipsMessage =
 				new NotificationMessage (NotificationMessage.PLACE_SHIPS);
 		player1.writeObject (placeShipsMessage);
@@ -86,22 +86,19 @@ public class Game {
 
 	public synchronized void applyMove (MoveMessage move, Player player) {
 		if (player != turn) {
-			player.writeObject (new NotificationMessage (
-					NotificationMessage.NOT_YOUR_TURN));
+			player.writeNotification (NotificationMessage.NOT_YOUR_TURN);
 			return;
 		}
 		int x = move.getX ();
 		int y = move.getY ();
 		int max = player.getBoard ().BOARD_DIMENSION;
 		if ( x < 0 || x >= max || y < 0 || y >= max ) {
-			player.writeObject (new NotificationMessage (
-					NotificationMessage.INVALID_MOVE));
+			player.writeNotification(NotificationMessage.INVALID_MOVE);
 		} else {
 			Player opponent = getOpponent (player);
 			Square square = opponent.getBoard ().getSquare (x, y);
 			if ( square.isGuessed () ) {
-				player.writeObject (new NotificationMessage (
-						NotificationMessage.REPEATED_MOVE));
+				player.writeNotification(NotificationMessage.REPEATED_MOVE);
 				return;
 			}
 			boolean hit = square.guess ();
@@ -118,10 +115,8 @@ public class Game {
 			opponent.writeObject (response);
 			if ( opponent.getBoard ().gameOver () ) {
 				opponent.getBoard ().printBoard (false);
-				turn.writeObject (new NotificationMessage (
-						NotificationMessage.GAME_WIN));
-				opponent.writeObject (new NotificationMessage (
-						NotificationMessage.GAME_LOSE));
+				turn.writeNotification (NotificationMessage.GAME_WIN);
+				opponent.writeNotification(NotificationMessage.GAME_LOSE);
 				turn = null;
 			} else if ( hit ) {
 				setTurn (player); // player gets another go if hit
@@ -143,17 +138,13 @@ public class Game {
 				killGame ();
 			} else if ( player1.getBoard () == null ) {
 				// Player1 failed to place ships in time
-				player1.writeObject (new NotificationMessage (
-						NotificationMessage.TIMEOUT_LOSE));
-				player2.writeObject (new NotificationMessage (
-						NotificationMessage.TIMEOUT_WIN));
+				player1.writeNotification (NotificationMessage.TIMEOUT_LOSE);
+				player2.writeNotification (NotificationMessage.TIMEOUT_WIN);
 				killGame ();
 			} else if ( player2.getBoard () == null ) {
 				// Player2 failed to place ships in time
-				player1.writeObject (new NotificationMessage (
-						NotificationMessage.TIMEOUT_WIN));
-				player2.writeObject (new NotificationMessage (
-						NotificationMessage.TIMEOUT_LOSE));
+				player1.writeNotification (NotificationMessage.TIMEOUT_WIN);
+				player2.writeNotification(NotificationMessage.TIMEOUT_LOSE);
 				killGame ();
 			}
 		}
@@ -164,10 +155,9 @@ public class Game {
 		@Override
 		public void run () {
 			if ( turn != null ) {
-				turn.writeObject (new NotificationMessage (
-						NotificationMessage.TIMEOUT_LOSE));
-				getOpponent (turn).writeObject (new NotificationMessage (
-						NotificationMessage.TIMEOUT_WIN));
+				turn.writeNotification (NotificationMessage.TIMEOUT_LOSE);
+				getOpponent (turn).writeNotification (
+						NotificationMessage.TIMEOUT_WIN);
 				killGame ();
 			}
 		}
