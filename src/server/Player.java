@@ -52,8 +52,13 @@ public class Player extends Thread {
 								}
 								break;
 							case "name":
-								if ( length == 2 && !matchRoom.playerNameExists(array[ 1 ]) && !array[ 1 ].equals("") ) {
+								if ( length != 2 || array[ 1 ].equals("")) {
+									writeNotification(NotificationMessage.INVALID_NAME);
+								} else if ( matchRoom.playerNameExists(array[ 1 ])) {
+									writeNotification(NotificationMessage.NAME_TAKEN);
+								} else {
 									name = array[ 1 ];
+									writeNotification(NotificationMessage.NAME_ACCEPTED);
 									matchRoom.sendMatchRoomList();
 								}
 								break;
