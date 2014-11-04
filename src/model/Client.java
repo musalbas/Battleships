@@ -21,6 +21,8 @@ public class Client extends Thread {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+	private String opponentName = "Player";
+
     public Client(ClientView clientView, Board ownBoard, Board opponentBoard, ObjectOutputStream out, ObjectInputStream in) {
         this.ownBoard = ownBoard;
         this.opponentBoard = opponentBoard;
@@ -59,6 +61,9 @@ public class Client extends Thread {
                 case NotificationMessage.OPPONENTS_NAME:
                     // TODO: handle receiving opponents name
 	                view.addChatMessage ("received opponents_name");
+	                if (n.getText().length == 1) {
+		                opponentName = n.getText()[0];
+	                }
 	                break;
 	            case NotificationMessage.BOARD_ACCEPTED:
 		            //TODO: board is good, can start game
@@ -153,4 +158,8 @@ public class Client extends Thread {
 		out.writeObject(new MoveMessage(x, y));
         out.flush();
     }
+
+	public String getOpponentName() {
+		return opponentName;
+	}
 }

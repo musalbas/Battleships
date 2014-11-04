@@ -62,16 +62,13 @@ public class Player extends Thread {
 				} else if ( input instanceof Board ) {
 					Board board = (Board) input;
 					if ( Board.isValid (board) && game != null ) {
-                        writeObject(new NotificationMessage(
-                                NotificationMessage.BOARD_ACCEPTED));
+                        writeNotification (NotificationMessage.BOARD_ACCEPTED);
 						this.board = board;
 						game.checkBoards ();
 					} else if ( game == null ) {
-						writeObject(new NotificationMessage(
-                                NotificationMessage.NOT_IN_GAME));
+						writeNotification (NotificationMessage.NOT_IN_GAME);
 					} else {
-						writeObject(new NotificationMessage(
-                                NotificationMessage.INVALID_BOARD));
+						writeNotification (NotificationMessage.INVALID_BOARD);
 					}
 				} else if ( input instanceof MoveMessage ) {
 					if ( game != null ) {
@@ -125,6 +122,17 @@ public class Player extends Thread {
 		try {
 			out.writeObject (object);
 			out.flush ();
+		} catch (IOException e) {
+			e.printStackTrace ();
+		}
+	}
+
+	public void writeNotification (int notificationMessage, String... text) {
+		try {
+			NotificationMessage nm = new
+					NotificationMessage (notificationMessage, text);
+			out.writeObject (nm);
+			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace ();
 		}

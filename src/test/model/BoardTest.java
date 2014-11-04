@@ -3,6 +3,7 @@
  */
 
 import java.util.ArrayList;
+import model.Ship;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -36,6 +37,11 @@ public class BoardTest {
     @Test
     public void isShipPlacementEqualsTest () {
             Assert.assertTrue("Is ship placement equal", isShipPlacementEqualsCorrect());
+    }
+    
+    @Test
+    public void isSquareNearShipTest () {
+            Assert.assertTrue("Is square near ship", isSquareNearShipCorrect());
     }
     
     
@@ -128,5 +134,24 @@ public class BoardTest {
             board2.placeShip(board2Ships.get(4), 8, 3); //SUBMARINE
             
             return board1.shipPlacementEquals(board2);
+    }
+    
+    public boolean isSquareNearShipCorrect () {
+        
+        model.Board board = new model.Board(true);
+        model.Ship ship = board.getShips().get(0); //AIRCRAFT_CARRIER
+        board.placeShip(ship, 3, 2);
+        
+        for ( int i = 0; i < board.BOARD_DIMENSION; i++ ) {
+                for ( int j = 0; j < board.BOARD_DIMENSION; j++ ) {
+                        //checks each square for correct near-ship status
+                        if ( (i >= 2 && i <= 8 && j >= 1 && j <= 3 && !board.isSquareNearShip(board.getSquare(i, j))) ||
+                            (!(i >= 2 && i <= 8 && j >= 1 && j <= 3) && board.isSquareNearShip(board.getSquare(i, j)))) {
+                                return false;
+                        }
+                }
+        }
+        
+        return true;
     }
 }

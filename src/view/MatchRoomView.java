@@ -94,9 +94,11 @@ public class MatchRoomView extends JFrame {
         this.playersListModel.clear();
         for (Map.Entry<String, String> entry : matchRoomList.entrySet()) {
             String key = entry.getKey();
-            String name = entry.getValue();
-            RoomPlayer player = new RoomPlayer(key, name);
-            this.playersListModel.addElement(player);
+            if (!key.equals(matchRoom.getKey())) {
+                String name = entry.getValue();
+                RoomPlayer player = new RoomPlayer(key, name);
+                this.playersListModel.addElement(player);
+            }
         }
     }
 

@@ -18,6 +18,7 @@ public class NotificationMessage extends ServerMessage implements Serializable {
 
     public final static int GAME_TOKEN = 401;
     public final static int GAME_NOT_FOUND = 402;
+	public final static int CANNOT_PLAY_YOURSELF = 403;
 
     public final static int REPEATED_MOVE = 501;
     public final static int NOT_YOUR_TURN = 502;

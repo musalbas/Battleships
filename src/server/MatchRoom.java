@@ -67,8 +67,7 @@ public class MatchRoom {
 		}
 		String key = keyBuilder.toString ();
 		waitingPlayerList.put (key, player);
-		player.writeObject (new NotificationMessage (
-				NotificationMessage.GAME_TOKEN, key));
+		player.writeNotification(NotificationMessage.GAME_TOKEN, key);
 		sendMatchRoomList();
 	}
 
@@ -81,9 +80,15 @@ public class MatchRoom {
 	 */
 	private synchronized void joinFriend (Player player, String key) {
 		Player opponent = waitingPlayerList.remove (key);
-		waitingPlayerList.values().remove(player);
+		if (player == opponent) {
+			player.writeNotification (NotificationMessage.CANNOT_PLAY_YOURSELF);
+			waitingPlayerList.put (key, opponent);
+			return;
+		}
 		if ( opponent != null ) {
+			waitingPlayerList.values ().remove (player);
 			new Game (opponent, player);
+			sendMatchRoomList ();
 		} else {
 			player.writeMessage ("That game does not exist");
 		}
