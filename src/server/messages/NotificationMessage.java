@@ -15,10 +15,13 @@ public class NotificationMessage extends ServerMessage implements Serializable {
     public final static int TIMEOUT_DRAW = 205;
 
     public final static int OPPONENTS_NAME = 301;
+    public final static int INVALID_NAME = 302;
+    public final static int NAME_TAKEN = 303;
+    public final static int NAME_ACCEPTED = 304;
 
     public final static int GAME_TOKEN = 401;
     public final static int GAME_NOT_FOUND = 402;
-	public final static int CANNOT_PLAY_YOURSELF = 403;
+    public final static int CANNOT_PLAY_YOURSELF = 403;
 
     public final static int REPEATED_MOVE = 501;
     public final static int NOT_YOUR_TURN = 502;
