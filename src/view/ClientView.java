@@ -10,14 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import model.Client;
@@ -31,16 +24,13 @@ public class ClientView extends JFrame {
 	private final JButton submitButton = new JButton ("Submit");
 	private final JButton rotateButton = new JButton ("Rotate");
 	private final JButton saveShipState = new JButton ("Done placing ships!");
-	private JTextArea chat = new JTextArea();
+	private JList<String> chat = new JList<>();
+    private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
 
 	public ClientView (ObjectOutputStream out, ObjectInputStream in) {
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            // TODO handle
-        }
+        chat.setModel(chatModel);
 
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
         rootPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -52,7 +42,6 @@ public class ClientView extends JFrame {
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
         controlPanel.add(new JScrollPane(chat), BorderLayout.CENTER);
-        chat.setEditable(false);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(inputField, BorderLayout.CENTER);
@@ -126,7 +115,7 @@ public class ClientView extends JFrame {
     }
 
     public void addChatMessage(String text) {
-        chat.append(text + "\n");
+        chatModel.addElement("<html><b>" + text + "</b></html>"+ "\n");
     }
 
 	public void setSendShipState (boolean state) {
