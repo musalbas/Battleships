@@ -69,7 +69,23 @@ public class MatchRoomView extends JFrame {
                 message = "You must choose a valid nickname.";
             } else {
                 this.matchRoom.sendName(name);
-                break;
+                synchronized (matchRoom) {
+                    try {
+                        if (matchRoom.getNameState() == MatchRoom.NameState.WAITING) {
+                            matchRoom.wait();
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                MatchRoom.NameState state = matchRoom.getNameState();
+                if (state == MatchRoom.NameState.ACCEPTED) {
+                    break;
+                } else if (state == MatchRoom.NameState.INVALID) {
+                    message = "You must choose a valid nickname.";
+                } else if (state == MatchRoom.NameState.TAKEN) {
+                    message = "This nickname already exists, please try again.";
+                }
             }
         }
     }
@@ -84,11 +100,11 @@ public class MatchRoomView extends JFrame {
         return exists;
     }
 
-    public void updateMatchRoomList(HashMap<String, String> matchRoomList) {
+    public synchronized void updateMatchRoomList(HashMap<String, String> matchRoomList) {
         this.matchRoomList = matchRoomList;
         if (firstTimeListing) {
-            askForName();
             firstTimeListing = false;
+            askForName();
         }
 
         this.playersListModel.clear();

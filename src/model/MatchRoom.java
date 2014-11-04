@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.*;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,6 +22,7 @@ public class MatchRoom extends Thread {
     private ObjectInputStream in;
     private volatile Client clientModel;
     private String key = "";
+    private volatile NameState nameState;
 
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
@@ -46,6 +48,7 @@ public class MatchRoom extends Thread {
         Object input;
         try {
             while ((input = in.readObject()) != null) {
+                System.out.println(input);
                 if (clientModel != null) {
                     clientModel.parseInput(input);
                 } else {
@@ -70,6 +73,7 @@ public class MatchRoom extends Thread {
     }
     
     public void sendName(String name) {
+        this.nameState = NameState.WAITING;
         try {
             out.writeObject(new String[]{ "name", name });
             out.flush();
@@ -77,11 +81,31 @@ public class MatchRoom extends Thread {
             e.printStackTrace();
         }
     }
-    
+
+    public static enum NameState {
+        WAITING, ACCEPTED, INVALID, TAKEN
+    }
+
+    public void setNameState(NameState nameState) {
+        synchronized (this) {
+            this.nameState = nameState;
+            this.notifyAll();
+        }
+    }
+
+    public NameState getNameState() {
+        return nameState;
+    }
+
     private void parseInput(Object input) {
         if (input instanceof MatchRoomListMessage) {
-            HashMap<String, String> matchRoomList = ((MatchRoomListMessage) input).getMatchRoomList();
-            this.matchRoomView.updateMatchRoomList(matchRoomList);
+            final HashMap<String, String> matchRoomList = ((MatchRoomListMessage) input).getMatchRoomList();
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    matchRoomView.updateMatchRoomList(matchRoomList);
+                }
+            });
         } else if (input instanceof NotificationMessage) {
             NotificationMessage n = (NotificationMessage) input;
             switch (n.getCode()) {
@@ -93,6 +117,14 @@ public class MatchRoom extends Thread {
                 case NotificationMessage.OPPONENTS_NAME:
                     startGame(input);
                     break;
+                case NotificationMessage.NAME_ACCEPTED:
+                    setNameState(NameState.ACCEPTED);
+                    break;
+                case NotificationMessage.NAME_TAKEN:
+                    setNameState(NameState.TAKEN);
+                    break;
+                case NotificationMessage.INVALID_NAME:
+                    setNameState(NameState.INVALID);
             }
         }
     }
