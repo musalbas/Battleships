@@ -17,20 +17,16 @@ import java.io.ObjectOutputStream;
  */
 public class ClientView extends JFrame {
 
-	private final JTextField inputField = new JTextField ();
-	private final JButton submitButton = new JButton ("Submit");
-	private final JButton rotateButton = new JButton ("Rotate");
-	private final JButton saveShipState = new JButton ("Done placing ships!");
-	private JTextArea chat = new JTextArea();
+    private final JTextField inputField = new JTextField();
+    private final JButton submitButton = new JButton("Submit");
+    private final JButton rotateButton = new JButton("Rotate");
+    private final JButton saveShipState = new JButton("Done placing ships!");
+    private JList<String> chat = new JList<>();
+    private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
 
-	public ClientView (ObjectOutputStream out, final ObjectInputStream in) {
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            // TODO handle
-        }
+    public ClientView(ObjectOutputStream out, final ObjectInputStream in) {
+        chat.setModel(chatModel);
 
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
         rootPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -41,42 +37,45 @@ public class ClientView extends JFrame {
         model = new Client(this, myBoard.getModel(), enemyBoard.getModel(), out, in);
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
-		JScrollPane chatScrollPane = new JScrollPane (chat);
+        JScrollPane chatScrollPane = new JScrollPane(chat);
 
-		controlPanel.add (chatScrollPane, BorderLayout.CENTER);
-		chat.setEditable(false);
-		DefaultCaret chatCaret = (DefaultCaret) chat.getCaret ();
-		chatCaret.setUpdatePolicy (DefaultCaret.ALWAYS_UPDATE);
+        chatScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+            }
+        });
+
+        controlPanel.add(chatScrollPane, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(inputField, BorderLayout.CENTER);
         bottomPanel.add(submitButton, BorderLayout.EAST);
 
-		inputField.addActionListener (new ActionListener () {
-			@Override
-			public void actionPerformed (ActionEvent e) {
-				sendChatMessage ();
-			}
-		});
+        inputField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendChatMessage();
+            }
+        });
 
-		submitButton.addActionListener (new ActionListener () {
-			@Override
-			public void actionPerformed (ActionEvent e) {
-				sendChatMessage ();
-			}
-		});
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendChatMessage();
+            }
+        });
 
         controlPanel.add(bottomPanel, BorderLayout.SOUTH);
         controlPanel.setPreferredSize(new Dimension(200, 150));
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-		rotateButton.setEnabled (false);
-		rotateButton.addActionListener (new ActionListener () {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+        rotateButton.setEnabled(false);
+        rotateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 ShipView shipView = myBoard.getSelectedShip();
                 if (shipView != null) {
-	                myBoard.getModel ().selectedShipRotated ();
+                    myBoard.getModel().selectedShipRotated();
                 }
             }
         });
@@ -92,8 +91,8 @@ public class ClientView extends JFrame {
             }
         });
 
-		saveShipState.setEnabled (false);
-		buttons.add(saveShipState);
+        saveShipState.setEnabled(false);
+        buttons.add(saveShipState);
         buttons.add(rotateButton);
 
         JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -108,7 +107,7 @@ public class ClientView extends JFrame {
 
         rootPanel.add(gamePanel, BorderLayout.CENTER);
         rootPanel.add(controlPanel, BorderLayout.EAST);
-		setDefaultCloseOperation (WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setContentPane(rootPanel);
 
@@ -122,28 +121,28 @@ public class ClientView extends JFrame {
         //new ClientView();
     }
 
-	public void sendChatMessage () {
-		try {
-			model.sendChatMessage (inputField.getText ());
-			inputField.setText ("");
-		} catch (IOException e1) {
-			e1.printStackTrace ();
-		}
-	}
-
-    public void addChatMessage(String text) {
-        chat.append(text + "\n");
+    public void sendChatMessage() {
+        try {
+            model.sendChatMessage(inputField.getText());
+            inputField.setText("");
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
-	public void setSendShipState (boolean state) {
-		saveShipState.setEnabled (state);
-	}
+    public void addChatMessage(String text) {
+        chatModel.addElement("<html><b>" + text + "</b></html>" + "\n");
+    }
 
-	public void setRotateButtonState (boolean state) {
-		rotateButton.setEnabled (state);
-	}
-	
-	public Client getModel() {
-	    return this.model;
-	}
+    public void setSendShipState(boolean state) {
+        saveShipState.setEnabled(state);
+    }
+
+    public void setRotateButtonState(boolean state) {
+        rotateButton.setEnabled(state);
+    }
+
+    public Client getModel() {
+        return this.model;
+    }
 }
