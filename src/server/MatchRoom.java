@@ -130,6 +130,7 @@ public class MatchRoom {
 			waitingRandomPlayer = null;
 		} else {
 			waitingPlayerList.values ().remove (player);
+			sendMatchRoomList ();
 		}
 	}
 	
