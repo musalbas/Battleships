@@ -55,9 +55,12 @@ public class Player extends Thread {
 
 						switch (message) {
 							case "join":
-								if ( game == null ) {
-									matchRoom.join (this, array);
+								if ( game != null ) {
+									// TODO: check if game over
+									game.killGame();
+									game = null;
 								}
+								matchRoom.join (this, array);
 								break;
 							case "name":
 								if ( length != 2 || array[ 1 ].equals("")) {
