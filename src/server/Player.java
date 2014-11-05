@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Player extends Thread {
 
@@ -19,10 +22,15 @@ public class Player extends Thread {
 	private ObjectOutputStream out;
 	private Game game;
 	private Board board;
+	private HashMap<String, Player> requestList;
+	private String ownKey;
+	private String requestedGameKey;
+	private Timer requestTimer;
 
 	public Player (Socket socket, MatchRoom matchRoom) {
 		this.socket = socket;
 		this.matchRoom = matchRoom;
+		this.requestList = new HashMap<>();
 	}
 
 	@Override
@@ -145,6 +153,55 @@ public class Player extends Thread {
 
 	public Board getBoard () {
 		return this.board;
+	}
+
+	public synchronized void sendRequest(Player requester) {
+		requestList.put(requester.getOwnKey(), requester);
+		requester.requestedGameKey = this.ownKey;
+		requester.startTimer(this);
+		writeNotification(
+                NotificationMessage.NEW_JOIN_GAME_REQUEST,
+                requester.getOwnKey(), requester.getPlayerName()
+        );
+	}
+
+	public synchronized void requestAccepted(Player opponent) {
+		cancelTimer();
+		opponent.requestList.remove(ownKey);
+		requestedGameKey = null;
+		opponent.writeNotification(NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED);
+	}
+
+	public synchronized void requestRejected(Player opponent) {
+		cancelTimer();
+		opponent.requestList.remove(ownKey);
+	    requestedGameKey = null;
+        opponent.writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
+	}
+
+	public void setOwnKey(String ownKey) {
+		this.ownKey = ownKey;
+	}
+
+	public String getOwnKey() {
+		return ownKey;
+	}
+
+	public void startTimer(final Player opponent) {
+		requestTimer = new Timer();
+		requestTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				requestRejected(opponent);
+			}
+		}, 30000);
+	}
+
+	private void cancelTimer() {
+		if (requestTimer != null) {
+			requestTimer.cancel();
+			requestTimer = null;
+		}
 	}
 
 }
