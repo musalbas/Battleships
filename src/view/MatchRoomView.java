@@ -22,7 +22,6 @@ public class MatchRoomView extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.matchRoom = new MatchRoom(this);
 
         JList playersList = new JList();
         playersList.setModel(this.playersListModel);
@@ -32,6 +31,8 @@ public class MatchRoomView extends JFrame {
 
         setVisible(true);
         setSize(180, 400);
+
+        this.matchRoom = new MatchRoom(this);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
