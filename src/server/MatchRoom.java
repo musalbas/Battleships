@@ -149,11 +149,13 @@ public class MatchRoom {
 		for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
 		    String key = entry.getKey();
 		    Player player = entry.getValue();
-		    matchRoomList.put(key, player.getPlayerName());
+			System.out.println(player.getPlayerName());
+			matchRoomList.put(key, player.getPlayerName());
 		}
+		MatchRoomListMessage message = new MatchRoomListMessage(matchRoomList);
 		for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
 		    Player player = entry.getValue();
-		    player.writeObject(new MatchRoomListMessage(matchRoomList));
+			player.writeObject(message);
 		}
 	}
 
