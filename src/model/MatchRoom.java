@@ -8,8 +8,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
-import javax.swing.JFrame;
-
 import server.messages.MatchRoomListMessage;
 import server.messages.NotificationMessage;
 import view.ClientView;
@@ -125,6 +123,20 @@ public class MatchRoom extends Thread {
                     break;
                 case NotificationMessage.INVALID_NAME:
                     setNameState(NameState.INVALID);
+                    break;
+                case NotificationMessage.NEW_JOIN_GAME_REQUEST:
+                    try {
+                        out.writeObject(new String[]{"join", "accept", n.getText()[0]});
+                        out.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case NotificationMessage.JOIN_GAME_REQUEST_REJECTED:
+                    System.out.println("Join request rejected");
+                    break;
+                case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
+                    System.out.println("Join request accepted");
             }
         }
     }

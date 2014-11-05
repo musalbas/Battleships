@@ -31,9 +31,15 @@ public class MatchRoom {
 				break;
 			case "join":
 				if ( args.length == 3 ) {
-					joinFriend (player, args[ 2 ]);
+					//joinFriend (player, args[ 2 ]);
+					joinRequest (player, args[ 2 ]);
 				}
 				break;
+			case "accept":
+                System.out.println("Received acceptance");
+                if (args.length == 3) {
+					acceptRequest(player, args[ 2 ]);
+				}
 		}
 	}
 
@@ -66,6 +72,7 @@ public class MatchRoom {
 			keyBuilder.append (ALPHABET.charAt (random.nextInt (length)));
 		}
 		String key = keyBuilder.toString ();
+		player.setOwnKey(key);
 		waitingPlayerList.put (key, player);
 		player.writeNotification(NotificationMessage.GAME_TOKEN, key);
 		sendMatchRoomList();
@@ -79,18 +86,37 @@ public class MatchRoom {
 	 * @param key
 	 */
 	private synchronized void joinFriend (Player player, String key) {
-		Player opponent = waitingPlayerList.remove (key);
+		Player opponent = waitingPlayerList.remove(key);
 		if (player == opponent) {
 			player.writeNotification (NotificationMessage.CANNOT_PLAY_YOURSELF);
-			waitingPlayerList.put (key, opponent);
+			waitingPlayerList.put(key, opponent);
 			return;
 		}
 		if ( opponent != null ) {
 			waitingPlayerList.values ().remove (player);
 			new Game (opponent, player);
-			sendMatchRoomList ();
+			sendMatchRoomList();
 		} else {
 			player.writeMessage ("That game does not exist");
+		}
+	}
+
+	private synchronized void joinRequest(Player player, String key) {
+		Player opponent = waitingPlayerList.get(key);
+		if (player == opponent) {
+			player.writeNotification(NotificationMessage.CANNOT_PLAY_YOURSELF);
+		} else if (opponent != null) {
+			opponent.sendRequest(player);
+		}
+	}
+
+	private synchronized void acceptRequest(Player player, String key) {
+		Player opponent = waitingPlayerList.remove(key);
+		if (opponent != null) {
+			waitingPlayerList.values().remove(player);
+			opponent.requestAccepted(player);
+			new Game( opponent, player );
+			sendMatchRoomList ();
 		}
 	}
 
@@ -108,26 +134,26 @@ public class MatchRoom {
 	}
 	
 	public boolean playerNameExists(String name) {
-	    boolean exists = false;
-            for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
-                if (entry.getValue().equals(name)) {
-                    return true;
-                }
-            }
-	    return exists;
+		boolean exists = false;
+		for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+		    if (entry.getValue().equals(name)) {
+		        return true;
+		    }
+		}
+		return exists;
 	}
 	
 	public synchronized void sendMatchRoomList () {
-	    HashMap<String, String> matchRoomList = new HashMap<String, String>();
-	    for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
-	        String key = entry.getKey();
-	        Player player = entry.getValue();
-	        matchRoomList.put(key, player.getPlayerName());
-	    }
-            for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
-                Player player = entry.getValue();
-                player.writeObject(new MatchRoomListMessage(matchRoomList));
-            }
+		HashMap<String, String> matchRoomList = new HashMap<String, String>();
+		for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+		    String key = entry.getKey();
+		    Player player = entry.getValue();
+		    matchRoomList.put(key, player.getPlayerName());
+		}
+		for (Map.Entry<String, Player> entry: waitingPlayerList.entrySet()) {
+		    Player player = entry.getValue();
+		    player.writeObject(new MatchRoomListMessage(matchRoomList));
+		}
 	}
 
 }
