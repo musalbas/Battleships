@@ -101,8 +101,9 @@ public class Player extends Thread {
             }
         } catch (IOException e) {
             if (game != null) {
+                Player opponent = game.getOpponent(this);
+                opponent.writeNotification(NotificationMessage.OPPONENT_DISCONNECTED);
                 game.killGame();
-                // TODO: Alert other player they win
             } else {
                 matchRoom.removeWaitingPlayer(this);
             }

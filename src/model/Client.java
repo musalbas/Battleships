@@ -131,6 +131,9 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.REPEATED_MOVE:
                 view.addChatMessage("REPEATED_MOVE");
+                break;
+            case NotificationMessage.OPPONENT_DISCONNECTED:
+                view.addChatMessage("OPPONENT_DISCONNECTED");
             }
         } else if (input instanceof MoveResponseMessage) {
             MoveResponseMessage move = (MoveResponseMessage) input;
