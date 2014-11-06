@@ -130,6 +130,7 @@ public class MatchRoom extends Thread {
                 }
                 break;
             case NotificationMessage.OPPONENTS_NAME:
+                disposeAllPanes();
                 startGame(input);
                 break;
             case NotificationMessage.NAME_ACCEPTED:
@@ -161,9 +162,6 @@ public class MatchRoom extends Thread {
                 break;
             case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
                 System.out.println("Join request accepted");
-                if (inviteSentPane != null) {
-                    inviteSentPane.dispose();
-                }
                 break;
             case NotificationMessage.JOIN_GAME_REQUEST_CANCELLED:
                 System.out.println("cancelled");
@@ -206,6 +204,15 @@ public class MatchRoom extends Thread {
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void disposeAllPanes() {
+        for (InviteReceivedPane pane : inviteDialogs.values()) {
+            pane.dispose();
+        }
+        if (inviteSentPane != null) {
+            inviteSentPane.dispose();
         }
     }
 }

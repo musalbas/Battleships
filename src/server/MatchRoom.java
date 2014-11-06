@@ -36,11 +36,14 @@ public class MatchRoom {
             }
             break;
         case "accept":
-            System.out.println("Received acceptance");
             if (args.length == 3) {
                 acceptRequest(player, args[2]);
             }
             break;
+        case "reject":
+            if (args.length == 3) {
+                rejectRequest(player, args[2]);
+            }
         case "cancel":
             if (args.length == 2) {
                 cancelRequest(player);
@@ -124,6 +127,13 @@ public class MatchRoom {
             sendMatchRoomList();
             player.rejectAll();
             opponent.rejectAll();
+        }
+    }
+
+    private synchronized void rejectRequest(Player player, String key) {
+        Player opponent = waitingPlayerList.get(key);
+        if (opponent != null) {
+            opponent.requestRejected(player);
         }
     }
 
