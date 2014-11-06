@@ -64,7 +64,7 @@ public class Ship implements Serializable {
 
     public int[] getTopLeft() {
         Square firstSquare = squares.get(0);
-        int[] tl = {firstSquare.getX(), firstSquare.getY()};
+        int[] tl = { firstSquare.getX(), firstSquare.getY() };
         for (int i = 1; i < squares.size(); ++i) {
             Square s = squares.get(i);
             if (s.getX() < tl[0]) {
@@ -82,8 +82,9 @@ public class Ship implements Serializable {
     }
 
     public enum Type {
-        AIRCRAFT_CARRIER(5, "aircraft carrier"), BATTLESHIP(4, "battleship"), SUBMARINE(3, "submarine"),
-        DESTROYER(3, "destroyer"), PATROL_BOAT(2, "patrol boat");
+        AIRCRAFT_CARRIER(5, "aircraft carrier"), BATTLESHIP(4, "battleship"), SUBMARINE(
+                3, "submarine"), DESTROYER(3, "destroyer"), PATROL_BOAT(2,
+                "patrol boat");
 
         private int length;
         private String name;

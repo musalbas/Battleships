@@ -29,7 +29,7 @@ public class ClientView extends JFrame {
     private MatchRoom matchRoom;
 
     public ClientView(ObjectOutputStream out, final ObjectInputStream in,
-                      MatchRoom matchRoom) {
+            MatchRoom matchRoom) {
         chat.setModel(chatModel);
 
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
@@ -38,17 +38,20 @@ public class ClientView extends JFrame {
         final BoardView myBoard = new BoardView(true);
         final BoardView enemyBoard = new BoardView(false);
 
-        model = new Client(this, myBoard.getModel(), enemyBoard.getModel(), out, in);
+        model = new Client(this, myBoard.getModel(), enemyBoard.getModel(),
+                out, in);
         this.matchRoom = matchRoom;
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
         JScrollPane chatScrollPane = new JScrollPane(chat);
 
-        chatScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-            }
-        });
+        chatScrollPane.getVerticalScrollBar().addAdjustmentListener(
+                new AdjustmentListener() {
+                    public void adjustmentValueChanged(AdjustmentEvent e) {
+                        e.getAdjustable().setValue(
+                                e.getAdjustable().getMaximum());
+                    }
+                });
 
         controlPanel.add(chatScrollPane, BorderLayout.CENTER);
 
@@ -123,7 +126,7 @@ public class ClientView extends JFrame {
     }
 
     public static void main(String[] args) {
-        //new ClientView();
+        // new ClientView();
     }
 
     public void sendChatMessage() {
@@ -152,19 +155,17 @@ public class ClientView extends JFrame {
     }
 
     public void gameOverAction() {
-        Object[] options = {"Back to lobby", "Quit"};
+        Object[] options = { "Back to lobby", "Quit" };
         int n = JOptionPane.showOptionDialog(this,
-                "What would you like to do now?",
-                "Your Game is Over",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null, options, options[0]);
+                "What would you like to do now?", "Your Game is Over",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                options, options[0]);
         switch (n) {
-            case 0:
-                matchRoom.reopen();
-                break;
-            case 1:
-                System.exit(0);
+        case 0:
+            matchRoom.reopen();
+            break;
+        case 1:
+            System.exit(0);
         }
     }
 }

@@ -37,7 +37,8 @@ public class ShipView {
             horizontalImage = ImageIO.read(new File(filename + ".png"));
             verticalImage = ImageIO.read(new File(filename + "_v.png"));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Some files have been deleted", "Fatal error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Some files have been deleted",
+                    "Fatal error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
     }
@@ -64,17 +65,19 @@ public class ShipView {
 
     public boolean has(int x, int y) {
         if (horizontal) {
-            return this.x <= x && x <= this.x + length * cellSize && this.y <= y && y <= this.y + cellSize;
+            return this.x <= x && x <= this.x + length * cellSize
+                    && this.y <= y && y <= this.y + cellSize;
         } else {
-            return this.x <= x && x <= this.x + cellSize && this.y <= y && y <= this.y + length * cellSize;
+            return this.x <= x && x <= this.x + cellSize && this.y <= y
+                    && y <= this.y + length * cellSize;
         }
     }
 
     public void resetPosition() {
-	    horizontal = true;
-	    model.setVertical (false);
-	    setX (initialX);
-	    setY(initialY);
+        horizontal = true;
+        model.setVertical(false);
+        setX(initialX);
+        setY(initialY);
     }
 
     public Ship getModel() {
@@ -93,7 +96,8 @@ public class ShipView {
                 g.setColor(Color.GREEN);
                 g.fillRect(x, y, length * cellSize, cellSize);
             }
-            g.drawImage(horizontalImage, x, y, length * cellSize, cellSize, null);
+            g.drawImage(horizontalImage, x, y, length * cellSize, cellSize,
+                    null);
         } else {
             if (selected) {
                 g.setColor(Color.GREEN);
