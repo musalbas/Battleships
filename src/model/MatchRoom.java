@@ -14,7 +14,7 @@ import view.ClientView;
 import view.MatchRoomView;
 
 public class MatchRoom extends Thread {
-    
+
     private MatchRoomView matchRoomView;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -24,22 +24,22 @@ public class MatchRoom extends Thread {
 
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
-        
+
         try {
             Socket socket = new Socket("localhost", 8900);
-            out = new ObjectOutputStream(
-                    new BufferedOutputStream(socket.getOutputStream()));
+            out = new ObjectOutputStream(new BufferedOutputStream(
+                    socket.getOutputStream()));
             in = new ObjectInputStream(socket.getInputStream());
-            out.flush ();
-            out.writeObject (new String[]{ "join", "start" });
-            out.flush ();
+            out.flush();
+            out.writeObject(new String[] { "join", "start" });
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         start();
     }
-    
+
     @Override
     public void run() {
         super.run();
@@ -60,20 +60,20 @@ public class MatchRoom extends Thread {
             e.printStackTrace();
         }
     }
-    
+
     public void sendJoinFriend(String key) {
         try {
-            out.writeObject(new String[]{"join", "join", key});
+            out.writeObject(new String[] { "join", "join", key });
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     public void sendName(String name) {
         this.nameState = NameState.WAITING;
         try {
-            out.writeObject(new String[]{ "name", name });
+            out.writeObject(new String[] { "name", name });
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +97,8 @@ public class MatchRoom extends Thread {
 
     private void parseInput(Object input) {
         if (input instanceof MatchRoomListMessage) {
-            final HashMap<String, String> matchRoomList = ((MatchRoomListMessage) input).getMatchRoomList();
+            final HashMap<String, String> matchRoomList = ((MatchRoomListMessage) input)
+                    .getMatchRoomList();
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -107,40 +108,41 @@ public class MatchRoom extends Thread {
         } else if (input instanceof NotificationMessage) {
             NotificationMessage n = (NotificationMessage) input;
             switch (n.getCode()) {
-                case NotificationMessage.GAME_TOKEN:
-                    if (n.getText().length == 1) {
-                        key = n.getText()[0];
-                    }
-                    break;
-                case NotificationMessage.OPPONENTS_NAME:
-                    startGame(input);
-                    break;
-                case NotificationMessage.NAME_ACCEPTED:
-                    setNameState(NameState.ACCEPTED);
-                    break;
-                case NotificationMessage.NAME_TAKEN:
-                    setNameState(NameState.TAKEN);
-                    break;
-                case NotificationMessage.INVALID_NAME:
-                    setNameState(NameState.INVALID);
-                    break;
-                case NotificationMessage.NEW_JOIN_GAME_REQUEST:
-                    try {
-                        out.writeObject(new String[]{"join", "accept", n.getText()[0]});
-                        out.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case NotificationMessage.JOIN_GAME_REQUEST_REJECTED:
-                    System.out.println("Join request rejected");
-                    break;
-                case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
-                    System.out.println("Join request accepted");
+            case NotificationMessage.GAME_TOKEN:
+                if (n.getText().length == 1) {
+                    key = n.getText()[0];
+                }
+                break;
+            case NotificationMessage.OPPONENTS_NAME:
+                startGame(input);
+                break;
+            case NotificationMessage.NAME_ACCEPTED:
+                setNameState(NameState.ACCEPTED);
+                break;
+            case NotificationMessage.NAME_TAKEN:
+                setNameState(NameState.TAKEN);
+                break;
+            case NotificationMessage.INVALID_NAME:
+                setNameState(NameState.INVALID);
+                break;
+            case NotificationMessage.NEW_JOIN_GAME_REQUEST:
+                try {
+                    out.writeObject(new String[] { "join", "accept",
+                            n.getText()[0] });
+                    out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case NotificationMessage.JOIN_GAME_REQUEST_REJECTED:
+                System.out.println("Join request rejected");
+                break;
+            case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
+                System.out.println("Join request accepted");
             }
         }
     }
-    
+
     private void startGame(Object firstInput) {
         matchRoomView.setVisible(false);
         ClientView clientView = new ClientView(this.out, this.in, this);
@@ -157,11 +159,11 @@ public class MatchRoom extends Thread {
         this.clientModel = null;
         matchRoomView.setVisible(true);
         try {
-            out.writeObject (new String[]{ "join", "start" });
-            out.flush ();
+            out.writeObject(new String[] { "join", "start" });
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
 }

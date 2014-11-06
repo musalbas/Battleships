@@ -118,7 +118,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         boolean shouldReset = true;
         model.pickUpShip(selectedShipView.getModel());
         if (hovered != null) {
-            boolean result = this.model.placeShip(selectedShipView.getModel(), newPosition[0], newPosition[1]);
+            boolean result = this.model.placeShip(selectedShipView.getModel(),
+                    newPosition[0], newPosition[1]);
             if (result) {
                 selectedShipView.setX(hovered.getX());
                 selectedShipView.setY(hovered.getY());
@@ -158,7 +159,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     private int[] translateCoordinates(int x, int y) {
-        return new int[]{x / CELL_SIZE, y / CELL_SIZE};
+        return new int[] { x / CELL_SIZE, y / CELL_SIZE };
     }
 
     private SquareView getCell(int x, int y) {
@@ -192,14 +193,16 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     private void resetHoveredCell() {
-        if (hoveredCell != null && hoveredCell.getState() == SquareView.HOVER && !model.isOwnBoard()) {
+        if (hoveredCell != null && hoveredCell.getState() == SquareView.HOVER
+                && !model.isOwnBoard()) {
             hoveredCell.setState(SquareView.CLEAR);
         }
     }
 
     public void addShipView(Ship ship) {
         int topLeft[] = ship.getTopLeft();
-        ShipView shipView = new ShipView(ship.getLength(), CELL_SIZE, topLeft[0] * CELL_SIZE, topLeft[1] * CELL_SIZE, ship);
+        ShipView shipView = new ShipView(ship.getLength(), CELL_SIZE,
+                topLeft[0] * CELL_SIZE, topLeft[1] * CELL_SIZE, ship);
         if (ship.isVertical()) {
             shipView.rotate();
         }
@@ -209,11 +212,13 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     private void addCellsAndShips() {
         cellViews = new SquareView[BOARD_SIZE][BOARD_SIZE];
 
-        setPreferredSize(new Dimension((BOARD_SIZE) * CELL_SIZE + 1, (BOARD_SIZE + 3) * CELL_SIZE + 15));
+        setPreferredSize(new Dimension((BOARD_SIZE) * CELL_SIZE + 1,
+                (BOARD_SIZE + 3) * CELL_SIZE + 15));
         setVisible(true);
         for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
-                setCell(i, j, new SquareView(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE, this, model.getSquare(i, j)));
+                setCell(i, j, new SquareView(i * CELL_SIZE, j * CELL_SIZE,
+                        CELL_SIZE, CELL_SIZE, this, model.getSquare(i, j)));
             }
         }
         if (model.isOwnBoard()) {
@@ -221,7 +226,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             int y = CELL_SIZE * BOARD_SIZE + 5;
             for (Ship shipModel : model.getShips()) {
                 int length = shipModel.getLength();
-                ShipView shipView = new ShipView(length, CELL_SIZE, x, y, shipModel);
+                ShipView shipView = new ShipView(length, CELL_SIZE, x, y,
+                        shipModel);
                 shipModel.setView(shipView);
                 viewShips.add(shipView);
                 final int newPosition = x + length * CELL_SIZE + 5;
