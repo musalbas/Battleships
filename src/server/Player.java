@@ -166,18 +166,26 @@ public class Player extends Thread {
                 requester.getOwnKey(), requester.getPlayerName());
     }
 
+    /**
+     * Called when the opponent accepts a request.
+     * @param opponent the player who accepted the request
+     */
     public synchronized void requestAccepted(Player opponent) {
         cancelTimer();
         opponent.requestList.remove(ownKey);
         requestedGameKey = null;
-        opponent.writeNotification(NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED);
+        writeNotification(NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED);
     }
 
+    /**
+     * Called when the opponent rejects a request.
+     * @param opponent the player who rejected the request
+     */
     public synchronized void requestRejected(Player opponent) {
         cancelTimer();
         opponent.requestList.remove(ownKey);
         requestedGameKey = null;
-        opponent.writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
+        writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
     }
 
     public void setOwnKey(String ownKey) {
@@ -188,11 +196,20 @@ public class Player extends Thread {
         return ownKey;
     }
 
+    /**
+     * Starts a timer in the context of the player who sent a game request,
+     * to automatically assume the request was rejected when the timeout is
+     * reached and notify the opponent the request is no longer active.
+     * @param opponent the invited player
+     */
     public void startTimer(final Player opponent) {
         requestTimer = new Timer();
         requestTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                opponent.writeNotification(
+                        NotificationMessage.JOIN_GAME_REQUEST_CANCELLED,
+                        ownKey);
                 requestRejected(opponent);
             }
         }, 30000);
@@ -201,7 +218,22 @@ public class Player extends Thread {
     private void cancelTimer() {
         if (requestTimer != null) {
             requestTimer.cancel();
+            System.out.println("timer cancelled");
             requestTimer = null;
+        }
+    }
+
+    public void setRequestedGameKey(String key) {
+        this.requestedGameKey = key;
+    }
+
+    public String getRequestedGameKey() {
+        return requestedGameKey;
+    }
+
+    public void rejectAll() {
+        for (Player p : requestList.values()) {
+            requestRejected(p);
         }
     }
 

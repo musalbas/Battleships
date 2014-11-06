@@ -11,6 +11,8 @@ import java.util.HashMap;
 import server.messages.MatchRoomListMessage;
 import server.messages.NotificationMessage;
 import view.ClientView;
+import view.InviteReceivedPane;
+import view.InviteSentPane;
 import view.MatchRoomView;
 
 public class MatchRoom extends Thread {
@@ -21,6 +23,8 @@ public class MatchRoom extends Thread {
     private volatile Client clientModel;
     private String key = "";
     private volatile NameState nameState;
+    private HashMap<String, InviteReceivedPane> inviteDialogs;
+    private InviteSentPane inviteSentPane;
 
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
@@ -36,6 +40,8 @@ public class MatchRoom extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        inviteDialogs = new HashMap<>();
 
         start();
     }
@@ -61,10 +67,20 @@ public class MatchRoom extends Thread {
         }
     }
 
-    public void sendJoinFriend(String key) {
+    public void sendJoinFriend(String key, String name) {
         try {
             out.writeObject(new String[] { "join", "join", key });
             out.flush();
+            final String currentKey = key;
+            final String currentName = name;
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    inviteSentPane = new InviteSentPane(currentKey, currentName,
+                            MatchRoom.this);
+                    inviteSentPane.showPane(matchRoomView);
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,6 +130,7 @@ public class MatchRoom extends Thread {
                 }
                 break;
             case NotificationMessage.OPPONENTS_NAME:
+                disposeAllPanes();
                 startGame(input);
                 break;
             case NotificationMessage.NAME_ACCEPTED:
@@ -126,19 +143,34 @@ public class MatchRoom extends Thread {
                 setNameState(NameState.INVALID);
                 break;
             case NotificationMessage.NEW_JOIN_GAME_REQUEST:
-                try {
-                    out.writeObject(new String[] { "join", "accept",
-                            n.getText()[0] });
-                    out.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                final InviteReceivedPane dialog = new InviteReceivedPane(
+                        n.getText()[0], n.getText()[1], this);
+                System.out.println("request from " + n.getText()[0] + " "  + n.getText()[1]);
+                inviteDialogs.put(n.getText()[0], dialog);
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.showOptionPane(matchRoomView);
+                    }
+                });
                 break;
             case NotificationMessage.JOIN_GAME_REQUEST_REJECTED:
                 System.out.println("Join request rejected");
+                if (inviteSentPane != null) {
+                    inviteSentPane.dispose();
+                }
                 break;
             case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
                 System.out.println("Join request accepted");
+                break;
+            case NotificationMessage.JOIN_GAME_REQUEST_CANCELLED:
+                System.out.println("cancelled");
+                InviteReceivedPane pane = inviteDialogs.get(n.getText()[0]);
+                if (pane != null) {
+                    pane.dispose();
+                } else {
+                    System.out.println("can't find " + n.getText()[0]);
+                }
             }
         }
     }
@@ -166,4 +198,21 @@ public class MatchRoom extends Thread {
         }
     }
 
+    public void sendStringArray(String[] array) {
+        try {
+            out.writeObject(array);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void disposeAllPanes() {
+        for (InviteReceivedPane pane : inviteDialogs.values()) {
+            pane.dispose();
+        }
+        if (inviteSentPane != null) {
+            inviteSentPane.dispose();
+        }
+    }
 }
