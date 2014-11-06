@@ -2,9 +2,12 @@ package view;
 
 import model.Square;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.io.File;
 
 /**
  * Created by user on 13.10.2014.
@@ -21,6 +24,7 @@ public class SquareView implements ChangeListener {
     private int height;
     private int state;
     private Image explosionImage;
+    private Image water;
     private BoardView boardView;
     private Square squareModel;
 
@@ -39,6 +43,11 @@ public class SquareView implements ChangeListener {
         this.boardView = boardView;
         this.squareModel = squareModel;
         squareModel.addChangeListener(this);
+        try {
+            water = ImageIO.read(new File("resources/water/water.png"));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Some files have been deleted.", "Fatal error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public boolean mouseEntered(int x, int y) {
@@ -73,6 +82,7 @@ public class SquareView implements ChangeListener {
     }
 
     public void paint(Graphics g) {
+        g.drawImage(water, x, y, width, height, null);
         g.setColor(Color.BLACK);
         g.drawRect(x, y, width, height);
         switch (state) {
