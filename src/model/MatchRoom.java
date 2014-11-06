@@ -142,13 +142,26 @@ public class MatchRoom extends Thread {
     }
     
     private void startGame(Object firstInput) {
-        ClientView clientView = new ClientView(this.out, this.in);
+        matchRoomView.setVisible(false);
+        ClientView clientView = new ClientView(this.out, this.in, this);
         clientModel = clientView.getModel();
         clientModel.parseInput(firstInput);
     }
 
     public String getKey() {
         return key;
+    }
+
+    public void reopen() {
+        this.clientModel.getView().dispose();
+        this.clientModel = null;
+        matchRoomView.setVisible(true);
+        try {
+            out.writeObject (new String[]{ "join", "start" });
+            out.flush ();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }
