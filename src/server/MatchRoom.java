@@ -28,6 +28,7 @@ public class MatchRoom {
             joinRandom(player);
             break;
         case "start":
+            player.leaveGame();
             startWithKey(player);
             break;
         case "join":
