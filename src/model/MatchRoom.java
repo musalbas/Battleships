@@ -187,8 +187,10 @@ public class MatchRoom extends Thread {
     }
 
     public void reopen() {
-        this.clientModel.getView().dispose();
-        this.clientModel = null;
+        if (clientModel != null) {
+            this.clientModel.getView().dispose();
+            this.clientModel = null;
+        }
         matchRoomView.setVisible(true);
         try {
             out.writeObject(new String[] { "join", "start" });
