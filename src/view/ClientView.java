@@ -6,10 +6,7 @@ import model.MatchRoom;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -29,7 +26,7 @@ public class ClientView extends JFrame {
     private MatchRoom matchRoom;
 
     public ClientView(ObjectOutputStream out, final ObjectInputStream in,
-            MatchRoom matchRoom) {
+            final MatchRoom matchRoom) {
         chat.setModel(chatModel);
 
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
@@ -115,13 +112,19 @@ public class ClientView extends JFrame {
 
         rootPanel.add(gamePanel, BorderLayout.CENTER);
         rootPanel.add(controlPanel, BorderLayout.EAST);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         setContentPane(rootPanel);
 
         pack();
-        System.out.println(getSize());
         setVisible(true);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                matchRoom.reopen();
+            }
+        });
 
     }
 
