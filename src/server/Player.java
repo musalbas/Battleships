@@ -236,7 +236,6 @@ public class Player extends Thread {
             Player opponent = game.getOpponent(this);
             opponent.writeNotification(NotificationMessage.OPPONENT_DISCONNECTED);
             game.killGame();
-            game = null;
         }
     }
 
