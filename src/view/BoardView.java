@@ -19,10 +19,10 @@ import java.util.ArrayList;
 public class BoardView extends JPanel implements PropertyChangeListener {
 
     private static int CELL_SIZE = 35;
-    private int BOARD_SIZE;
+    private int BOARD_SIZE = Board.BOARD_DIMENSION;
     private SquareView hoveredCell = null;
     private ShipView selectedShipView = null;
-    private SquareView[][] viewCells;
+    private SquareView[][] cellViews;
     private ArrayList<ShipView> viewShips = new ArrayList<>();
     private int xDistance;
     private int yDistance;
@@ -50,7 +50,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-                setCellState(hoveredCell, SquareView.CLEAR);
+                resetHoveredCell();
             }
 
             @Override
@@ -164,11 +164,11 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     private SquareView getCell(int x, int y) {
         int i = x / CELL_SIZE;
         int j = y / CELL_SIZE;
-        return i >= 0 && j >= 0 && i < 10 && j < 10 ? viewCells[i][j] : null;
+        return i >= 0 && j >= 0 && i < 10 && j < 10 ? cellViews[i][j] : null;
     }
 
     private void setCell(int i, int j, SquareView cell) {
-        viewCells[i][j] = cell;
+        cellViews[i][j] = cell;
     }
 
     private void updateSelectedShip(MouseEvent e) {
@@ -197,14 +197,6 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
     }
 
-    public void setCellState(SquareView squareView, int state) {
-        if (squareView != null && !model.isOwnBoard()) {
-            if (state == SquareView.HIT) {
-                new ExplosionAnimation(squareView, this).start();
-            }
-        }
-    }
-
     public void addShipView(Ship ship) {
         int topLeft[] = ship.getTopLeft();
         ShipView shipView = new ShipView(ship.getLength(), CELL_SIZE, topLeft[0] * CELL_SIZE, topLeft[1] * CELL_SIZE, ship);
@@ -215,10 +207,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     private void addCellsAndShips() {
-
-        BOARD_SIZE = model.BOARD_DIMENSION;
-
-        viewCells = new SquareView[BOARD_SIZE][BOARD_SIZE];
+        cellViews = new SquareView[BOARD_SIZE][BOARD_SIZE];
 
         setPreferredSize(new Dimension((BOARD_SIZE) * CELL_SIZE + 1, (BOARD_SIZE + 3) * CELL_SIZE + 15));
         setVisible(true);
@@ -255,7 +244,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (SquareView[] row : viewCells) {
+        for (SquareView[] row : cellViews) {
             for (SquareView cell : row) {
                 cell.paint(g);
             }
@@ -263,7 +252,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         for (ShipView s : viewShips) {
             s.paint(g);
         }
-        for (SquareView[] row : viewCells) {
+        for (SquareView[] row : cellViews) {
             for (SquareView cell : row) {
                 if (cell.getState() == cell.HIT) {
                     if (cell.animated()) {

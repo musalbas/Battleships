@@ -103,7 +103,7 @@ public class SquareView implements ChangeListener {
         g.drawLine(x + width - padding, y + padding, x + padding, y + height - padding);
     }
 
-    public void drawExplosion(Graphics g)  {
+    public void drawExplosion(Graphics g) {
         if (explosionImage != null) {
             g.drawImage(explosionImage, x, y, width, height, null);
         }
@@ -118,7 +118,12 @@ public class SquareView implements ChangeListener {
             case NO_SHIP:
                 this.state = MISS;
         }
-        boardView.setCellState(this, this.state);
+
+        if (!boardView.getModel().isOwnBoard()) {
+            if (state == SquareView.HIT) {
+                new ExplosionAnimation(this, boardView).start();
+            }
+        }
         boardView.repaint();
     }
 

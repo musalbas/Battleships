@@ -16,7 +16,7 @@ public class Board implements Serializable {
         /**
          * The dimension of the Board
          */
-	public final int BOARD_DIMENSION = 10;
+	public static final int BOARD_DIMENSION = 10;
 	private Square[][] squares;
 	private ArrayList<Ship> ships;
 	private boolean ownBoard;
