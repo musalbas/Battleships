@@ -55,11 +55,6 @@ public class Player extends Thread {
 
                         switch (message) {
                         case "join":
-                            if (game != null) {
-                                // TODO: check if game over
-                                game.killGame();
-                                game = null;
-                            }
                             matchRoom.join(this, array);
                             break;
                         case "name":
@@ -101,9 +96,7 @@ public class Player extends Thread {
             }
         } catch (IOException e) {
             if (game != null) {
-                Player opponent = game.getOpponent(this);
-                opponent.writeNotification(NotificationMessage.OPPONENT_DISCONNECTED);
-                game.killGame();
+                leaveGame();
             } else {
                 matchRoom.removeWaitingPlayer(this);
             }
@@ -235,6 +228,14 @@ public class Player extends Thread {
     public void rejectAll() {
         for (Player p : requestList.values()) {
             p.requestRejected(this);
+        }
+    }
+
+    public void leaveGame() {
+        if (game != null) {
+            Player opponent = game.getOpponent(this);
+            opponent.writeNotification(NotificationMessage.OPPONENT_DISCONNECTED);
+            game.killGame();
         }
     }
 
