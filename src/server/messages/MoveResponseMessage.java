@@ -22,8 +22,8 @@ public class MoveResponseMessage extends ServerMessage implements Serializable {
     /**
      * Initialise a move response message where a ship was sunk.
      */
-    public MoveResponseMessage(int x, int y, Ship shipSunk,
-                               boolean hit, boolean ownBoard) {
+    public MoveResponseMessage(int x, int y, Ship shipSunk, boolean hit,
+            boolean ownBoard) {
         this.x = x;
         this.y = y;
         this.shipSunk = shipSunk;

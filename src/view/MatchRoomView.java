@@ -56,14 +56,8 @@ public class MatchRoomView extends JFrame {
     private void askForName() {
         String message = "Please choose a nickname.";
         while (true) {
-            String name = (String) JOptionPane.showInputDialog(
-                    this,
-                    message,
-                    "Nickname",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    "");
+            String name = (String) JOptionPane.showInputDialog(this, message,
+                    "Nickname", JOptionPane.PLAIN_MESSAGE, null, null, "");
             if (playerNameExists(name)) {
                 message = "This nickname already exists, please try again.";
             } else if (name.equals("")) {
@@ -101,7 +95,8 @@ public class MatchRoomView extends JFrame {
         return exists;
     }
 
-    public synchronized void updateMatchRoomList(HashMap<String, String> matchRoomList) {
+    public synchronized void updateMatchRoomList(
+            HashMap<String, String> matchRoomList) {
         this.matchRoomList = matchRoomList;
         if (firstTimeListing) {
             firstTimeListing = false;
