@@ -233,7 +233,7 @@ public class Player extends Thread {
 
     public void rejectAll() {
         for (Player p : requestList.values()) {
-            requestRejected(p);
+            p.requestRejected(this);
         }
     }
 
