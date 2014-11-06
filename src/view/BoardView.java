@@ -260,15 +260,12 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
         for (SquareView[] row : cellViews) {
             for (SquareView cell : row) {
-                if (cell.getState() == cell.HIT) {
+                if (cell.getState() == SquareView.HIT) {
                     if (cell.animated()) {
                         cell.drawExplosion(g);
                     } else {
                         cell.drawCross(g);
                     }
-                }
-                if (cell.getState() == cell.MISS) {
-                    cell.drawCross(g);
                 }
             }
         }
