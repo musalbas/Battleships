@@ -166,6 +166,10 @@ public class Player extends Thread {
                 requester.getOwnKey(), requester.getPlayerName());
     }
 
+    /**
+     * Called when the player accepts a request.
+     * @param opponent the player who sent the request
+     */
     public synchronized void requestAccepted(Player opponent) {
         cancelTimer();
         opponent.requestList.remove(ownKey);
@@ -193,7 +197,10 @@ public class Player extends Thread {
         requestTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                requestRejected(opponent);
+                opponent.writeNotification(
+                        NotificationMessage.JOIN_GAME_REQUEST_CANCELLED,
+                        getOwnKey());
+                requestRejected(Player.this);
             }
         }, 30000);
     }
@@ -202,6 +209,20 @@ public class Player extends Thread {
         if (requestTimer != null) {
             requestTimer.cancel();
             requestTimer = null;
+        }
+    }
+
+    public void setRequestedGameKey(String key) {
+        this.requestedGameKey = key;
+    }
+
+    public String getRequestedGameKey() {
+        return requestedGameKey;
+    }
+
+    public void rejectAll() {
+        for (Player p : requestList.values()) {
+            requestRejected(p);
         }
     }
 

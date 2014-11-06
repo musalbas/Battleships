@@ -40,6 +40,11 @@ public class MatchRoom {
             if (args.length == 3) {
                 acceptRequest(player, args[2]);
             }
+            break;
+        case "cancel":
+            if (args.length == 2) {
+                cancelRequest(player);
+            }
         }
     }
 
@@ -117,6 +122,18 @@ public class MatchRoom {
             opponent.requestAccepted(player);
             new Game(opponent, player);
             sendMatchRoomList();
+            player.rejectAll();
+            opponent.rejectAll();
+        }
+    }
+
+    private synchronized void cancelRequest(Player player) {
+        Player opponent = waitingPlayerList.get(player.getRequestedGameKey());
+        player.setRequestedGameKey(null);
+        if (opponent != null) {
+            opponent.writeNotification(
+                    NotificationMessage.JOIN_GAME_REQUEST_CANCELLED,
+                    player.getOwnKey());
         }
     }
 
