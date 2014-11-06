@@ -21,10 +21,11 @@ public class LabeledBoardView extends JPanel {
     static class VerticalBoardLabels extends JPanel {
 
         private int squareSize;
+        private static final int WIDTH = 25;
 
         public VerticalBoardLabels() {
             squareSize = BoardView.CELL_SIZE;
-            setPreferredSize(new Dimension(squareSize, squareSize * 10 + 1));
+            setPreferredSize(new Dimension(WIDTH, squareSize * 10 + 1));
         }
 
         @Override
@@ -33,8 +34,8 @@ public class LabeledBoardView extends JPanel {
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
             FontMetrics fm = g.getFontMetrics();
             for (int i = 1; i <= 10; ++i) {
-                int x = (squareSize - fm.stringWidth(Integer.toString(i))) / 2;
-                int y = i * squareSize - fm.getAscent() / 2;
+                int x = (WIDTH - fm.stringWidth(Integer.toString(i))) / 2;
+                int y = i * squareSize - (squareSize - fm.getAscent()) / 2;
                 g.drawString(Integer.toString(i), x, y);
             }
         }
@@ -42,10 +43,11 @@ public class LabeledBoardView extends JPanel {
 
     static class HorizontalBoardLabels extends JPanel {
         private int squareSize;
+        private static final int HEIGHT = 25;
 
         public HorizontalBoardLabels() {
             squareSize = BoardView.CELL_SIZE;
-            setPreferredSize(new Dimension(squareSize * 11 + 1, squareSize));
+            setPreferredSize(new Dimension(squareSize * 11 + 1, HEIGHT));
         }
 
         @Override
@@ -53,10 +55,11 @@ public class LabeledBoardView extends JPanel {
             super.paintComponent(g);
             g.setFont(new Font("SansSerif", Font.BOLD, 16));
             FontMetrics fm = g.getFontMetrics();
-            for (int i = 1; i <= 10; ++i) {
-                char label = (char) ('A' + i - 1);
-                int x = (squareSize - fm.stringWidth(Character.toString(label))) / 2 + squareSize * i;
-                int y = squareSize - fm.getAscent() / 2;
+            for (int i = 0; i < 10; ++i) {
+                char label = (char) ('A' + i);
+                int x = (squareSize - fm.stringWidth(Character.toString(label))) / 2
+                        + squareSize * i + VerticalBoardLabels.WIDTH;
+                int y = (HEIGHT + fm.getAscent()) / 2;
                 g.drawString(Character.toString(label), x, y);
             }
         }
