@@ -68,7 +68,7 @@ public class SquareView implements ChangeListener {
         return y;
     }
 
-    private boolean animationDisplayed() {
+    public boolean animated() {
         return explosionImage != null;
     }
 
@@ -77,34 +77,36 @@ public class SquareView implements ChangeListener {
         g.drawRect(x, y, width, height);
         switch (state) {
             case HOVER:
-                if (!animationDisplayed()) {
+                if (!animated()) {
                     g.setColor(Color.RED);
                     g.fillRect(x, y, width, height);
                 }
                 break;
             case HIT:
                 g.setColor(Color.GRAY);
-                g.fillRect(x, y, width, height);
+                g.fillRect(x, y, width, height);/*
                 g.setColor(Color.RED);
-                if (!animationDisplayed()) {
+                if (!animated()) {
                     drawCross(g);
                 }
                 break;
             case MISS:
-                g.setColor(Color.RED);
                 drawCross(g);
-                break;
-        }
-
-        if (explosionImage != null) {
-            g.drawImage(explosionImage, x, y, width, height, null);
+                break;*/
         }
     }
 
-    private void drawCross(Graphics g) {
+    public void drawCross(Graphics g) {
         final int padding = 5;
+        g.setColor(Color.RED);
         g.drawLine(x + padding, y + padding, x + width - padding, y + height - padding);
         g.drawLine(x + width - padding, y + padding, x + padding, y + height - padding);
+    }
+
+    public void drawExplosion(Graphics g)  {
+        if (explosionImage != null) {
+            g.drawImage(explosionImage, x, y, width, height, null);
+        }
     }
 
     @Override
