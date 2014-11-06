@@ -22,7 +22,7 @@ public class ClientView extends JFrame {
     private final JTextField inputField = new JTextField();
     private final JButton submitButton = new JButton("Submit");
     private final JButton rotateButton = new JButton("Rotate");
-    private final JButton saveShipState = new JButton("Done placing ships!");
+    private final JButton saveShipState = new JButton("Ready");
     private JList<String> chat = new JList<>();
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
@@ -102,8 +102,8 @@ public class ClientView extends JFrame {
 
         JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
 
-        boards.add(enemyBoard);
-        boards.add(myBoard);
+        boards.add(new LabeledBoardView(enemyBoard));
+        boards.add(new LabeledBoardView(myBoard));
 
         JPanel gamePanel = new JPanel(new BorderLayout(10, 10));
 

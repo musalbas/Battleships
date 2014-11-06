@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class BoardView extends JPanel implements PropertyChangeListener {
 
-    private static int CELL_SIZE = 35;
+    public static int CELL_SIZE = 35;
     private int BOARD_SIZE = Board.BOARD_DIMENSION;
     private SquareView hoveredCell = null;
     private ShipView selectedShipView = null;

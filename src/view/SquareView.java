@@ -8,6 +8,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.io.File;
+import java.util.Random;
 
 /**
  * Created by user on 13.10.2014.
@@ -44,7 +45,8 @@ public class SquareView implements ChangeListener {
         this.squareModel = squareModel;
         squareModel.addChangeListener(this);
         try {
-            water = ImageIO.read(new File("resources/water/water.png"));
+            int index = new Random().nextInt(5) + 1;
+            water = ImageIO.read(new File("resources/water/water" + 2 + ".png"));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Some files have been deleted.", "Fatal error", JOptionPane.ERROR_MESSAGE);
         }
