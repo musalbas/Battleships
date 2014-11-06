@@ -24,18 +24,21 @@ public class MatchRoom {
         String option = args[1];
         switch (option) {
         case "random":
+            player.leaveGame();
             joinRandom(player);
             break;
         case "start":
             startWithKey(player);
             break;
         case "join":
+            player.leaveGame();
             if (args.length == 3) {
-                // joinFriend(player, args[2]);
+                player.leaveGame();
                 joinRequest(player, args[2]);
             }
             break;
         case "accept":
+            player.leaveGame();
             if (args.length == 3) {
                 acceptRequest(player, args[2]);
             }
