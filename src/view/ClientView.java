@@ -25,7 +25,7 @@ public class ClientView extends JFrame {
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
     private MatchRoom matchRoom;
-    private JLabel timerView;
+    private JLabel timerAndMessagesView;
     private Timer timer;
 
     public ClientView(ObjectOutputStream out, final ObjectInputStream in,
@@ -103,13 +103,12 @@ public class ClientView extends JFrame {
         buttons.add(saveShipState);
         buttons.add(rotateButton);
 
-        JPanel bottomPanel = new JPanel(new GridLayout(1,0));
-        timerView = new JLabel(Integer.toString(Game.PLACEMENT_TIMEOUT / 1000));
-        timerView.setHorizontalAlignment(JLabel.CENTER);
-        timerView.setVerticalAlignment(JLabel.CENTER);
-        timerView.setFont(new Font("SansSerif", Font.BOLD, 16));
-        timer = makeTimer(Game.PLACEMENT_TIMEOUT / 1000);
-        bottomPanel.add(timerView);
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 0));
+        timerAndMessagesView = new JLabel(Integer.toString(Game.PLACEMENT_TIMEOUT / 1000));
+        timerAndMessagesView.setHorizontalAlignment(JLabel.CENTER);
+        timerAndMessagesView.setVerticalAlignment(JLabel.CENTER);
+        timerAndMessagesView.setFont(new Font("SansSerif", Font.BOLD, 16));
+        bottomPanel.add(timerAndMessagesView);
         bottomPanel.add(buttons);
 
         JPanel boards = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -138,12 +137,22 @@ public class ClientView extends JFrame {
                 matchRoom.reopen();
             }
         });
-        timer.start();
+        setTimer(Game.PLACEMENT_TIMEOUT / 1000);
     }
 
-    private Timer makeTimer(final int seconds) {
-        final Timer timer = new Timer(1000, null);
+    public void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
+    }
 
+    public void setMessage(String message) {
+        timerAndMessagesView.setText(message);
+    }
+
+
+    public void setTimer(final int seconds) {
+        timer = new Timer(1000, null);
         timer.addActionListener(new ActionListener() {
 
             private int secondsLeft = seconds;
@@ -151,14 +160,13 @@ public class ClientView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 --secondsLeft;
-                timerView.setText(Integer.toString(secondsLeft));
+                timerAndMessagesView.setText(Integer.toString(secondsLeft));
                 if (secondsLeft == 0) {
                     timer.stop();
                 }
             }
         });
-
-        return timer;
+        timer.start();
     }
 
     public void sendChatMessage() {

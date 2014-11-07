@@ -1,5 +1,6 @@
 package model;
 
+import server.Game;
 import server.messages.ChatMessage;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
@@ -68,7 +69,8 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.BOARD_ACCEPTED:
                 // TODO: board is good, can start game
-                view.addChatMessage("board OK!");
+                view.setMessage("Board accepted. Waiting for opponent.");
+                view.stopTimer();
                 ownBoard.setBoatPositionLocked(true);
                 break;
             case NotificationMessage.GAME_TOKEN:
@@ -86,10 +88,14 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.YOUR_TURN:
                 // TODO: inform player it's their turn and to make a move
+                view.stopTimer();
+                view.setTimer(Game.TURN_TIMEOUT / 1000);
                 view.addChatMessage("YOUR TURN");
                 break;
             case NotificationMessage.OPPONENTS_TURN:
                 // TODO: informs player it is their opponent's turn
+                view.stopTimer();
+                view.setTimer(Game.TURN_TIMEOUT / 1000);
                 view.addChatMessage("OPPONENTS_TURN");
                 break;
             case NotificationMessage.GAME_WIN:
