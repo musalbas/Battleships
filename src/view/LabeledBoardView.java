@@ -17,12 +17,11 @@ public class LabeledBoardView extends JPanel {
 
     static class VerticalBoardLabels extends JPanel {
 
-        private int squareSize;
+        private final int SQUARE_WIDTH = BoardView.SQUARE_WIDTH;
         private static final int WIDTH = 25;
 
         public VerticalBoardLabels() {
-            squareSize = BoardView.CELL_SIZE;
-            setPreferredSize(new Dimension(WIDTH, squareSize * 10 + 1));
+            setPreferredSize(new Dimension(WIDTH, SQUARE_WIDTH * 10 + 1));
         }
 
         @Override
@@ -32,19 +31,18 @@ public class LabeledBoardView extends JPanel {
             FontMetrics fm = g.getFontMetrics();
             for (int i = 1; i <= 10; ++i) {
                 int x = (WIDTH - fm.stringWidth(Integer.toString(i))) / 2;
-                int y = i * squareSize - (squareSize - fm.getAscent()) / 2;
+                int y = i * SQUARE_WIDTH - (SQUARE_WIDTH - fm.getAscent()) / 2;
                 g.drawString(Integer.toString(i), x, y);
             }
         }
     }
 
     static class HorizontalBoardLabels extends JPanel {
-        private int squareSize;
+        private static final int SQUARE_WIDTH = BoardView.SQUARE_WIDTH;
         private static final int HEIGHT = 25;
 
         public HorizontalBoardLabels() {
-            squareSize = BoardView.CELL_SIZE;
-            setPreferredSize(new Dimension(squareSize * 11 + 1, HEIGHT));
+            setPreferredSize(new Dimension(SQUARE_WIDTH * 11 + 1, HEIGHT));
         }
 
         @Override
@@ -54,8 +52,8 @@ public class LabeledBoardView extends JPanel {
             FontMetrics fm = g.getFontMetrics();
             for (int i = 0; i < 10; ++i) {
                 char label = (char) ('A' + i);
-                int x = (squareSize - fm.stringWidth(Character.toString(label))) / 2
-                        + squareSize * i + VerticalBoardLabels.WIDTH;
+                int x = (SQUARE_WIDTH - fm.stringWidth(Character.toString(label))) / 2
+                        + SQUARE_WIDTH * i + VerticalBoardLabels.WIDTH;
                 int y = (HEIGHT + fm.getAscent()) / 2;
                 g.drawString(Character.toString(label), x, y);
             }

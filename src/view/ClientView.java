@@ -26,7 +26,7 @@ public class ClientView extends JFrame {
     private MatchRoom matchRoom;
 
     public ClientView(ObjectOutputStream out, final ObjectInputStream in,
-            final MatchRoom matchRoom) {
+                      final MatchRoom matchRoom) {
         chat.setModel(chatModel);
 
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
@@ -129,10 +129,6 @@ public class ClientView extends JFrame {
 
     }
 
-    public static void main(String[] args) {
-        // new ClientView();
-    }
-
     public void sendChatMessage() {
         try {
             model.sendChatMessage(inputField.getText());
@@ -159,17 +155,17 @@ public class ClientView extends JFrame {
     }
 
     public void gameOverAction() {
-        Object[] options = { "Back to lobby", "Quit" };
+        Object[] options = {"Back to lobby", "Quit"};
         int n = JOptionPane.showOptionDialog(this,
                 "What would you like to do now?", "Your Game is Over",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                 options, options[0]);
         switch (n) {
-        case 0:
-            matchRoom.reopen();
-            break;
-        case 1:
-            System.exit(0);
+            case 0:
+                matchRoom.reopen();
+                break;
+            case 1:
+                System.exit(0);
         }
     }
 }
