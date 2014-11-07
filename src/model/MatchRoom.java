@@ -1,12 +1,10 @@
 package model;
 
 import java.awt.*;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Properties;
 
 import server.messages.MatchRoomListMessage;
 import server.messages.NotificationMessage;
@@ -14,6 +12,8 @@ import view.ClientView;
 import view.InviteReceivedPane;
 import view.InviteSentPane;
 import view.MatchRoomView;
+
+import javax.swing.*;
 
 public class MatchRoom extends Thread {
 
@@ -29,8 +29,26 @@ public class MatchRoom extends Thread {
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
 
+        Properties properties = new Properties();
+        InputStream inputStream =getClass().getClassLoader()
+                .getResourceAsStream("config.properties");
+        if (inputStream == null) {
+            String message = "Please make sure you have a config.properties " +
+                    "file in the root directory.\n\n" +
+                    "It should contain:\n\n" +
+                    "hostname=<hostname/ip>\n" +
+                    "port=<port>";
+            JOptionPane.showMessageDialog(matchRoomView,
+                    message, "Can't find config.properties",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
+        }
         try {
-            Socket socket = new Socket("localhost", 8900);
+            properties.load(inputStream);
+            String hostname = properties.getProperty("hostname");
+            int port = Integer.parseInt(properties.getProperty("port"));
+
+            Socket socket = new Socket(hostname, port);
             out = new ObjectOutputStream(new BufferedOutputStream(
                     socket.getOutputStream()));
             in = new ObjectInputStream(socket.getInputStream());
