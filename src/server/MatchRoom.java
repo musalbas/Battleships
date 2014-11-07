@@ -77,6 +77,13 @@ public class MatchRoom {
      * @param player
      */
     private synchronized void startWithKey(Player player) {
+        waitingPlayerList.put(player.getOwnKey(), player);
+        player.writeNotification(NotificationMessage.GAME_TOKEN,
+                player.getOwnKey());
+        sendMatchRoomList();
+    }
+
+    public synchronized void assignKey(Player player) {
         StringBuilder keyBuilder = new StringBuilder();
         Random random = new Random();
         int length = ALPHABET.length();
@@ -85,9 +92,6 @@ public class MatchRoom {
         }
         String key = keyBuilder.toString();
         player.setOwnKey(key);
-        waitingPlayerList.put(key, player);
-        player.writeNotification(NotificationMessage.GAME_TOKEN, key);
-        sendMatchRoomList();
     }
 
     /**

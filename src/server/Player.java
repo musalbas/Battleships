@@ -30,6 +30,7 @@ public class Player extends Thread {
     public Player(Socket socket, MatchRoom matchRoom) {
         this.socket = socket;
         this.matchRoom = matchRoom;
+        matchRoom.assignKey(this);
         this.requestList = new HashMap<>();
     }
 
