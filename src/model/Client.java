@@ -92,7 +92,7 @@ public class Client extends Thread {
                 // TODO: inform player it's their turn and to make a move
                 view.stopTimer();
                 view.setTimer(Game.TURN_TIMEOUT / 1000);
-                view.addChatMessage("YOUR TURN");
+                view.setMessage("Your turn.");
                 break;
             case NotificationMessage.OPPONENTS_TURN:
                 // TODO: informs player it is their opponent's turn
@@ -103,13 +103,12 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.GAME_WIN:
                 // TODO: inform player they have won the game
-                view.addChatMessage("GAME_WIN");
+                view.setMessage("You won.");
                 view.gameOverAction();
-                view.setMessage("Your turn.");
                 break;
             case NotificationMessage.GAME_LOSE:
                 // TODO: inform player they have lost the game
-                view.addChatMessage("GAME_LOSE");
+                view.setMessage("You lost.");
                 view.gameOverAction();
                 break;
             case NotificationMessage.TIMEOUT_WIN:
