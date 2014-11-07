@@ -71,7 +71,7 @@ public class ClientView extends JFrame {
         });
 
         controlPanel.add(bottomPanel, BorderLayout.SOUTH);
-        controlPanel.setPreferredSize(new Dimension(200, 150));
+        controlPanel.setPreferredSize(new Dimension(180, 150));
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         rotateButton.setEnabled(false);
@@ -100,7 +100,7 @@ public class ClientView extends JFrame {
         buttons.add(saveShipState);
         buttons.add(rotateButton);
 
-        JPanel boards = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel boards = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
         boards.add(new LabeledBoardView(enemyBoard));
         boards.add(new LabeledBoardView(myBoard));
@@ -117,6 +117,7 @@ public class ClientView extends JFrame {
         setContentPane(rootPanel);
 
         pack();
+        setMinimumSize(getSize());
         setVisible(true);
 
         addWindowListener(new WindowAdapter() {
