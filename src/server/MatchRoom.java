@@ -77,6 +77,13 @@ public class MatchRoom {
      * @param player
      */
     private synchronized void startWithKey(Player player) {
+        waitingPlayerList.put(player.getOwnKey(), player);
+        player.writeNotification(NotificationMessage.GAME_TOKEN,
+                player.getOwnKey());
+        sendMatchRoomList();
+    }
+
+    public synchronized void assignKey(Player player) {
         StringBuilder keyBuilder = new StringBuilder();
         Random random = new Random();
         int length = ALPHABET.length();
@@ -85,9 +92,6 @@ public class MatchRoom {
         }
         String key = keyBuilder.toString();
         player.setOwnKey(key);
-        waitingPlayerList.put(key, player);
-        player.writeNotification(NotificationMessage.GAME_TOKEN, key);
-        sendMatchRoomList();
     }
 
     /**
@@ -123,8 +127,10 @@ public class MatchRoom {
     }
 
     private synchronized void acceptRequest(Player player, String key) {
-        Player opponent = waitingPlayerList.remove(key);
-        if (opponent != null) {
+        Player opponent = waitingPlayerList.get(key);
+        if (opponent != null &&
+                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
+            waitingPlayerList.remove(key);
             waitingPlayerList.values().remove(player);
             opponent.requestAccepted(player);
             new Game(opponent, player);
@@ -136,7 +142,8 @@ public class MatchRoom {
 
     private synchronized void rejectRequest(Player player, String key) {
         Player opponent = waitingPlayerList.get(key);
-        if (opponent != null) {
+        if (opponent != null &&
+                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
             opponent.requestRejected(player);
         }
     }
