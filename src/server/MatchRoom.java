@@ -127,8 +127,10 @@ public class MatchRoom {
     }
 
     private synchronized void acceptRequest(Player player, String key) {
-        Player opponent = waitingPlayerList.remove(key);
-        if (opponent != null) {
+        Player opponent = waitingPlayerList.get(key);
+        if (opponent != null &&
+                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
+            waitingPlayerList.remove(key);
             waitingPlayerList.values().remove(player);
             opponent.requestAccepted(player);
             new Game(opponent, player);
@@ -140,7 +142,8 @@ public class MatchRoom {
 
     private synchronized void rejectRequest(Player player, String key) {
         Player opponent = waitingPlayerList.get(key);
-        if (opponent != null) {
+        if (opponent != null &&
+                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
             opponent.requestRejected(player);
         }
     }
