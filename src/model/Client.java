@@ -65,6 +65,8 @@ public class Client extends Thread {
                 view.addChatMessage("received opponents_name");
                 if (n.getText().length == 1) {
                     opponentName = n.getText()[0];
+                    view.setTitle("Playing Battleships against " +
+                            opponentName);
                 }
                 break;
             case NotificationMessage.BOARD_ACCEPTED:
