@@ -2,6 +2,7 @@ package view;
 
 import model.Client;
 import model.MatchRoom;
+import server.Game;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,6 +25,8 @@ public class ClientView extends JFrame {
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
     private MatchRoom matchRoom;
+    private JLabel timerView;
+    private Timer timer;
 
     public ClientView(ObjectOutputStream out, final ObjectInputStream in,
                       final MatchRoom matchRoom) {
@@ -52,9 +55,9 @@ public class ClientView extends JFrame {
 
         controlPanel.add(chatScrollPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(inputField, BorderLayout.CENTER);
-        bottomPanel.add(submitButton, BorderLayout.EAST);
+        JPanel chatInput = new JPanel(new BorderLayout());
+        chatInput.add(inputField, BorderLayout.CENTER);
+        chatInput.add(submitButton, BorderLayout.EAST);
 
         inputField.addActionListener(new ActionListener() {
             @Override
@@ -70,10 +73,10 @@ public class ClientView extends JFrame {
             }
         });
 
-        controlPanel.add(bottomPanel, BorderLayout.SOUTH);
+        controlPanel.add(chatInput, BorderLayout.SOUTH);
         controlPanel.setPreferredSize(new Dimension(180, 150));
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         rotateButton.setEnabled(false);
         rotateButton.addActionListener(new ActionListener() {
             @Override
@@ -100,15 +103,24 @@ public class ClientView extends JFrame {
         buttons.add(saveShipState);
         buttons.add(rotateButton);
 
+        JPanel bottomPanel = new JPanel(new GridLayout(1,0));
+        timerView = new JLabel(Integer.toString(Game.PLACEMENT_TIMEOUT / 1000));
+        timerView.setHorizontalAlignment(JLabel.CENTER);
+        timerView.setVerticalAlignment(JLabel.CENTER);
+        timerView.setFont(new Font("SansSerif", Font.BOLD, 16));
+        timer = makeTimer(Game.PLACEMENT_TIMEOUT / 1000);
+        bottomPanel.add(timerView);
+        bottomPanel.add(buttons);
+
         JPanel boards = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        boards.add(new LabeledBoardView(enemyBoard));
         boards.add(new LabeledBoardView(myBoard));
+        boards.add(new LabeledBoardView(enemyBoard));
 
         JPanel gamePanel = new JPanel(new BorderLayout(10, 10));
 
         gamePanel.add(boards, BorderLayout.CENTER);
-        gamePanel.add(buttons, BorderLayout.SOUTH);
+        gamePanel.add(bottomPanel, BorderLayout.SOUTH);
 
         rootPanel.add(gamePanel, BorderLayout.CENTER);
         rootPanel.add(controlPanel, BorderLayout.EAST);
@@ -126,7 +138,27 @@ public class ClientView extends JFrame {
                 matchRoom.reopen();
             }
         });
+        timer.start();
+    }
 
+    private Timer makeTimer(final int seconds) {
+        final Timer timer = new Timer(1000, null);
+
+        timer.addActionListener(new ActionListener() {
+
+            private int secondsLeft = seconds;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                --secondsLeft;
+                timerView.setText(Integer.toString(secondsLeft));
+                if (secondsLeft == 0) {
+                    timer.stop();
+                }
+            }
+        });
+
+        return timer;
     }
 
     public void sendChatMessage() {

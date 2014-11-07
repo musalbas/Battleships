@@ -90,7 +90,7 @@ public class SquareView implements ChangeListener {
         switch (state) {
             case HOVER:
                 if (!animated()) {
-                    g.setColor(Color.RED);
+                    g.setColor(Color.BLUE);
                     g.fillRect(x, y, width, height);
                 }
                 break;
