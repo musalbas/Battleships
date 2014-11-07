@@ -19,7 +19,7 @@ public class Player extends Thread {
 
     private Socket socket;
     private MatchRoom matchRoom;
-    private String name = "(new player)";
+    private String name = "";
     private ObjectOutputStream out;
     private Game game;
     private Board board;
