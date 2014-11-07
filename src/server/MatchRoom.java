@@ -1,5 +1,6 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,9 +13,11 @@ public class MatchRoom {
     private final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
     private Player waitingRandomPlayer;
     private HashMap<String, Player> waitingPlayerList;
+    private ArrayList<Player> connectedPlayers;
 
     public MatchRoom() {
         this.waitingPlayerList = new HashMap<String, Player>();
+        this.connectedPlayers = new ArrayList<>();
     }
 
     public void join(Player player, String[] args) {
@@ -77,6 +80,13 @@ public class MatchRoom {
      * @param player
      */
     private synchronized void startWithKey(Player player) {
+        waitingPlayerList.put(player.getOwnKey(), player);
+        player.writeNotification(NotificationMessage.GAME_TOKEN,
+                player.getOwnKey());
+        sendMatchRoomList();
+    }
+
+    public synchronized void assignKey(Player player) {
         StringBuilder keyBuilder = new StringBuilder();
         Random random = new Random();
         int length = ALPHABET.length();
@@ -85,9 +95,6 @@ public class MatchRoom {
         }
         String key = keyBuilder.toString();
         player.setOwnKey(key);
-        waitingPlayerList.put(key, player);
-        player.writeNotification(NotificationMessage.GAME_TOKEN, key);
-        sendMatchRoomList();
     }
 
     /**
@@ -113,6 +120,12 @@ public class MatchRoom {
         }
     }
 
+    /**
+     * Sends a join request, coming from a player, to a player matching the
+     * given key.
+     * @param player player sending the request
+     * @param key key of player being invited
+     */
     private synchronized void joinRequest(Player player, String key) {
         Player opponent = waitingPlayerList.get(key);
         if (player == opponent) {
@@ -122,9 +135,17 @@ public class MatchRoom {
         }
     }
 
+    /**
+     * Called when a player accepts a game request from a player matching the
+     * given key.
+     * @param player player accepting the request
+     * @param key key of player who sent the request
+     */
     private synchronized void acceptRequest(Player player, String key) {
-        Player opponent = waitingPlayerList.remove(key);
-        if (opponent != null) {
+        Player opponent = waitingPlayerList.get(key);
+        if (opponent != null &&
+                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
+            waitingPlayerList.remove(key);
             waitingPlayerList.values().remove(player);
             opponent.requestAccepted(player);
             new Game(opponent, player);
@@ -134,13 +155,24 @@ public class MatchRoom {
         }
     }
 
+    /**
+     * Called when a player rejects a game request from a player matching the
+     * given key.
+     * @param player player accepting the request
+     * @param key key of player who sent the request
+     */
     private synchronized void rejectRequest(Player player, String key) {
         Player opponent = waitingPlayerList.get(key);
-        if (opponent != null) {
+        if (opponent != null &&
+                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
             opponent.requestRejected(player);
         }
     }
 
+    /**
+     * Called when a game request from a player gets cancelled.
+     * @param player the player who sent and cancelled the invite
+     */
     private synchronized void cancelRequest(Player player) {
         Player opponent = waitingPlayerList.get(player.getRequestedGameKey());
         player.setRequestedGameKey(null);
@@ -165,16 +197,24 @@ public class MatchRoom {
         }
     }
 
+    /**
+     * Checks if a player connected to the server already has the requested
+     * name.
+     * @param name desired name
+     * @return true if name taken
+     */
     public boolean playerNameExists(String name) {
-        boolean exists = false;
-        for (Map.Entry<String, Player> entry : waitingPlayerList.entrySet()) {
-            if (entry.getValue().equals(name)) {
+        for (Player player : connectedPlayers) {
+            if (name.equals(player.getPlayerName())) {
                 return true;
             }
         }
-        return exists;
+        return false;
     }
 
+    /**
+     * Sends the match room list to all players in the match room list.
+     */
     public synchronized void sendMatchRoomList() {
         HashMap<String, String> matchRoomList = new HashMap<String, String>();
         for (Map.Entry<String, Player> entry : waitingPlayerList.entrySet()) {
@@ -188,6 +228,16 @@ public class MatchRoom {
             Player player = entry.getValue();
             player.writeObject(message);
         }
+    }
+
+    public void addPlayer(Player player) {
+        if (!connectedPlayers.contains(player)) {
+            connectedPlayers.add(player);
+        }
+    }
+
+    public void removePlayer(Player player) {
+        connectedPlayers.remove(player);
     }
 
 }

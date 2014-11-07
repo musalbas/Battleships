@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,6 +31,8 @@ public class Player extends Thread {
     public Player(Socket socket, MatchRoom matchRoom) {
         this.socket = socket;
         this.matchRoom = matchRoom;
+        matchRoom.assignKey(this);
+        matchRoom.addPlayer(this);
         this.requestList = new HashMap<>();
     }
 
@@ -100,6 +103,7 @@ public class Player extends Thread {
             } else {
                 matchRoom.removeWaitingPlayer(this);
             }
+            matchRoom.removePlayer(this);
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -209,6 +213,9 @@ public class Player extends Thread {
         }, 30000);
     }
 
+    /**
+     * Cancels the invite timer.
+     */
     private void cancelTimer() {
         if (requestTimer != null) {
             requestTimer.cancel();
@@ -231,6 +238,9 @@ public class Player extends Thread {
         }
     }
 
+    /**
+     * Ends a game and notifies the opponent the player has left.
+     */
     public void leaveGame() {
         if (game != null) {
             Player opponent = game.getOpponent(this);
