@@ -15,9 +15,6 @@ public class LabeledBoardView extends JPanel {
         add(boardView, BorderLayout.CENTER);
     }
 
-    /**
-     * Created by user on 6-Nov-14.
-     */
     static class VerticalBoardLabels extends JPanel {
 
         private int squareSize;
