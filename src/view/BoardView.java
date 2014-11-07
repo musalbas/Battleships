@@ -81,7 +81,9 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void resetSelectedShipView() {
-        selectedShipView.setSelected(false);
+        if (selectedShipView != null) {
+            selectedShipView.setSelected(false);
+        }
         selectedShipView = null;
         repaint();
     }

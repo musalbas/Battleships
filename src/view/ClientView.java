@@ -25,7 +25,8 @@ public class ClientView extends JFrame {
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
     private MatchRoom matchRoom;
-    private JLabel timerAndMessagesView;
+    private JLabel timerView;
+    private JLabel message;
     private Timer timer;
 
     public ClientView(ObjectOutputStream out, final ObjectInputStream in,
@@ -104,11 +105,18 @@ public class ClientView extends JFrame {
         buttons.add(rotateButton);
 
         JPanel bottomPanel = new JPanel(new GridLayout(1, 0));
-        timerAndMessagesView = new JLabel(Integer.toString(Game.PLACEMENT_TIMEOUT / 1000));
-        timerAndMessagesView.setHorizontalAlignment(JLabel.CENTER);
-        timerAndMessagesView.setVerticalAlignment(JLabel.CENTER);
-        timerAndMessagesView.setFont(new Font("SansSerif", Font.BOLD, 16));
-        bottomPanel.add(timerAndMessagesView);
+
+        message = new JLabel("");
+        message.setHorizontalAlignment(JLabel.CENTER);
+        message.setVerticalAlignment(JLabel.CENTER);
+        message.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        timerView = new JLabel(Integer.toString(Game.PLACEMENT_TIMEOUT / 1000));
+        timerView.setHorizontalAlignment(JLabel.CENTER);
+        timerView.setVerticalAlignment(JLabel.CENTER);
+        timerView.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        bottomPanel.add(message);
+        bottomPanel.add(timerView);
         bottomPanel.add(buttons);
 
         JPanel boards = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -146,8 +154,8 @@ public class ClientView extends JFrame {
         }
     }
 
-    public void setMessage(String message) {
-        timerAndMessagesView.setText(message);
+    public void setMessage(String s) {
+        message.setText(s);
     }
 
 
@@ -160,7 +168,7 @@ public class ClientView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 --secondsLeft;
-                timerAndMessagesView.setText(Integer.toString(secondsLeft));
+                timerView.setText(Integer.toString(secondsLeft));
                 if (secondsLeft == 0) {
                     timer.stop();
                 }

@@ -97,11 +97,13 @@ public class Client extends Thread {
                 view.stopTimer();
                 view.setTimer(Game.TURN_TIMEOUT / 1000);
                 view.addChatMessage("OPPONENTS_TURN");
+                view.setMessage("Opponent's turn.");
                 break;
             case NotificationMessage.GAME_WIN:
                 // TODO: inform player they have won the game
                 view.addChatMessage("GAME_WIN");
                 view.gameOverAction();
+                view.setMessage("Your turn.");
                 break;
             case NotificationMessage.GAME_LOSE:
                 // TODO: inform player they have lost the game
