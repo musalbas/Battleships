@@ -70,6 +70,8 @@ public class MatchRoomView extends JFrame {
         setSize(300, 200);
 
         this.matchRoom = new MatchRoom(this);
+        askForName();
+        matchRoom.joinLobby();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -94,30 +96,24 @@ public class MatchRoomView extends JFrame {
         String message = "Please choose a nickname.";
         while (true) {
             String name = (String) JOptionPane.showInputDialog(this, message,
-                    "Nickname", JOptionPane.PLAIN_MESSAGE, null, null, "");
-            if (playerNameExists(name)) {
-                message = "This nickname already exists, please try again.";
-            } else if (name.equals("")) {
-                message = "You must choose a valid nickname.";
-            } else {
-                this.matchRoom.sendName(name);
-                synchronized (matchRoom) {
-                    try {
-                        if (matchRoom.getNameState() == MatchRoom.NameState.WAITING) {
-                            matchRoom.wait();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                "Nickname", JOptionPane.PLAIN_MESSAGE, null, null, "");
+            this.matchRoom.sendName(name);
+            synchronized (matchRoom) {
+                try {
+                    if (matchRoom.getNameState() == MatchRoom.NameState.WAITING) {
+                        matchRoom.wait();
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                MatchRoom.NameState state = matchRoom.getNameState();
-                if (state == MatchRoom.NameState.ACCEPTED) {
-                    break;
-                } else if (state == MatchRoom.NameState.INVALID) {
-                    message = "You must choose a valid nickname.";
-                } else if (state == MatchRoom.NameState.TAKEN) {
-                    message = "This nickname already exists, please try again.";
-                }
+            }
+            MatchRoom.NameState state = matchRoom.getNameState();
+            if (state == MatchRoom.NameState.ACCEPTED) {
+                break;
+            } else if (state == MatchRoom.NameState.INVALID) {
+                message = "You must choose a valid nickname.";
+            } else if (state == MatchRoom.NameState.TAKEN) {
+                message = "This nickname already exists, please try again.";
             }
         }
     }
@@ -135,11 +131,6 @@ public class MatchRoomView extends JFrame {
     public synchronized void updateMatchRoomList(
             HashMap<String, String> matchRoomList) {
         this.matchRoomList = matchRoomList;
-        if (firstTimeListing) {
-            firstTimeListing = false;
-            askForName();
-        }
-
         this.playersListModel.clear();
         for (Map.Entry<String, String> entry : matchRoomList.entrySet()) {
             String key = entry.getKey();

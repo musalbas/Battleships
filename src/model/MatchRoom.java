@@ -35,8 +35,6 @@ public class MatchRoom extends Thread {
                     socket.getOutputStream()));
             in = new ObjectInputStream(socket.getInputStream());
             out.flush();
-            out.writeObject(new String[] { "join", "start" });
-            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,6 +88,15 @@ public class MatchRoom extends Thread {
         this.nameState = NameState.WAITING;
         try {
             out.writeObject(new String[] { "name", name });
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void joinLobby() {
+        try {
+            out.writeObject(new String[]{"join", "start"});
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -192,12 +199,7 @@ public class MatchRoom extends Thread {
             this.clientModel = null;
         }
         matchRoomView.setVisible(true);
-        try {
-            out.writeObject(new String[] { "join", "start" });
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        joinLobby();
     }
 
     public void sendStringArray(String[] array) {

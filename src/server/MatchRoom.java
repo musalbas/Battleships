@@ -21,8 +21,8 @@ public class MatchRoom {
     }
 
     public void join(Player player, String[] args) {
-        if (args.length < 2) {
-            // Send fail response to view
+        if (args.length < 2 || player.getPlayerName().equals("")) {
+            return;
         }
         String option = args[1];
         switch (option) {
