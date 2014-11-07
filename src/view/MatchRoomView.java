@@ -21,6 +21,8 @@ public class MatchRoomView extends JFrame {
     private boolean firstTimeListing = true;
     private HashMap<String, String> matchRoomList;
     private JList<RoomPlayer> playersList;
+    private JButton sendInvite;
+    private JLabel playersNumber;
 
     public MatchRoomView() {
         try {
@@ -30,15 +32,15 @@ public class MatchRoomView extends JFrame {
             e.printStackTrace();
         }
 
-
         JPanel mainPanel = new JPanel(new BorderLayout(10, 5));
+        setTitle("Battleships");
         mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         playersList = new JList<>();
         playersList.setModel(playersListModel);
         playersList.addMouseListener(new PlayersListMouseAdapter());
         playersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        final JButton sendInvite = new JButton("Send invite");
+        sendInvite = new JButton("Send invite");
         sendInvite.setEnabled(false);
         sendInvite.addActionListener(new ActionListener() {
             @Override
@@ -56,6 +58,10 @@ public class MatchRoomView extends JFrame {
             }
         });
 
+        playersNumber = new JLabel("Players in room: " + playersListModel.getSize());
+        playersNumber.setHorizontalAlignment(JLabel.CENTER);
+        
+        mainPanel.add(playersNumber, BorderLayout.NORTH);
         mainPanel.add(new JScrollPane(playersList), BorderLayout.CENTER);
         mainPanel.add(sendInvite, BorderLayout.SOUTH);
 
@@ -76,7 +82,10 @@ public class MatchRoomView extends JFrame {
             }
 
             RoomPlayer player = playersList.getSelectedValue();
-            matchRoom.sendJoinFriend(player.getKey(), player.getName());
+
+            if (player != null) {
+                matchRoom.sendJoinFriend(player.getKey(), player.getName());
+            }
         }
 
     }
@@ -140,6 +149,10 @@ public class MatchRoomView extends JFrame {
                 this.playersListModel.addElement(player);
             }
         }
+        if (playersList.isSelectionEmpty()) {
+            sendInvite.setEnabled(false);
+        }
+        playersNumber.setText("Players in room: " + playersListModel.getSize());
     }
 
     public static void main(String[] args) {
