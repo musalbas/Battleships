@@ -3,6 +3,12 @@ package view;
 import model.MatchRoom;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -10,10 +16,11 @@ import java.util.Map;
 
 public class MatchRoomView extends JFrame {
 
-    private DefaultListModel playersListModel = new DefaultListModel();
+    private DefaultListModel<RoomPlayer> playersListModel = new DefaultListModel<RoomPlayer>();
     private MatchRoom matchRoom;
     private boolean firstTimeListing = true;
     private HashMap<String, String> matchRoomList;
+    private JList<RoomPlayer> playersList;
 
     public MatchRoomView() {
         try {
@@ -23,14 +30,38 @@ public class MatchRoomView extends JFrame {
             e.printStackTrace();
         }
 
-        JList playersList = new JList();
-        playersList.setModel(this.playersListModel);
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 5));
+        mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+        playersList = new JList<>();
+        playersList.setModel(playersListModel);
         playersList.addMouseListener(new PlayersListMouseAdapter());
+        playersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        final JButton sendInvite = new JButton("Send invite");
+        sendInvite.setEnabled(false);
+        sendInvite.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RoomPlayer player = playersList.getSelectedValue();
+                matchRoom.sendJoinFriend(player.getKey(), player.getName());
+            }
+        });
 
-        this.add(playersList);
 
+        playersList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                sendInvite.setEnabled(true);
+            }
+        });
+
+        mainPanel.add(new JScrollPane(playersList), BorderLayout.CENTER);
+        mainPanel.add(sendInvite, BorderLayout.SOUTH);
+
+        add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
-        setSize(180, 400);
+        setSize(300, 200);
 
         this.matchRoom = new MatchRoom(this);
 
@@ -44,10 +75,7 @@ public class MatchRoomView extends JFrame {
                 return;
             }
 
-            JList list = (JList) e.getSource();
-            int index = list.locationToIndex(e.getPoint());
-            RoomPlayer player = (RoomPlayer) playersListModel.get(index);
-
+            RoomPlayer player = playersList.getSelectedValue();
             matchRoom.sendJoinFriend(player.getKey(), player.getName());
         }
 
