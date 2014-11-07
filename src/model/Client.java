@@ -104,11 +104,13 @@ public class Client extends Thread {
             case NotificationMessage.GAME_WIN:
                 // TODO: inform player they have won the game
                 view.setMessage("You won.");
+                view.stopTimer();
                 view.gameOverAction();
                 break;
             case NotificationMessage.GAME_LOSE:
                 // TODO: inform player they have lost the game
                 view.setMessage("You lost.");
+                view.stopTimer();
                 view.gameOverAction();
                 break;
             case NotificationMessage.TIMEOUT_WIN:
