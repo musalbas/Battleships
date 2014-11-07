@@ -60,14 +60,14 @@ public class MatchRoomView extends JFrame {
 
         playersNumber = new JLabel("Players in room: " + playersListModel.getSize());
         playersNumber.setHorizontalAlignment(JLabel.CENTER);
-        
+
         mainPanel.add(playersNumber, BorderLayout.NORTH);
         mainPanel.add(new JScrollPane(playersList), BorderLayout.CENTER);
         mainPanel.add(sendInvite, BorderLayout.SOUTH);
 
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
-        setSize(300, 200);
+        pack();
 
         this.matchRoom = new MatchRoom(this);
 
