@@ -95,7 +95,7 @@ public class Board implements Serializable {
     public void setBoatPositionLocked(boolean boatPositionLocked) {
         this.boatPositionLocked = boatPositionLocked;
         client.getView().setSendShipState(!boatPositionLocked);
-        firePropertyChange ("resetSelectedShip", null, null);
+        firePropertyChange("resetSelectedShip", null, null);
     }
 
     /**
