@@ -1,11 +1,5 @@
 package model;
 
-import java.awt.*;
-import java.io.*;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.Properties;
-
 import server.messages.MatchRoomListMessage;
 import server.messages.NotificationMessage;
 import view.ClientView;
@@ -14,6 +8,11 @@ import view.InviteSentPane;
 import view.MatchRoomView;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.*;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Properties;
 
 public class MatchRoom extends Thread {
 
@@ -82,7 +81,7 @@ public class MatchRoom extends Thread {
 
     public void sendJoinFriend(String key, String name) {
         try {
-            out.writeObject(new String[] { "join", "join", key });
+            out.writeObject(new String[]{"join", "join", key});
             out.flush();
             final String currentKey = key;
             final String currentName = name;
@@ -102,7 +101,7 @@ public class MatchRoom extends Thread {
     public void sendName(String name) {
         this.nameState = NameState.WAITING;
         try {
-            out.writeObject(new String[] { "name", name });
+            out.writeObject(new String[]{"name", name});
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -146,53 +145,53 @@ public class MatchRoom extends Thread {
         } else if (input instanceof NotificationMessage) {
             NotificationMessage n = (NotificationMessage) input;
             switch (n.getCode()) {
-            case NotificationMessage.GAME_TOKEN:
-                if (n.getText().length == 1) {
-                    key = n.getText()[0];
-                }
-                break;
-            case NotificationMessage.OPPONENTS_NAME:
-                disposeAllPanes();
-                startGame(input);
-                break;
-            case NotificationMessage.NAME_ACCEPTED:
-                setNameState(NameState.ACCEPTED);
-                break;
-            case NotificationMessage.NAME_TAKEN:
-                setNameState(NameState.TAKEN);
-                break;
-            case NotificationMessage.INVALID_NAME:
-                setNameState(NameState.INVALID);
-                break;
-            case NotificationMessage.NEW_JOIN_GAME_REQUEST:
-                final InviteReceivedPane dialog = new InviteReceivedPane(
-                        n.getText()[0], n.getText()[1], this);
-                System.out.println("request from " + n.getText()[0] + " "  + n.getText()[1]);
-                inviteDialogs.put(n.getText()[0], dialog);
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        dialog.showOptionPane(matchRoomView);
+                case NotificationMessage.GAME_TOKEN:
+                    if (n.getText().length == 1) {
+                        key = n.getText()[0];
                     }
-                });
-                break;
-            case NotificationMessage.JOIN_GAME_REQUEST_REJECTED:
-                System.out.println("Join request rejected");
-                if (inviteSentPane != null) {
-                    inviteSentPane.dispose();
-                }
-                break;
-            case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
-                System.out.println("Join request accepted");
-                break;
-            case NotificationMessage.JOIN_GAME_REQUEST_CANCELLED:
-                System.out.println("cancelled");
-                InviteReceivedPane pane = inviteDialogs.get(n.getText()[0]);
-                if (pane != null) {
-                    pane.dispose();
-                } else {
-                    System.out.println("can't find " + n.getText()[0]);
-                }
+                    break;
+                case NotificationMessage.OPPONENTS_NAME:
+                    disposeAllPanes();
+                    startGame(input);
+                    break;
+                case NotificationMessage.NAME_ACCEPTED:
+                    setNameState(NameState.ACCEPTED);
+                    break;
+                case NotificationMessage.NAME_TAKEN:
+                    setNameState(NameState.TAKEN);
+                    break;
+                case NotificationMessage.INVALID_NAME:
+                    setNameState(NameState.INVALID);
+                    break;
+                case NotificationMessage.NEW_JOIN_GAME_REQUEST:
+                    final InviteReceivedPane dialog = new InviteReceivedPane(
+                            n.getText()[0], n.getText()[1], this);
+                    System.out.println("request from " + n.getText()[0] + " " + n.getText()[1]);
+                    inviteDialogs.put(n.getText()[0], dialog);
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.showOptionPane(matchRoomView);
+                        }
+                    });
+                    break;
+                case NotificationMessage.JOIN_GAME_REQUEST_REJECTED:
+                    System.out.println("Join request rejected");
+                    if (inviteSentPane != null) {
+                        inviteSentPane.dispose();
+                    }
+                    break;
+                case NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED:
+                    System.out.println("Join request accepted");
+                    break;
+                case NotificationMessage.JOIN_GAME_REQUEST_CANCELLED:
+                    System.out.println("cancelled");
+                    InviteReceivedPane pane = inviteDialogs.get(n.getText()[0]);
+                    if (pane != null) {
+                        pane.dispose();
+                    } else {
+                        System.out.println("can't find " + n.getText()[0]);
+                    }
             }
         }
     }

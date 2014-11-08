@@ -116,8 +116,8 @@ public class ClientView extends JFrame {
         timerView.setFont(new Font("SansSerif", Font.BOLD, 16));
 
         bottomPanel.add(message);
-        bottomPanel.add(timerView);
         bottomPanel.add(buttons);
+        bottomPanel.add(timerView);
 
         JPanel boards = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
@@ -152,6 +152,7 @@ public class ClientView extends JFrame {
         if (timer != null) {
             timer.stop();
         }
+        timerView.setText("");
     }
 
     public void setMessage(String s) {
