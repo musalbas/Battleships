@@ -66,7 +66,7 @@ public class Player extends Thread {
 
                         switch (message) {
                         case "join":
-                            matchRoom.join(this, array);
+                            matchRoom.parse(this, array);
                             break;
                         case "name":
                             if (length != 2 || array[1].equals("")) {
