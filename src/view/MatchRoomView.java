@@ -109,6 +109,7 @@ public class MatchRoomView extends JFrame {
             }
             MatchRoom.NameState state = matchRoom.getNameState();
             if (state == MatchRoom.NameState.ACCEPTED) {
+                matchRoom.setOwnName(name);
                 break;
             } else if (state == MatchRoom.NameState.INVALID) {
                 message = "You must choose a valid nickname.";
