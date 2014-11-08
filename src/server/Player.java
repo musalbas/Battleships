@@ -27,6 +27,12 @@ public class Player extends Thread {
     private String ownKey;
     private String requestedGameKey;
 
+    /**
+     * Initialises a player with a socket to connect through, and a reference
+     * to the match room.
+     * @param socket
+     * @param matchRoom
+     */
     public Player(Socket socket, MatchRoom matchRoom) {
         this.socket = socket;
         this.matchRoom = matchRoom;
@@ -35,6 +41,9 @@ public class Player extends Thread {
         this.requestList = new HashMap<>();
     }
 
+    /**
+     * Listens to input from the client.
+     */
     @Override
     public void run() {
         super.run();
@@ -109,17 +118,24 @@ public class Player extends Thread {
         }
     }
 
+    /**
+     * Sets the Game the player is in.
+     * @param game the game the player is in
+     */
     public void setGame(Game game) {
         this.game = game;
     }
 
+    /**
+     * Gets the name that the player has chosen to assign to themselves.
+     * @return the name of the player
+     */
     public String getPlayerName() {
         return name;
     }
 
     /**
-     * Writes a String to the view.
-     * 
+     * Writes a String to the player, and flushes it.
      * @param message
      */
     public void writeMessage(String message) {
@@ -131,6 +147,10 @@ public class Player extends Thread {
         }
     }
 
+    /**
+     * Writes an Object to the player, and flushes it.
+     * @param object
+     */
     public void writeObject(Object object) {
         try {
             out.writeObject(object);
@@ -140,6 +160,12 @@ public class Player extends Thread {
         }
     }
 
+    /**
+     * Writes a notification to the player, with an optional String array.
+     * @see server.messages.NotificationMessage
+     * @param notificationMessage the notification messages constant to send
+     * @param text additional information to be sent as a String array
+     */
     public void writeNotification(int notificationMessage, String... text) {
         try {
             NotificationMessage nm = new NotificationMessage(
@@ -151,10 +177,19 @@ public class Player extends Thread {
         }
     }
 
+    /**
+     * Gets the board that the player has uploaded to the server.
+     * @return the client's board
+     */
     public Board getBoard() {
         return this.board;
     }
 
+    /**
+     * Sends a game request to the player, and updates the request list and the
+     * requested game key of the opponent.
+     * @param requester the player who sent the request
+     */
     public synchronized void sendRequest(Player requester) {
         requestList.put(requester.getOwnKey(), requester);
         requester.requestedGameKey = this.ownKey;
@@ -182,22 +217,43 @@ public class Player extends Thread {
         writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
     }
 
+    /**
+     * Sets player's own unique key, used to identify them when sending and
+     * receiving game requests.
+     * @param ownKey player's unique key
+     */
     public void setOwnKey(String ownKey) {
         this.ownKey = ownKey;
     }
 
+    /**
+     * Gets the unique key of the player.
+     * @return player's unique key
+     */
     public String getOwnKey() {
         return ownKey;
     }
 
+    /**
+     * Sets the requested game key to the unique key of the player an invite was
+     * sent to.
+     * @param key key of invited player
+     */
     public void setRequestedGameKey(String key) {
         this.requestedGameKey = key;
     }
 
+    /**
+     * Gets the unique key of a player that the player sent a game invite to.
+     * @return key of invited player
+     */
     public String getRequestedGameKey() {
         return requestedGameKey;
     }
 
+    /**
+     * Rejects a game invite from every player who has invited this player.
+     */
     public void rejectAll() {
         for (Player p : requestList.values()) {
             p.requestRejected(this);
