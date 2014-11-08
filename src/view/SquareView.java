@@ -25,12 +25,11 @@ public class SquareView implements ChangeListener {
     private int state;
     private Image explosionImage;
     private Image water;
+    private Image splash;
     private BoardView boardView;
     private Square squareModel;
 
-    /*
-     * (x,y)----* | | height----* width
-     */
+
     public SquareView(int x, int y, int width, int height, BoardView boardView,
                       Square squareModel) {
         this.x = x;
@@ -43,16 +42,12 @@ public class SquareView implements ChangeListener {
         squareModel.addChangeListener(this);
         try {
             water = ImageIO.read(new File("resources/water/water.png"));
+            splash = ImageIO.read(new File("resources/water/splash.png"));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Some files have been deleted.", "Fatal error",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    public boolean mouseEntered(int x, int y) {
-        return (this.x <= x && x <= this.x + width)
-                && (this.y <= y && y <= this.y + height);
     }
 
     public int getState() {
@@ -94,11 +89,8 @@ public class SquareView implements ChangeListener {
                     g.fillRect(x, y, width, height);
                 }
                 break;
-            case HIT:
-                g.setColor(Color.GRAY);
-                g.fillRect(x, y, width, height);
             case MISS:
-                drawCross(g);
+                g.drawImage(splash, x, y, width, height, null);
                 break;
         }
     }
