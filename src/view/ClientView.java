@@ -21,6 +21,7 @@ public class ClientView extends JFrame {
     private final JButton submitButton = new JButton("Submit");
     private final JButton rotateButton = new JButton("Rotate");
     private final JButton saveShipState = new JButton("Ready");
+    private JScrollPane chatScrollPane;
     private JList<String> chat = new JList<>();
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
     private Client model;
@@ -44,15 +45,7 @@ public class ClientView extends JFrame {
         this.matchRoom = matchRoom;
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
-        JScrollPane chatScrollPane = new JScrollPane(chat);
-
-        chatScrollPane.getVerticalScrollBar().addAdjustmentListener(
-                new AdjustmentListener() {
-                    public void adjustmentValueChanged(AdjustmentEvent e) {
-                        e.getAdjustable().setValue(
-                                e.getAdjustable().getMaximum());
-                    }
-                });
+        chatScrollPane = new JScrollPane(chat);
 
         controlPanel.add(chatScrollPane, BorderLayout.CENTER);
 
@@ -188,7 +181,9 @@ public class ClientView extends JFrame {
     }
 
     public void addChatMessage(String text) {
+        JScrollBar bar = chatScrollPane.getVerticalScrollBar();
         chatModel.addElement("<html><b>" + text + "</b></html>" + "\n");
+        bar.setValue(bar.getMaximum());
     }
 
     public void setSendShipState(boolean state) {
