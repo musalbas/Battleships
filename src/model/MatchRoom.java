@@ -7,7 +7,6 @@ import view.InviteReceivedPane;
 import view.InviteSentPane;
 import view.MatchRoomView;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
@@ -29,29 +28,33 @@ public class MatchRoom extends Thread {
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
 
-        try {
-            InputStream inputStream = new FileInputStream("config.properties");
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            String hostname = properties.getProperty("hostname");
-            int port = Integer.parseInt(properties.getProperty("port"));
-            Socket socket = new Socket(hostname, port);
-            out = new ObjectOutputStream(new BufferedOutputStream(
-                    socket.getOutputStream()));
-            in = new ObjectInputStream(socket.getInputStream());
-            out.flush();
-        } catch (FileNotFoundException e) {
-            String message = "Please make sure you have a config.properties " +
-                    "file in the current working directory.\n\n" +
-                    "It should contain:\n\n" +
-                    "hostname=<hostname/ip>\n" +
-                    "port=<port>";
-            JOptionPane.showMessageDialog(matchRoomView,
-                    message, "Can't find config.properties",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        } catch (IOException e) {
-            e.printStackTrace();
+        boolean connected = false;
+
+        while (!connected) {
+            try {
+                InputStream inputStream = new FileInputStream("config.properties");
+                Properties properties = new Properties();
+                properties.load(inputStream);
+                String hostname = properties.getProperty("hostname");
+                String portStr = properties.getProperty("port");
+                if (hostname == null || portStr == null) {
+                    matchRoomView.showConfigFileError();
+                }
+                int port = Integer.parseInt(portStr);
+                Socket socket = new Socket(hostname, port);
+                out = new ObjectOutputStream(new BufferedOutputStream(
+                        socket.getOutputStream()));
+                in = new ObjectInputStream(socket.getInputStream());
+                out.flush();
+                connected = true;
+            } catch (FileNotFoundException e) {
+                matchRoomView.showConfigFileError();
+            } catch (IOException e) {
+                int response = matchRoomView.showInitialConnectionError();
+                if (response == 0) {
+                    System.exit(-1);
+                }
+            }
         }
 
         inviteDialogs = new HashMap<>();
@@ -74,7 +77,7 @@ public class MatchRoom extends Thread {
             }
             System.out.println("stopped");
         } catch (IOException e) {
-            e.printStackTrace();
+            matchRoomView.showLostConnectionError();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

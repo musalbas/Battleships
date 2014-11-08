@@ -175,4 +175,30 @@ public class MatchRoomView extends JFrame {
 
     }
 
+    public void showConfigFileError() {
+        String message = "Make sure you have a config.properties file\n" +
+                "in the current working directory containing:\n\n" +
+                "hostname=<hostname/ip>\n" +
+                "port=<port>";
+        JOptionPane.showMessageDialog(this,
+                message, "Can't find a valid config.properties",
+                JOptionPane.ERROR_MESSAGE);
+        System.exit(-1);
+    }
+
+    public int showInitialConnectionError() {
+        String message = "Could not connect to server, did you set the " +
+                "correct hostname and port in config.properties?";
+        String options[] = {"Quit", "Retry"};
+        return JOptionPane.showOptionDialog(this, message,
+                "Could not connect to server", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+    }
+
+    public void showLostConnectionError() {
+        JOptionPane.showMessageDialog(this,
+                "Lost connection to server.", "Connection Error",
+                JOptionPane.ERROR_MESSAGE);
+        System.exit(-1);
+    }
 }
