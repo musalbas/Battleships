@@ -26,7 +26,6 @@ public class Player extends Thread {
     private HashMap<String, Player> requestList;
     private String ownKey;
     private String requestedGameKey;
-    private Timer requestTimer;
 
     public Player(Socket socket, MatchRoom matchRoom) {
         this.socket = socket;
@@ -159,7 +158,6 @@ public class Player extends Thread {
     public synchronized void sendRequest(Player requester) {
         requestList.put(requester.getOwnKey(), requester);
         requester.requestedGameKey = this.ownKey;
-        requester.startTimer(this);
         writeNotification(NotificationMessage.NEW_JOIN_GAME_REQUEST,
                 requester.getOwnKey(), requester.getPlayerName());
     }
@@ -169,7 +167,6 @@ public class Player extends Thread {
      * @param opponent the player who accepted the request
      */
     public synchronized void requestAccepted(Player opponent) {
-        cancelTimer();
         opponent.requestList.remove(ownKey);
         requestedGameKey = null;
         writeNotification(NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED);
@@ -180,7 +177,6 @@ public class Player extends Thread {
      * @param opponent the player who rejected the request
      */
     public synchronized void requestRejected(Player opponent) {
-        cancelTimer();
         opponent.requestList.remove(ownKey);
         requestedGameKey = null;
         writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
@@ -192,36 +188,6 @@ public class Player extends Thread {
 
     public String getOwnKey() {
         return ownKey;
-    }
-
-    /**
-     * Starts a timer in the context of the player who sent a game request,
-     * to automatically assume the request was rejected when the timeout is
-     * reached and notify the opponent the request is no longer active.
-     * @param opponent the invited player
-     */
-    public void startTimer(final Player opponent) {
-        requestTimer = new Timer();
-        requestTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                opponent.writeNotification(
-                        NotificationMessage.JOIN_GAME_REQUEST_CANCELLED,
-                        ownKey);
-                requestRejected(opponent);
-            }
-        }, 30000);
-    }
-
-    /**
-     * Cancels the invite timer.
-     */
-    private void cancelTimer() {
-        if (requestTimer != null) {
-            requestTimer.cancel();
-            System.out.println("timer cancelled");
-            requestTimer = null;
-        }
     }
 
     public void setRequestedGameKey(String key) {
