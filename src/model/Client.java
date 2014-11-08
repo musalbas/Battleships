@@ -1,5 +1,6 @@
 package model;
 
+import server.Game;
 import server.messages.ChatMessage;
 import server.messages.MoveMessage;
 import server.messages.MoveResponseMessage;
@@ -64,11 +65,13 @@ public class Client extends Thread {
                 view.addChatMessage("received opponents_name");
                 if (n.getText().length == 1) {
                     opponentName = n.getText()[0];
+                    view.setTitle("Playing Battleships against " +
+                            opponentName);
                 }
                 break;
             case NotificationMessage.BOARD_ACCEPTED:
-                // TODO: board is good, can start game
-                view.addChatMessage("board OK!");
+                view.setMessage("Board accepted. Waiting for opponent.");
+                view.stopTimer();
                 ownBoard.setBoatPositionLocked(true);
                 break;
             case NotificationMessage.GAME_TOKEN:
@@ -85,21 +88,26 @@ public class Client extends Thread {
                 ownBoard.setBoatPositionLocked(false);
                 break;
             case NotificationMessage.YOUR_TURN:
-                // TODO: inform player it's their turn and to make a move
-                view.addChatMessage("YOUR TURN");
+                view.stopTimer();
+                view.setTimer(Game.TURN_TIMEOUT / 1000);
+                view.setMessage("Your turn.");
                 break;
             case NotificationMessage.OPPONENTS_TURN:
-                // TODO: informs player it is their opponent's turn
+                view.stopTimer();
+                view.setTimer(Game.TURN_TIMEOUT / 1000);
                 view.addChatMessage("OPPONENTS_TURN");
+                view.setMessage("Opponent's turn.");
                 break;
             case NotificationMessage.GAME_WIN:
                 // TODO: inform player they have won the game
-                view.addChatMessage("GAME_WIN");
+                view.setMessage("You won.");
+                view.stopTimer();
                 view.gameOverAction();
                 break;
             case NotificationMessage.GAME_LOSE:
                 // TODO: inform player they have lost the game
-                view.addChatMessage("GAME_LOSE");
+                view.setMessage("You lost.");
+                view.stopTimer();
                 view.gameOverAction();
                 break;
             case NotificationMessage.TIMEOUT_WIN:
@@ -131,6 +139,9 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.REPEATED_MOVE:
                 view.addChatMessage("REPEATED_MOVE");
+                break;
+            case NotificationMessage.OPPONENT_DISCONNECTED:
+                view.addChatMessage("OPPONENT_DISCONNECTED");
             }
         } else if (input instanceof MoveResponseMessage) {
             MoveResponseMessage move = (MoveResponseMessage) input;
@@ -140,7 +151,8 @@ public class Client extends Thread {
                 opponentBoard.applyMove(move);
             }
         } else if (input instanceof ChatMessage) {
-            view.addChatMessage(((ChatMessage) input).getMessage());
+            ChatMessage chatMessage = (ChatMessage) input;
+            view.addChatMessage("<b>" + opponentName + ":</b> " + chatMessage.getMessage());
         }
     }
 

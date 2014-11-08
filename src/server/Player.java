@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,18 +19,19 @@ public class Player extends Thread {
 
     private Socket socket;
     private MatchRoom matchRoom;
-    private String name = "(new player)";
+    private String name = "";
     private ObjectOutputStream out;
     private Game game;
     private Board board;
     private HashMap<String, Player> requestList;
     private String ownKey;
     private String requestedGameKey;
-    private Timer requestTimer;
 
     public Player(Socket socket, MatchRoom matchRoom) {
         this.socket = socket;
         this.matchRoom = matchRoom;
+        matchRoom.assignKey(this);
+        matchRoom.addPlayer(this);
         this.requestList = new HashMap<>();
     }
 
@@ -55,11 +57,6 @@ public class Player extends Thread {
 
                         switch (message) {
                         case "join":
-                            if (game != null) {
-                                // TODO: check if game over
-                                game.killGame();
-                                game = null;
-                            }
                             matchRoom.join(this, array);
                             break;
                         case "name":
@@ -101,11 +98,11 @@ public class Player extends Thread {
             }
         } catch (IOException e) {
             if (game != null) {
-                game.killGame();
-                // TODO: Alert other player they win
+                leaveGame();
             } else {
                 matchRoom.removeWaitingPlayer(this);
             }
+            matchRoom.removePlayer(this);
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -161,23 +158,28 @@ public class Player extends Thread {
     public synchronized void sendRequest(Player requester) {
         requestList.put(requester.getOwnKey(), requester);
         requester.requestedGameKey = this.ownKey;
-        requester.startTimer(this);
         writeNotification(NotificationMessage.NEW_JOIN_GAME_REQUEST,
                 requester.getOwnKey(), requester.getPlayerName());
     }
 
+    /**
+     * Called when the opponent accepts a request.
+     * @param opponent the player who accepted the request
+     */
     public synchronized void requestAccepted(Player opponent) {
-        cancelTimer();
         opponent.requestList.remove(ownKey);
         requestedGameKey = null;
-        opponent.writeNotification(NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED);
+        writeNotification(NotificationMessage.JOIN_GAME_REQUEST_ACCEPTED);
     }
 
+    /**
+     * Called when the opponent rejects a request.
+     * @param opponent the player who rejected the request
+     */
     public synchronized void requestRejected(Player opponent) {
-        cancelTimer();
         opponent.requestList.remove(ownKey);
         requestedGameKey = null;
-        opponent.writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
+        writeNotification(NotificationMessage.JOIN_GAME_REQUEST_REJECTED);
     }
 
     public void setOwnKey(String ownKey) {
@@ -188,20 +190,28 @@ public class Player extends Thread {
         return ownKey;
     }
 
-    public void startTimer(final Player opponent) {
-        requestTimer = new Timer();
-        requestTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                requestRejected(opponent);
-            }
-        }, 30000);
+    public void setRequestedGameKey(String key) {
+        this.requestedGameKey = key;
     }
 
-    private void cancelTimer() {
-        if (requestTimer != null) {
-            requestTimer.cancel();
-            requestTimer = null;
+    public String getRequestedGameKey() {
+        return requestedGameKey;
+    }
+
+    public void rejectAll() {
+        for (Player p : requestList.values()) {
+            p.requestRejected(this);
+        }
+    }
+
+    /**
+     * Ends a game and notifies the opponent the player has left.
+     */
+    public void leaveGame() {
+        if (game != null) {
+            Player opponent = game.getOpponent(this);
+            opponent.writeNotification(NotificationMessage.OPPONENT_DISCONNECTED);
+            game.killGame();
         }
     }
 

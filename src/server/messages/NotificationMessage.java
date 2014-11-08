@@ -13,6 +13,7 @@ public class NotificationMessage extends ServerMessage implements Serializable {
     public final static int TIMEOUT_WIN = 203;
     public final static int TIMEOUT_LOSE = 204;
     public final static int TIMEOUT_DRAW = 205;
+    public final static int OPPONENT_DISCONNECTED = 206;
 
     public final static int OPPONENTS_NAME = 301;
     public final static int INVALID_NAME = 302;
@@ -34,6 +35,7 @@ public class NotificationMessage extends ServerMessage implements Serializable {
     public final static int NEW_JOIN_GAME_REQUEST = 701;
     public final static int JOIN_GAME_REQUEST_REJECTED = 702;
     public final static int JOIN_GAME_REQUEST_ACCEPTED = 703;
+    public final static int JOIN_GAME_REQUEST_CANCELLED = 704;
 
     private int code;
     private String[] text;

@@ -25,14 +25,13 @@ public class SquareView implements ChangeListener {
     private int state;
     private Image explosionImage;
     private Image water;
+    private Image splash;
     private BoardView boardView;
     private Square squareModel;
 
-    /*
-     * (x,y)----* | | height----* width
-     */
+
     public SquareView(int x, int y, int width, int height, BoardView boardView,
-            Square squareModel) {
+                      Square squareModel) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -43,16 +42,12 @@ public class SquareView implements ChangeListener {
         squareModel.addChangeListener(this);
         try {
             water = ImageIO.read(new File("resources/water/water.png"));
+            splash = ImageIO.read(new File("resources/water/splash.png"));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Some files have been deleted.", "Fatal error",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    public boolean mouseEntered(int x, int y) {
-        return (this.x <= x && x <= this.x + width)
-                && (this.y <= y && y <= this.y + height);
     }
 
     public int getState() {
@@ -86,21 +81,17 @@ public class SquareView implements ChangeListener {
         g.drawImage(water, x, y, width, height, null);
         g.setColor(Color.BLACK);
         g.drawRect(x, y, width, height);
+
         switch (state) {
-        case HOVER:
-            if (!animated()) {
-                g.setColor(Color.RED);
-                g.fillRect(x, y, width, height);
-            }
-            break;
-        case HIT:
-            g.setColor(Color.GRAY);
-            g.fillRect(x, y, width, height);/*
-                                             * g.setColor(Color.RED); if
-                                             * (!animated()) { drawCross(g); }
-                                             * break; case MISS: drawCross(g);
-                                             * break;
-                                             */
+            case HOVER:
+                if (!animated()) {
+                    g.setColor(Color.BLUE);
+                    g.fillRect(x, y, width, height);
+                }
+                break;
+            case MISS:
+                g.drawImage(splash, x, y, width, height, null);
+                break;
         }
     }
 
@@ -122,11 +113,11 @@ public class SquareView implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         switch (squareModel.getState()) {
-        case CONTAINS_SHIP:
-            this.state = HIT;
-            break;
-        case NO_SHIP:
-            this.state = MISS;
+            case CONTAINS_SHIP:
+                this.state = HIT;
+                break;
+            case NO_SHIP:
+                this.state = MISS;
         }
 
         if (!boardView.getModel().isOwnBoard()) {
