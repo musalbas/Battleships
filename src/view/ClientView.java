@@ -173,7 +173,9 @@ public class ClientView extends JFrame {
 
     public void sendChatMessage() {
         try {
-            model.sendChatMessage(inputField.getText());
+             String text = inputField.getText();
+            model.sendChatMessage(text);
+            addChatMessage("<b>" + "" + ":</b> " + text);
             inputField.setText("");
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -182,7 +184,7 @@ public class ClientView extends JFrame {
 
     public void addChatMessage(String text) {
         JScrollBar bar = chatScrollPane.getVerticalScrollBar();
-        chatModel.addElement("<html><b>" + text + "</b></html>" + "\n");
+        chatModel.addElement("<html>" + text + "</html>" + "\n");
         bar.setValue(bar.getMaximum());
     }
 
