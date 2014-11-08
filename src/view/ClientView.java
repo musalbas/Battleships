@@ -7,7 +7,10 @@ import server.Game;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,10 +20,9 @@ import java.io.ObjectOutputStream;
  */
 public class ClientView extends JFrame {
 
-    private final JTextField inputField = new JTextField();
-    private final JButton submitButton = new JButton("Submit");
-    private final JButton rotateButton = new JButton("Rotate");
-    private final JButton saveShipState = new JButton("Ready");
+    private JTextField inputField = new JTextField();
+    private JButton rotateButton = new JButton("Rotate");
+    private JButton saveShipState = new JButton("Ready");
     private JScrollPane chatScrollPane;
     private JList<String> chat = new JList<>();
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
@@ -50,8 +52,9 @@ public class ClientView extends JFrame {
         controlPanel.add(chatScrollPane, BorderLayout.CENTER);
 
         JPanel chatInput = new JPanel(new BorderLayout());
+        JButton sendButton = new JButton("Send");
         chatInput.add(inputField, BorderLayout.CENTER);
-        chatInput.add(submitButton, BorderLayout.EAST);
+        chatInput.add(sendButton, BorderLayout.EAST);
 
         inputField.addActionListener(new ActionListener() {
             @Override
@@ -60,7 +63,7 @@ public class ClientView extends JFrame {
             }
         });
 
-        submitButton.addActionListener(new ActionListener() {
+        sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sendChatMessage();
@@ -173,9 +176,9 @@ public class ClientView extends JFrame {
 
     public void sendChatMessage() {
         try {
-             String text = inputField.getText();
+            String text = inputField.getText();
             model.sendChatMessage(text);
-            addChatMessage("<b>" + "" + ":</b> " + text);
+            addChatMessage("<b>" + matchRoom.getOwnName() + ":</b> " + text);
             inputField.setText("");
         } catch (IOException e1) {
             e1.printStackTrace();
