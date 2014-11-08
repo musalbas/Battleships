@@ -188,7 +188,7 @@ public class ClientView extends JFrame {
     }
 
     public void addChatMessage(String text) {
-        chatModel.addElement("<html><b>" + text + "</b></html>" + "\n");
+        chatModel.addElement("<html>" + text + "</html>" + "\n");
     }
 
     public void setSendShipState(boolean state) {
