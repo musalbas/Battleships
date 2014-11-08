@@ -7,10 +7,8 @@ import view.InviteReceivedPane;
 import view.InviteSentPane;
 import view.MatchRoomView;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Properties;
