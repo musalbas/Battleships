@@ -16,7 +16,7 @@ public class MatchRoom {
     private ArrayList<Player> connectedPlayers;
 
     /**
-     * Initialises MatchRoom with an empty waiting player list and an empty
+     * Constructs MatchRoom with an empty waiting player list and an empty
      * connected player list.
      */
     public MatchRoom() {
