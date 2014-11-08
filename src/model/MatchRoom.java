@@ -29,12 +29,20 @@ public class MatchRoom extends Thread {
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
 
-        Properties properties = new Properties();
-        InputStream inputStream =getClass().getClassLoader()
-                .getResourceAsStream("config.properties");
-        if (inputStream == null) {
+        try {
+            InputStream inputStream = new FileInputStream("config.properties");
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            String hostname = properties.getProperty("hostname");
+            int port = Integer.parseInt(properties.getProperty("port"));
+            Socket socket = new Socket(hostname, port);
+            out = new ObjectOutputStream(new BufferedOutputStream(
+                    socket.getOutputStream()));
+            in = new ObjectInputStream(socket.getInputStream());
+            out.flush();
+        } catch (FileNotFoundException e) {
             String message = "Please make sure you have a config.properties " +
-                    "file in the root directory.\n\n" +
+                    "file in the current working directory.\n\n" +
                     "It should contain:\n\n" +
                     "hostname=<hostname/ip>\n" +
                     "port=<port>";
@@ -42,17 +50,6 @@ public class MatchRoom extends Thread {
                     message, "Can't find config.properties",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
-        }
-        try {
-            properties.load(inputStream);
-            String hostname = properties.getProperty("hostname");
-            int port = Integer.parseInt(properties.getProperty("port"));
-
-            Socket socket = new Socket(hostname, port);
-            out = new ObjectOutputStream(new BufferedOutputStream(
-                    socket.getOutputStream()));
-            in = new ObjectInputStream(socket.getInputStream());
-            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
