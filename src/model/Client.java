@@ -70,7 +70,6 @@ public class Client extends Thread {
                 }
                 break;
             case NotificationMessage.BOARD_ACCEPTED:
-                // TODO: board is good, can start game
                 view.setMessage("Board accepted. Waiting for opponent.");
                 view.stopTimer();
                 ownBoard.setBoatPositionLocked(true);
@@ -89,13 +88,11 @@ public class Client extends Thread {
                 ownBoard.setBoatPositionLocked(false);
                 break;
             case NotificationMessage.YOUR_TURN:
-                // TODO: inform player it's their turn and to make a move
                 view.stopTimer();
                 view.setTimer(Game.TURN_TIMEOUT / 1000);
                 view.setMessage("Your turn.");
                 break;
             case NotificationMessage.OPPONENTS_TURN:
-                // TODO: informs player it is their opponent's turn
                 view.stopTimer();
                 view.setTimer(Game.TURN_TIMEOUT / 1000);
                 view.addChatMessage("OPPONENTS_TURN");
@@ -154,7 +151,8 @@ public class Client extends Thread {
                 opponentBoard.applyMove(move);
             }
         } else if (input instanceof ChatMessage) {
-            view.addChatMessage(((ChatMessage) input).getMessage());
+            ChatMessage chatMessage = (ChatMessage) input;
+            view.addChatMessage("<b>" + opponentName + ":</b> " + chatMessage.getMessage());
         }
     }
 
