@@ -26,7 +26,10 @@ public class Game {
     private boolean gameStarted;
 
     /**
-     * Constructs a Game between two players.
+     * Constructs a Game between two players, and informs the players of the
+     * name of their opponent. A timer is started, which the ships are to be
+     * placed by the end of.
+     *
      * @param player1 a player
      * @param player2 another player
      */
