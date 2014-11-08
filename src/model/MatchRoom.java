@@ -21,6 +21,7 @@ public class MatchRoom extends Thread {
     private ObjectInputStream in;
     private volatile Client clientModel;
     private String key = "";
+    private String ownName;
     private volatile NameState nameState;
     private HashMap<String, InviteReceivedPane> inviteDialogs;
     private InviteSentPane inviteSentPane;
@@ -232,5 +233,13 @@ public class MatchRoom extends Thread {
         if (inviteSentPane != null) {
             inviteSentPane.dispose();
         }
+    }
+
+    public void setOwnName(String ownName) {
+        this.ownName = ownName;
+    }
+
+    public String getOwnName() {
+        return ownName;
     }
 }
