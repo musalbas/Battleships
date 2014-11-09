@@ -2,6 +2,11 @@ package server.messages;
 
 import java.io.Serializable;
 
+/**
+ * An Object sent from the server to a client containing a notification, and an
+ * optional String array with additional information. The notifications are
+ * constants represented by an int.
+ */
 public class NotificationMessage implements Serializable {
 
     public final static int PLACE_SHIPS = 101;
@@ -40,19 +45,43 @@ public class NotificationMessage implements Serializable {
     private int code;
     private String[] text;
 
+    /**
+     * Constructs a NotificationMessage with the int value of a constant
+     * representing the notification.
+     *
+     * @param code int value of constant
+     */
     public NotificationMessage(int code) {
         this.code = code;
     }
 
+    /**
+     * Constructs a NotificationMessage with the int value of a constant
+     * representing the notification, and a String array of any length, to be
+     * sent as additional information.
+     *
+     * @param code int value of constant
+     * @param text additional information
+     */
     public NotificationMessage(int code, String... text) {
         this.code = code;
         this.text = text;
     }
 
+    /**
+     * Returns the int value of the notification the object is storing.
+     *
+     * @return int value of notification
+     */
     public int getCode() {
         return code;
     }
 
+    /**
+     * Returns the String array of additional information.
+     *
+     * @return additional information
+     */
     public String[] getText() {
         return text;
     }
