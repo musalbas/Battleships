@@ -203,10 +203,10 @@ public class ClientView extends JFrame {
         return this.model;
     }
 
-    public void gameOverAction() {
+    public void gameOverAction(String result) {
         Object[] options = {"Back to lobby", "Quit"};
         int n = JOptionPane.showOptionDialog(this,
-                "What would you like to do now?", "Your Game is Over",
+                result + " What would you like to do now?", "Game Over ",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                 options, options[0]);
         switch (n) {
