@@ -83,17 +83,14 @@ public class MatchRoom extends Thread {
         }
     }
 
-    public void sendJoinFriend(String key, String name) {
+    public void sendJoinFriend(String key, final String name) {
         try {
             out.writeObject(new String[]{"join", "join", key});
             out.flush();
-            final String currentKey = key;
-            final String currentName = name;
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    inviteSentPane = new InviteSentPane(currentKey, currentName,
-                            MatchRoom.this);
+                    inviteSentPane = new InviteSentPane(name, MatchRoom.this);
                     inviteSentPane.showPane(matchRoomView);
                 }
             });
