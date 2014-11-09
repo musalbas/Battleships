@@ -4,7 +4,7 @@ import model.Ship;
 
 import java.io.Serializable;
 
-public class MoveResponseMessage extends ServerMessage implements Serializable {
+public class MoveResponseMessage implements Serializable {
 
     private int x;
     private int y;
