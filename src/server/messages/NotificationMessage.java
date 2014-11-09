@@ -2,7 +2,7 @@ package server.messages;
 
 import java.io.Serializable;
 
-public class NotificationMessage extends ServerMessage implements Serializable {
+public class NotificationMessage implements Serializable {
 
     public final static int PLACE_SHIPS = 101;
     public final static int YOUR_TURN = 102;

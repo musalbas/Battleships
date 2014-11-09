@@ -3,7 +3,7 @@ package server.messages;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class MatchRoomListMessage extends ServerMessage implements Serializable {
+public class MatchRoomListMessage implements Serializable {
 
     private HashMap<String, String> matchRoomList;
     
