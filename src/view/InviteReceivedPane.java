@@ -6,7 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by joe on 06/11/14.
+ * An option pane asking the user if they would like to play a game against a
+ * player who has invited them.
  */
 public class InviteReceivedPane extends JOptionPane {
 
@@ -14,6 +15,15 @@ public class InviteReceivedPane extends JOptionPane {
     private MatchRoom matchRoom;
     private String key;
 
+    /**
+     * Constructs InviteReceivedPane with the key of the player inviting them,
+     * the name of the player inviting them, and a reference to the
+     * {@link model.MatchRoom} object to send the response back to.
+     *
+     * @param key key of player inviting
+     * @param name name of player inviting
+     * @param matchRoom MatchRoom object to send response too
+     */
     public InviteReceivedPane(String key, String name, MatchRoom matchRoom) {
         super();
         this.setMessage(name + " would like to play with you.");
@@ -25,6 +35,12 @@ public class InviteReceivedPane extends JOptionPane {
         this.matchRoom = matchRoom;
     }
 
+    /**
+     * Shows InviteReceivedPane, and informs {@link model.MatchRoom} of the
+     * user's response.
+     *
+     * @param parent the frame to display the dialog in
+     */
     public void showOptionPane(Component parent) {
         dialog = this.createDialog(parent, "Invite");
         dialog.setVisible(true);
@@ -36,6 +52,9 @@ public class InviteReceivedPane extends JOptionPane {
         }
     }
 
+    /**
+     * Disposes of the frame, cancelling the user's chance to respond.
+     */
     public void dispose() {
         dialog.dispose();
     }
