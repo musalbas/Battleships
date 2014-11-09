@@ -92,7 +92,7 @@ public class Client extends Thread {
             switch (n.getCode()) {
             case NotificationMessage.OPPONENTS_NAME:
                 // TODO: handle receiving opponents name
-                view.addChatMessage("received opponents_name");
+                //view.addChatMessage("Received opponent's name.");
                 if (n.getText().length == 1) {
                     opponentName = n.getText()[0];
                     view.setTitle("Playing Battleships against " +
@@ -106,15 +106,15 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.GAME_TOKEN:
                 // TODO: handle receiving game token to share with friend
-                view.addChatMessage("received game_Token");
+                view.addChatMessage("Received game token.");
                 break;
             case NotificationMessage.GAME_NOT_FOUND:
                 // TODO: handle joining a game that doesn't exist
-                view.addChatMessage("game not found");
+                view.addChatMessage("Game not found.");
                 break;
             case NotificationMessage.PLACE_SHIPS:
                 // TODO: allow player to start positioning ships
-                view.addChatMessage("can place ships now");
+                //view.addChatMessage("Can place ships now.");
                 ownBoard.setBoatPositionLocked(false);
                 break;
             case NotificationMessage.YOUR_TURN:
@@ -125,7 +125,7 @@ public class Client extends Thread {
             case NotificationMessage.OPPONENTS_TURN:
                 view.stopTimer();
                 view.setTimer(Game.TURN_TIMEOUT / 1000);
-                view.addChatMessage("OPPONENTS_TURN");
+                view.addChatMessage("Opponent's turn.");
                 view.setMessage("Opponent's turn.");
                 break;
             case NotificationMessage.GAME_WIN:
@@ -142,36 +142,36 @@ public class Client extends Thread {
                 break;
             case NotificationMessage.TIMEOUT_WIN:
                 // TODO: inform of win due to opponent taking too long
-                view.addChatMessage("TIMEOUT_WIN");
+                view.addChatMessage("Your opponent took to long, you win!");
                 view.gameOverAction("Your opponent took to long, you win!");
                 break;
             case NotificationMessage.TIMEOUT_LOSE:
                 // TODO: inform of loss due to taking too long
-                view.addChatMessage("TIMEOUT_LOSE");
+                view.addChatMessage("You took too long, you lose!");
                 view.gameOverAction("You took too long, you lose!");
                 break;
             case NotificationMessage.TIMEOUT_DRAW:
                 // TODO: inform that both took too long to place ships
-                view.addChatMessage("TIMEOUT_DRAW");
+                view.addChatMessage("Game ended a draw.");
                 view.gameOverAction("Game ended a draw.");
                 break;
             case NotificationMessage.NOT_YOUR_TURN:
-                view.addChatMessage("NOT_YOUR_TURN");
+                view.addChatMessage("It's not your turn!");
                 break;
             case NotificationMessage.INVALID_BOARD:
-                view.addChatMessage("INVALID_BOARD");
+                view.addChatMessage("Invalid board.");
                 break;
             case NotificationMessage.NOT_IN_GAME:
-                view.addChatMessage("NOT_IN_GAME");
+                view.addChatMessage("You're not in a game.");
                 break;
             case NotificationMessage.INVALID_MOVE:
-                view.addChatMessage("INVALID_MOVE");
+                view.addChatMessage("Invalid move.");
                 break;
             case NotificationMessage.REPEATED_MOVE:
-                view.addChatMessage("REPEATED_MOVE");
+                view.addChatMessage("You cannot repeat a move.");
                 break;
             case NotificationMessage.OPPONENT_DISCONNECTED:
-                view.addChatMessage("OPPONENT_DISCONNECTED");
+                view.addChatMessage("Opponent disconnected.");
             }
         } else if (input instanceof MoveResponseMessage) {
             MoveResponseMessage move = (MoveResponseMessage) input;
