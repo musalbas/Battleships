@@ -49,14 +49,11 @@ public class Client extends Thread {
         this.opponentBoard = opponentBoard;
         this.view = clientView;
 
-        // TODO: MAKE THIS SHIT BETTER
         ownBoard.setClient(this);
         opponentBoard.setClient(this);
 
         this.out = out;
         this.in = in;
-
-        // start();
     }
 
     /**
