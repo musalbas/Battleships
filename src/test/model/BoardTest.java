@@ -1,9 +1,4 @@
-package src.test.model;
-
-/*
- * JUnit testing for Board class
- */
-
+package test.model;
 
 import java.util.ArrayList;
 import model.Ship;
@@ -16,40 +11,54 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * 
+ * A JUnit class for testing {@link model.Board}.
  * @author Olly
  */
-
 public class BoardTest {
 
+    /**
+     * Test method for {@link model.Board#placeShip(model.Ship, int, int)}.
+     */
     @Test
     public void isShipPlacedTest() {
         Assert.assertTrue("Is the ship placed correctly", isShipCorrect());
     }
 
+    /**
+     * Test method for {@link model.Board#pickUpShip(model.Ship)}
+     */
     @Test
     public void isShipPickedUpTest() {
         Assert.assertTrue("Has the ship been picked up", isShipRemoved());
     }
 
+    /**
+     * Test method for {@link model.Board#gameOver()}
+     */
     @Test
     public void isGameOverTest() {
         Assert.assertTrue("Is the game over", isGameOver());
     }
 
+    /**
+     * Test method for {@link model.Board#shipPlacementEquals(model.Board)}
+     */
     @Test
     public void isShipPlacementEqualsTest() {
         Assert.assertTrue("Is ship placement equal",
                 isShipPlacementEqualsCorrect());
     }
 
+    /**
+     * Test method for {@link model.Board#isSquareNearShip(model.Square)}
+     */
     @Test
     public void isSquareNearShipTest() {
         Assert.assertTrue("Is square near ship", isSquareNearShipCorrect());
     }
 
     // checks for correct placement of ship
-    public boolean isShipCorrect() {
+    private boolean isShipCorrect() {
 
         model.Board board = new model.Board(true);
         model.Ship ship = board.getShips().get(4); // gets a submarine
@@ -72,7 +81,7 @@ public class BoardTest {
         return true;
     }
 
-    public boolean isShipRemoved() {
+    private boolean isShipRemoved() {
 
         // creates and places ship on the board
         model.Board board = new model.Board(true);
@@ -94,7 +103,7 @@ public class BoardTest {
         return true;
     }
 
-    public boolean isGameOver() {
+    private boolean isGameOver() {
 
         model.Board board = new model.Board(true);
 
@@ -113,7 +122,7 @@ public class BoardTest {
     }
 
     // checks whether shipPlacementEquals correctly tests board equality
-    public boolean isShipPlacementEqualsCorrect() {
+    private boolean isShipPlacementEqualsCorrect() {
         model.Board board1 = new model.Board(true);
         model.Board board2 = new model.Board(true);
 
@@ -140,7 +149,7 @@ public class BoardTest {
         return board1.shipPlacementEquals(board2);
     }
 
-    public boolean isSquareNearShipCorrect() {
+    private boolean isSquareNearShipCorrect() {
 
         model.Board board = new model.Board(true);
         model.Ship ship = board.getShips().get(0); // AIRCRAFT_CARRIER

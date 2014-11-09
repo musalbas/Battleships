@@ -1,10 +1,4 @@
-package src.test.model;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+package test.model;
 
 import java.util.Arrays;
 import junit.framework.Assert;
@@ -16,18 +10,21 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * 
- * @author User
+ * A JUnit class for testing {@link model.Ship}.
+ * @author Olly
  */
 public class ShipTest {
 
+    /**
+     * Test method for {@link model.Ship#getTopLeft()}.
+     */
     @Test
     public void getTopLeftTest() {
         Assert.assertTrue("Is the top-left square returned",
                 isTopLeftCoordsReturned());
     }
 
-    public boolean isTopLeftCoordsReturned() {
+    private boolean isTopLeftCoordsReturned() {
 
         model.Board board = new model.Board(true);
         model.Ship ship1 = board.getShips().get(0); // AIRCRAFT_CARRIER
