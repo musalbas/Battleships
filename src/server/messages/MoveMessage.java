@@ -2,7 +2,7 @@ package server.messages;
 
 import java.io.Serializable;
 
-public class MoveMessage extends ClientMessage implements Serializable {
+public class MoveMessage implements Serializable {
 
     private int x;
     private int y;
