@@ -97,6 +97,9 @@ public class MatchRoomView extends JFrame {
         while (true) {
             String name = (String) JOptionPane.showInputDialog(this, message,
                 "Nickname", JOptionPane.PLAIN_MESSAGE, null, null, "");
+            if (name == null) {
+                System.exit(-1);
+            }
             this.matchRoom.sendName(name);
             synchronized (matchRoom) {
                 try {
