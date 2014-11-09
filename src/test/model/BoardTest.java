@@ -1,6 +1,9 @@
+package src.test.model;
+
 /*
  * JUnit testing for Board class
  */
+
 
 import java.util.ArrayList;
 import model.Ship;
