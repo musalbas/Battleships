@@ -236,7 +236,6 @@ public class MatchRoom {
         for (Map.Entry<String, Player> entry : waitingPlayerList.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
-            System.out.println(player.getPlayerName());
             matchRoomList.put(key, player.getPlayerName());
         }
         MatchRoomListMessage message = new MatchRoomListMessage(matchRoomList);

@@ -103,7 +103,6 @@ public class Game {
      * Starts the game and sets the turn to a random player's.
      */
     private void startGame() {
-        System.out.println("Game started");
         gameStarted = true;
         if (new Random().nextInt(2) == 0) {
             setTurn(player1);
@@ -143,7 +142,6 @@ public class Game {
             MoveResponseMessage response;
             if (ship != null && ship.isSunk()) {
                 response = new MoveResponseMessage(x, y, ship, true, false);
-                System.out.println(x + ", " + y);
             } else {
                 response = new MoveResponseMessage(x, y, null, hit, false);
             }
@@ -151,7 +149,6 @@ public class Game {
             response.setOwnBoard(true);
             opponent.writeObject(response);
             if (opponent.getBoard().gameOver()) {
-                opponent.getBoard().printBoard(false);
                 turn.writeNotification(NotificationMessage.GAME_WIN);
                 opponent.writeNotification(NotificationMessage.GAME_LOSE);
                 turn = null;

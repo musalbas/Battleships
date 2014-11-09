@@ -40,6 +40,8 @@ public class Player extends Thread {
         matchRoom.assignKey(this);
         matchRoom.addPlayer(this);
         this.requestList = new HashMap<>();
+        System.out.println(socket.getRemoteSocketAddress().toString() +
+                " connected");
     }
 
     /**
@@ -114,7 +116,8 @@ public class Player extends Thread {
                 matchRoom.removeWaitingPlayer(this);
             }
             matchRoom.removePlayer(this);
-            e.printStackTrace();
+            System.out.println(socket.getRemoteSocketAddress().toString() +
+                    " connected");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
