@@ -26,7 +26,7 @@ public class InviteSentPane extends JOptionPane {
 
     public void showPane(Component parent) {
         dialog = this.createDialog(parent, "Invite Sent");
-        dialog.show();
+        dialog.setVisible(true);
         dialog.dispose();
         if (getValue() == "Cancel") {
             matchRoom.sendStringArray(new String[]{"join", "cancel"});

@@ -27,7 +27,7 @@ public class InviteReceivedPane extends JOptionPane {
 
     public void showOptionPane(Component parent) {
         dialog = this.createDialog(parent, "Invite");
-        dialog.show();
+        dialog.setVisible(true);
         dialog.dispose();
         if (getValue() == "Accept") {
             matchRoom.sendStringArray(new String[]{"join", "accept", key});
