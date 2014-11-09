@@ -132,28 +132,28 @@ public class Client extends Thread {
                 // TODO: inform player they have won the game
                 view.setMessage("You won.");
                 view.stopTimer();
-                view.gameOverAction();
+                view.gameOverAction("You won!");
                 break;
             case NotificationMessage.GAME_LOSE:
                 // TODO: inform player they have lost the game
                 view.setMessage("You lost.");
                 view.stopTimer();
-                view.gameOverAction();
+                view.gameOverAction("You lost!");
                 break;
             case NotificationMessage.TIMEOUT_WIN:
                 // TODO: inform of win due to opponent taking too long
                 view.addChatMessage("TIMEOUT_WIN");
-                view.gameOverAction();
+                view.gameOverAction("Your opponent took to long, you win!");
                 break;
             case NotificationMessage.TIMEOUT_LOSE:
                 // TODO: inform of loss due to taking too long
                 view.addChatMessage("TIMEOUT_LOSE");
-                view.gameOverAction();
+                view.gameOverAction("You took too long, you lose!");
                 break;
             case NotificationMessage.TIMEOUT_DRAW:
                 // TODO: inform that both took too long to place ships
                 view.addChatMessage("TIMEOUT_DRAW");
-                view.gameOverAction();
+                view.gameOverAction("Game ended a draw.");
                 break;
             case NotificationMessage.NOT_YOUR_TURN:
                 view.addChatMessage("NOT_YOUR_TURN");
