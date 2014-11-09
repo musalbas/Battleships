@@ -11,7 +11,6 @@ import server.messages.NotificationMessage;
 public class MatchRoom {
 
     private final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-    private Player waitingRandomPlayer;
     private HashMap<String, Player> waitingPlayerList;
     private ArrayList<Player> connectedPlayers;
 
@@ -36,10 +35,6 @@ public class MatchRoom {
         }
         String option = args[1];
         switch (option) {
-        case "random":
-            player.leaveGame();
-            joinRandom(player);
-            break;
         case "start":
             player.leaveGame();
             joinWaitingList(player);
@@ -69,21 +64,6 @@ public class MatchRoom {
     }
 
     /**
-     * Either queues a player up to be paired with the next player who chooses
-     * to join a random game, or pairs with a player waiting to play.
-     * 
-     * @param player
-     */
-    private synchronized void joinRandom(Player player) {
-        if (waitingRandomPlayer == null) {
-            waitingRandomPlayer = player; // there is no current waiting player
-        } else {
-            new Game(waitingRandomPlayer, player);
-            waitingRandomPlayer = null; // next player to join has to wait
-        }
-    }
-
-    /**
      * Puts a key and a player into a HashMap, the key is sent back to the
      * user. This key is used for other players to identify them and send
      * requests to them.
@@ -106,29 +86,6 @@ public class MatchRoom {
         }
         String key = keyBuilder.toString();
         player.setOwnKey(key);
-    }
-
-    /**
-     * Searches the HashMap for the key and starts a game between the newly
-     * joined player and waiting player if found.
-     * 
-     * @param player
-     * @param key
-     */
-    private synchronized void joinFriend(Player player, String key) {
-        Player opponent = waitingPlayerList.remove(key);
-        if (player == opponent) {
-            player.writeNotification(NotificationMessage.CANNOT_PLAY_YOURSELF);
-            waitingPlayerList.put(key, opponent);
-            return;
-        }
-        if (opponent != null) {
-            waitingPlayerList.values().remove(player);
-            new Game(opponent, player);
-            sendMatchRoomList();
-        } else {
-            player.writeMessage("That game does not exist");
-        }
     }
 
     /**
@@ -204,12 +161,8 @@ public class MatchRoom {
      * @param player player to be removed
      */
     public synchronized void removeWaitingPlayer(Player player) {
-        if (player == waitingRandomPlayer) {
-            waitingRandomPlayer = null;
-        } else {
-            waitingPlayerList.values().remove(player);
-            sendMatchRoomList();
-        }
+        waitingPlayerList.values().remove(player);
+        sendMatchRoomList();
     }
 
     /**
@@ -236,7 +189,6 @@ public class MatchRoom {
         for (Map.Entry<String, Player> entry : waitingPlayerList.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
-            System.out.println(player.getPlayerName());
             matchRoomList.put(key, player.getPlayerName());
         }
         MatchRoomListMessage message = new MatchRoomListMessage(matchRoomList);
