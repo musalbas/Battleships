@@ -82,16 +82,12 @@ public class SquareView implements ChangeListener {
         g.setColor(Color.BLACK);
         g.drawRect(x, y, width, height);
 
-        switch (state) {
-            case HOVER:
-                if (!animated()) {
-                    g.setColor(Color.BLUE);
-                    g.fillRect(x, y, width, height);
-                }
-                break;
-            case MISS:
-                g.drawImage(splash, x, y, width, height, null);
-                break;
+        if (state == HOVER && !animated()) {
+            g.setColor(Color.BLUE);
+            g.fillRect(x, y, width, height);
+        }
+        if (state == MISS) {
+            g.drawImage(splash, x, y, width, height, null);
         }
     }
 

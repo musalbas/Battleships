@@ -11,28 +11,33 @@ import server.messages.NotificationMessage;
 public class MatchRoom {
 
     private final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-    private Player waitingRandomPlayer;
     private HashMap<String, Player> waitingPlayerList;
     private ArrayList<Player> connectedPlayers;
 
+    /**
+     * Constructs MatchRoom with an empty waiting player list and an empty
+     * connected player list.
+     */
     public MatchRoom() {
         this.waitingPlayerList = new HashMap<String, Player>();
         this.connectedPlayers = new ArrayList<>();
     }
 
-    public void join(Player player, String[] args) {
+    /**
+     * Parses messages from the client that are intended for the MatchRoom.
+     *
+     * @param player the player who send the message
+     * @param args the String array sent by the player
+     */
+    public void parse(Player player, String[] args) {
         if (args.length < 2 || player.getPlayerName().equals("")) {
             return;
         }
         String option = args[1];
         switch (option) {
-        case "random":
-            player.leaveGame();
-            joinRandom(player);
-            break;
         case "start":
             player.leaveGame();
-            startWithKey(player);
+            joinWaitingList(player);
             break;
         case "join":
             player.leaveGame();
@@ -59,27 +64,13 @@ public class MatchRoom {
     }
 
     /**
-     * Either queues a player up to be paired with the next player who chooses
-     * to join a random game, or pairs with a player waiting to play.
+     * Puts a key and a player into a HashMap, the key is sent back to the
+     * user. This key is used for other players to identify them and send
+     * requests to them.
      * 
-     * @param player
+     * @param player player to join waiting list
      */
-    private synchronized void joinRandom(Player player) {
-        if (waitingRandomPlayer == null) {
-            waitingRandomPlayer = player; // there is no current waiting player
-        } else {
-            new Game(waitingRandomPlayer, player);
-            waitingRandomPlayer = null; // next player to join has to wait
-        }
-    }
-
-    /**
-     * Puts a key and a player into a HashMap, they key is sent back to the
-     * user, which is to be shared with a friend to start a game between them.
-     * 
-     * @param player
-     */
-    private synchronized void startWithKey(Player player) {
+    private synchronized void joinWaitingList(Player player) {
         waitingPlayerList.put(player.getOwnKey(), player);
         player.writeNotification(NotificationMessage.GAME_TOKEN,
                 player.getOwnKey());
@@ -98,31 +89,9 @@ public class MatchRoom {
     }
 
     /**
-     * Searches the HashMap for the key and starts a game between the newly
-     * joined player and waiting player if found.
-     * 
-     * @param player
-     * @param key
-     */
-    private synchronized void joinFriend(Player player, String key) {
-        Player opponent = waitingPlayerList.remove(key);
-        if (player == opponent) {
-            player.writeNotification(NotificationMessage.CANNOT_PLAY_YOURSELF);
-            waitingPlayerList.put(key, opponent);
-            return;
-        }
-        if (opponent != null) {
-            waitingPlayerList.values().remove(player);
-            new Game(opponent, player);
-            sendMatchRoomList();
-        } else {
-            player.writeMessage("That game does not exist");
-        }
-    }
-
-    /**
      * Sends a join request, coming from a player, to a player matching the
      * given key.
+     *
      * @param player player sending the request
      * @param key key of player being invited
      */
@@ -138,6 +107,7 @@ public class MatchRoom {
     /**
      * Called when a player accepts a game request from a player matching the
      * given key.
+     *
      * @param player player accepting the request
      * @param key key of player who sent the request
      */
@@ -158,6 +128,7 @@ public class MatchRoom {
     /**
      * Called when a player rejects a game request from a player matching the
      * given key.
+     *
      * @param player player accepting the request
      * @param key key of player who sent the request
      */
@@ -171,6 +142,7 @@ public class MatchRoom {
 
     /**
      * Called when a game request from a player gets cancelled.
+     *
      * @param player the player who sent and cancelled the invite
      */
     private synchronized void cancelRequest(Player player) {
@@ -186,20 +158,17 @@ public class MatchRoom {
     /**
      * Removes a player from any queue.
      * 
-     * @param player
+     * @param player player to be removed
      */
     public synchronized void removeWaitingPlayer(Player player) {
-        if (player == waitingRandomPlayer) {
-            waitingRandomPlayer = null;
-        } else {
-            waitingPlayerList.values().remove(player);
-            sendMatchRoomList();
-        }
+        waitingPlayerList.values().remove(player);
+        sendMatchRoomList();
     }
 
     /**
      * Checks if a player connected to the server already has the requested
      * name.
+     *
      * @param name desired name
      * @return true if name taken
      */
@@ -220,7 +189,6 @@ public class MatchRoom {
         for (Map.Entry<String, Player> entry : waitingPlayerList.entrySet()) {
             String key = entry.getKey();
             Player player = entry.getValue();
-            System.out.println(player.getPlayerName());
             matchRoomList.put(key, player.getPlayerName());
         }
         MatchRoomListMessage message = new MatchRoomListMessage(matchRoomList);
@@ -230,12 +198,22 @@ public class MatchRoom {
         }
     }
 
+    /**
+     * Adds player to the list of all connected players.
+     *
+     * @param player player to be added
+     */
     public void addPlayer(Player player) {
         if (!connectedPlayers.contains(player)) {
             connectedPlayers.add(player);
         }
     }
 
+    /**
+     * Removes player from the list of all connected players.
+     *
+     * @param player player to be removed
+     */
     public void removePlayer(Player player) {
         connectedPlayers.remove(player);
     }

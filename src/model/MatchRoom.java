@@ -13,6 +13,12 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Properties;
 
+/**
+ * A MatchRoom responsible for finding player's to play a game with. Makes the
+ * initial connection to the server and responsible for setting a player's name.
+ * It contains an {@link java.io.ObjectOutputStream} to write to the server, and
+ * and {@link java.io.ObjectInputStream} to receive objects from the server.
+ */
 public class MatchRoom extends Thread {
 
     private MatchRoomView matchRoomView;
@@ -25,6 +31,13 @@ public class MatchRoom extends Thread {
     private HashMap<String, InviteReceivedPane> inviteDialogs;
     private InviteSentPane inviteSentPane;
 
+    /**
+     * Constructs MatchRoom with a reference {@link view.MatchRoomView}. The
+     * connection information to the server is loaded from a config file and the
+     * initial connection to the server is made.
+     *
+     * @param matchRoomView the related view
+     */
     public MatchRoom(MatchRoomView matchRoomView) {
         this.matchRoomView = matchRoomView;
 
@@ -62,6 +75,12 @@ public class MatchRoom extends Thread {
         start();
     }
 
+    /**
+     * Runs this {@link Thread}. Waits to receive input from the server, checks
+     * to see if {@link model.Client} is active, if so, parses the input to
+     * {@link model.Client}. If {@link model.Client} is null, the input is
+     * parsed in this object.
+     */
     @Override
     public void run() {
         super.run();
@@ -83,17 +102,22 @@ public class MatchRoom extends Thread {
         }
     }
 
-    public void sendJoinFriend(String key, String name) {
+    /**
+     * Sends a game request to the player matching the given key, and displays
+     * a {@link view.InviteSentPane} informing the player that they have sent
+     * a request and who to, and allows them to cancel it.
+     *
+     * @param key key of invited player
+     * @param name name of invited player
+     */
+    public void sendJoinFriend(String key, final String name) {
         try {
             out.writeObject(new String[]{"join", "join", key});
             out.flush();
-            final String currentKey = key;
-            final String currentName = name;
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    inviteSentPane = new InviteSentPane(currentKey, currentName,
-                            MatchRoom.this);
+                    inviteSentPane = new InviteSentPane(name, MatchRoom.this);
                     inviteSentPane.showPane(matchRoomView);
                 }
             });
@@ -102,36 +126,46 @@ public class MatchRoom extends Thread {
         }
     }
 
+    /**
+     * Sends the player's desired name to the server.
+     *
+     * @param name the player's desired name
+     */
     public void sendName(String name) {
         this.nameState = NameState.WAITING;
-        try {
-            out.writeObject(new String[]{"name", name});
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendStringArray(new String[]{"name", name});
     }
 
+
+    /**
+     * Sends a request to the server to join the {@link server.MatchRoom} lobby.
+     */
     public void joinLobby() {
-        try {
-            out.writeObject(new String[]{"join", "start"});
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendStringArray(new String[]{"join", "start"});
     }
 
+    /**
+     * Enumerations to represent the state of the player's name. The state is
+     * WAITING when they are waiting for a response from the server, ACCEPTED
+     * means the name has been accepted by the server, INVALID means the name
+     * was not a valid name, TAKEN means another player already has the name.
+     */
     public static enum NameState {
         WAITING, ACCEPTED, INVALID, TAKEN
     }
 
-    public void setNameState(NameState nameState) {
+    private void setNameState(NameState nameState) {
         synchronized (this) {
             this.nameState = nameState;
             this.notifyAll();
         }
     }
 
+    /**
+     * Gets the state of the request of being assigned the desired name.
+     *
+     * @return state of the name request
+     */
     public NameState getNameState() {
         return nameState;
     }
@@ -200,6 +234,12 @@ public class MatchRoom extends Thread {
         }
     }
 
+    /**
+     * Starts the game and opens {@link view.ClientView}. Passes the information
+     * just received by the server to {@link model.Client} to be parsed.
+     *
+     * @param firstInput data to be passed to {@link model.Client}
+     */
     private void startGame(Object firstInput) {
         matchRoomView.setVisible(false);
         ClientView clientView = new ClientView(this.out, this.in, this);
@@ -207,10 +247,19 @@ public class MatchRoom extends Thread {
         clientModel.parseInput(firstInput);
     }
 
+    /**
+     * Returns the client's unique key.
+     *
+     * @return the client's key
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * Reopens {@link view.MatchRoomView}, disposing of {@link view.ClientView},
+     * and stops {@link model.Client} from handling the input from the server.
+     */
     public void reopen() {
         if (clientModel != null) {
             this.clientModel.getView().dispose();
@@ -220,6 +269,11 @@ public class MatchRoom extends Thread {
         joinLobby();
     }
 
+    /**
+     * Writes a String array to the server and flushes it.
+     *
+     * @param array String array to be sent to server
+     */
     public void sendStringArray(String[] array) {
         try {
             out.writeObject(array);
@@ -229,6 +283,9 @@ public class MatchRoom extends Thread {
         }
     }
 
+    /**
+     * Disposes of all open invite sent and invite received panes.
+     */
     private void disposeAllPanes() {
         for (InviteReceivedPane pane : inviteDialogs.values()) {
             pane.dispose();
@@ -238,10 +295,20 @@ public class MatchRoom extends Thread {
         }
     }
 
+    /**
+     * Sets the player's local reference of their own name.
+     *
+     * @param ownName the player's name
+     */
     public void setOwnName(String ownName) {
         this.ownName = ownName;
     }
 
+    /**
+     * Returns the player's local reference of their own name.
+     *
+     * @return the player's name
+     */
     public String getOwnName() {
         return ownName;
     }
