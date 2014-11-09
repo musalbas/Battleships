@@ -13,6 +13,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * A Client used for communicating with the server. Contains both player's 
+ * {@link Board}s, an {@link ObjectOutputStream} and an 
+ * {@link ObjectInputStream}.
+ */
 public class Client extends Thread {
 
     private Board ownBoard;
@@ -24,6 +29,20 @@ public class Client extends Thread {
 
     private String opponentName = "Player";
 
+    /**
+     * Constructs a Client with the players' {@link Board}s, {@link ClientView} 
+     * and streams.
+     * @param clientView
+     *          The {@link ClientView} used for the GUI
+     * @param ownBoard
+     *          The {@link Board} belonging to the player
+     * @param opponentBoard
+     *          The {@link Board} belonging to the player's opponent
+     * @param out
+     *          The {@link ObjectOutputStream} for sending data
+     * @param in 
+     *          The {@link ObjectOutputStream} for receiving data
+     */
     public Client(ClientView clientView, Board ownBoard, Board opponentBoard,
             ObjectOutputStream out, ObjectInputStream in) {
         this.ownBoard = ownBoard;
@@ -40,6 +59,10 @@ public class Client extends Thread {
         // start();
     }
 
+    /**
+     * Runs this {@link Thread}. Waits to receive input from the server, parses 
+     * the input and executes instructions based on the input.
+     */
     @Override
     public void run() {
         super.run();
@@ -56,6 +79,13 @@ public class Client extends Thread {
 
     }
 
+    /**
+     * Determines the type of message of the input and then responds 
+     * accordingly.
+     * @param input 
+     *          The message from the server allowing the Client to determine 
+     *          what course of action to take next.
+     */
     public void parseInput(Object input) {
         if (input instanceof NotificationMessage) {
             NotificationMessage n = (NotificationMessage) input;
@@ -156,27 +186,57 @@ public class Client extends Thread {
         }
     }
 
+    /**
+     * Sends the {@link Board} over the {@link ObjectOutputStream}.
+     * @param board
+     *          The {@link Board} to send to the server
+     * @throws IOException 
+     */
     public void sendBoard(Board board) throws IOException {
         out.reset();
         out.writeObject(board);
         out.flush();
     }
 
+    /**
+     * Gets the {@link ClientView}.
+     * @return 
+     *          the {@link ClientView} belonging to the Client
+     */
     public ClientView getView() {
         return view;
     }
 
+    /**
+     * Sends a message to be displayed in the opponents chat window.
+     * @param message
+     *          The text of the message to be sent
+     * @throws IOException 
+     */
     public void sendChatMessage(String message) throws IOException {
         System.out.println(message);
         out.writeObject(new ChatMessage(message));
         out.flush();
     }
 
+    /**
+     * Sends a move to be executed on the opponent's {@link Board}.
+     * @param x
+     *          The index of the {@link Square} on the X-axis to be hit
+     * @param y
+     *          The index of the {@link Square} on the Y-axis to be hit
+     * @throws IOException 
+     */
     public void sendMove(int x, int y) throws IOException {
         out.writeObject(new MoveMessage(x, y));
         out.flush();
     }
 
+    /**
+     * Gets the opponent's name.
+     * @return 
+     *          the opponent's name
+     */
     public String getOpponentName() {
         return opponentName;
     }
